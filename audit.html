@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>服务商平台 · 运营工作台</title>
+  <!-- 引入 Tailwind CSS 样式工具库 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            wechat: {
+              green: '#07C160',
+              greenHover: '#06AD56',
+              blue: '#576B95',
+              blueHover: '#445577',
+              dark: '#353535',
+              light: '#888888',
+              bg: '#f7f7f7',
+              border: '#e7e7eb'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-wechat-bg text-wechat-dark flex flex-col min-h-screen text-[14px]">
+
+  <!-- 1. 全局顶部导航栏 -->
+  <header class="bg-white border-b border-wechat-border sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="w-3.5 h-3.5 bg-wechat-green rounded-full"></span>
+        <span class="font-semibold text-base text-wechat-dark">服务商平台</span>
+        <span class="text-wechat-border">|</span>
+        <span class="text-wechat-light text-xs">运营工作台</span>
+      </div>
+      <div class="text-xs text-wechat-light flex items-center gap-3">
+        <span>服务商：极速开发助手后台</span>
+        <span class="w-px h-3 bg-wechat-border"></span>
+        <a href="#" class="text-wechat-blue hover:underline">退出</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. 主内容区域 (垂直流式一上一下大排版) -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-6 md:py-8 space-y-6">
+    
+    <!-- 面包屑 -->
+    <div>
+      <div class="text-xs text-wechat-light flex items-center gap-1.5 mb-1.5">
+        <span>运营工作台</span>
+        <span>/</span>
+        <span class="text-wechat-dark">审核管理</span>
+      </div>
+      <h2 class="text-2xl font-normal text-wechat-dark">审核管理</h2>
+    </div>
+
+    <!-- 额度指标 -->
+    <div class="grid grid-cols-2 gap-6 bg-white border border-wechat-border rounded-sm py-5 shadow-sm">
+      <!-- 提审额度 -->
+      <div class="text-center flex flex-col justify-between h-20 border-r border-wechat-border">
+        <span class="text-xs text-wechat-light font-medium">本月可提审</span>
+        <span class="text-2xl font-semibold tracking-tight text-wechat-dark">290936 <span class="text-xs text-wechat-light font-normal">/ 291090</span></span>
+        <button onclick="openQuotaModal('提审')" class="text-xs text-wechat-blue hover:underline focus:outline-none">临时调额</button>
+      </div>
+      <!-- 加急额度 -->
+      <div class="text-center flex flex-col justify-between h-20">
+        <span class="text-xs text-wechat-light font-medium">本月可加急</span>
+        <span class="text-2xl font-semibold tracking-tight text-wechat-dark">125 <span class="text-xs text-wechat-light font-normal">/ 125</span></span>
+        <button onclick="openQuotaModal('加急')" class="text-xs text-wechat-blue hover:underline focus:outline-none">临时调额</button>
+      </div>
+    </div>
+
+    <!-- 审核数据大盘图 (大宽幅置顶展示，SVG精准绘图，带有虚线背景网格) -->
+    <div class="bg-white border border-wechat-border rounded-sm p-6 shadow-sm">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h3 class="font-bold text-[15px] text-wechat-dark">审核数据</h3>
+          <p class="text-[11px] text-wechat-light mt-0.5">最近 7 天微信审核通道提交单量趋势</p>
+        </div>
+        <div class="flex items-center gap-6">
+          <span class="text-xs font-semibold text-wechat-dark flex items-center gap-2">
+            平均合格率 <strong class="text-base text-wechat-green">99%</strong>
+          </span>
+          <div class="flex bg-[#f2f2f2] rounded-sm p-0.5 text-xs select-none">
+            <button class="px-3 py-1 bg-white text-wechat-green rounded-sm font-medium shadow-sm">近七天</button>
+            <button class="px-3 py-1 text-wechat-light hover:text-wechat-dark">本月</button>
+            <button class="px-3 py-1 text-wechat-light hover:text-wechat-dark">上月</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="relative w-full overflow-hidden">
+        <svg class="w-full h-48" viewBox="0 0 1000 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Y轴辅助线与刻度 -->
+          <line x1="60" y1="20" x2="980" y2="20" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="60" y1="60" x2="980" y2="60" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="60" y1="100" x2="980" y2="100" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="60" y1="140" x2="980" y2="140" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="3,3" />
+          <line x1="60" y1="180" x2="980" y2="180" stroke="#e7e7eb" stroke-width="1.2" />
+
+          <text x="45" y="24" fill="#888" font-size="10" text-anchor="end">16,000</text>
+          <text x="45" y="64" fill="#888" font-size="10" text-anchor="end">12,000</text>
+          <text x="45" y="104" fill="#888" font-size="10" text-anchor="end">8,000</text>
+          <text x="45" y="144" fill="#888" font-size="10" text-anchor="end">4,000</text>
+          <text x="45" y="184" fill="#888" font-size="10" text-anchor="end">0</text>
+
+          <!-- 2. 精致的 Y轴柱体 -->
+          <g class="group cursor-pointer">
+            <rect x="110" y="75" width="28" height="105" rx="3" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="124" y="65" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">10.5k</text>
+            <text x="124" y="200" fill="#888" font-size="10" text-anchor="middle">06/24</text>
+          </g>
+          
+          <g class="group cursor-pointer">
+            <rect x="245" y="18" width="28" height="162" rx="3" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="259" y="10" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">16.2k</text>
+            <text x="259" y="200" fill="#888" font-size="10" text-anchor="middle">06/25</text>
+          </g>
+
+          <g class="group cursor-pointer">
+            <rect x="380" y="102" width="28" height="78" rx="3" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="394" y="92" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">7.8k</text>
+            <text x="394" y="200" fill="#888" font-size="10" text-anchor="middle">06/26</text>
+          </g>
+
+          <g class="group cursor-pointer">
+            <rect x="515" y="172" width="28" height="8" rx="2" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="529" y="164" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">0.8k</text>
+            <text x="529" y="200" fill="#888" font-size="10" text-anchor="middle">06/27</text>
+          </g>
+
+          <g class="group cursor-pointer">
+            <rect x="650" y="174" width="28" height="6" rx="2" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="664" y="166" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">0.6k</text>
+            <text x="664" y="200" fill="#888" font-size="10" text-anchor="middle">06/28</text>
+          </g>
+
+          <g class="group cursor-pointer">
+            <rect x="785" y="175" width="28" height="5" rx="1.5" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="799" y="167" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">0.5k</text>
+            <text x="799" y="200" fill="#888" font-size="10" text-anchor="middle">06/29</text>
+          </g>
+
+          <g class="group cursor-pointer">
+            <rect x="920" y="176" width="28" height="4" rx="1" fill="#576B95" opacity="0.85" class="hover:fill-wechat-green transition-all" />
+            <text x="934" y="168" fill="#353535" font-size="10" font-weight="600" text-anchor="middle">0.4k</text>
+            <text x="934" y="200" fill="#888" font-size="10" text-anchor="middle">06/30</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 中部列表表格 (去除了详情点击跳转，纯色静态高密度展示) -->
+    <div class="bg-white border border-wechat-border rounded-sm shadow-sm overflow-hidden">
+      <!-- 过滤与搜索行 -->
+      <div class="p-4 border-b border-wechat-border flex justify-between items-center bg-[#fbfbfb]">
+        <!-- 标签页 Tabs -->
+        <div class="flex gap-8">
+          <button onclick="switchTab('auditing')" id="tab-auditing" class="py-2 px-1 text-[15px] font-medium border-b-2 border-wechat-green text-wechat-green focus:outline-none">
+            审核中
+          </button>
+          <button onclick="switchTab('frozen')" id="tab-frozen" class="py-2 px-1 text-[15px] text-wechat-light hover:text-wechat-dark border-b-2 border-transparent focus:outline-none">
+            审核冻结
+          </button>
+          <button onclick="switchTab('rejected')" id="tab-rejected" class="py-2 px-1 text-[15px] text-wechat-light hover:text-wechat-dark border-b-2 border-transparent focus:outline-none">
+            审核驳回
+          </button>
+        </div>
+        <!-- 搜索输入框 -->
+        <div class="relative">
+          <input type="text" id="search-input" oninput="handleSearch()" placeholder="搜索名称 / AppID / 模板 ID" 
+            class="pl-9 pr-4 py-1.5 border border-wechat-border rounded-sm text-xs w-64 focus:outline-none focus:border-wechat-green placeholder-wechat-light" />
+          <svg class="w-4 h-4 text-wechat-light absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 数据表格区域 (操作列仅保留核心动作) -->
+      <div class="overflow-x-auto relative min-h-[180px]">
+        
+        <!-- 空状态展示 -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-16">
+          <svg class="w-12 h-12 text-[#e7e7eb] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <p class="text-wechat-light text-xs">暂无匹配的数据记录</p>
+        </div>
+
+        <table id="data-table" class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-[#f4f5f9] border-b border-wechat-border text-wechat-light font-medium text-xs">
+              <th class="p-4 w-12 text-center">
+                <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)" class="w-4 h-4 accent-wechat-green cursor-pointer" />
+              </th>
+              <!-- 小程序列采用下钻方案 A，悬浮有点击反馈样式 -->
+              <th class="p-4">小程序</th>
+              <th class="p-4">模板 ID</th>
+              <th class="p-4">审核单号</th>
+              <th class="p-4">提交时间</th>
+              <th class="p-4">审核状态</th>
+              <th class="p-4 text-right pr-6">操作</th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-wechat-border text-wechat-dark">
+            <!-- JS 动态渲染 -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页组件 -->
+      <div class="p-4 border-t border-wechat-border bg-[#fbfbfb] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-wechat-light">
+        <div class="flex items-center gap-3">
+          <span>共 <span id="total-count" class="font-medium text-wechat-dark">0</span> 条记录</span>
+          <span class="text-[#e0e0e0]">|</span>
+          <div class="flex items-center gap-1.5">
+            <span>每页显示</span>
+            <select id="page-size-select" onchange="handlePageSizeChange(this)" class="border border-wechat-border rounded-sm bg-white px-2 py-1 text-xs focus:outline-none focus:border-wechat-green text-wechat-dark cursor-pointer font-medium">
+              <option value="10" selected>10 条</option>
+              <option value="25">25 条</option>
+              <option value="50">50 条</option>
+              <option value="100">100 条</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex gap-1.5 items-center" id="pagination-controls">
+          <!-- JS 注入 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 高保真宽幅 驳回原因分布图 (完全还原环形分布图) -->
+    <div class="bg-white border border-wechat-border rounded-sm p-6 shadow-sm">
+      <h3 class="font-bold text-[15px] text-wechat-dark mb-1">驳回原因分布</h3>
+      <p class="text-[11px] text-wechat-light mb-6">小程序审核被驳回原因的多维度精细归因（本期大盘数据分析）</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+        <!-- 1. 精准比例 SVG 环形圆环图 (Donut Chart) -->
+        <div class="flex flex-col items-center justify-center">
+          <div class="relative w-44 h-44 shrink-0">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f4f5f9" stroke-width="3.5" />
+              <!-- 1. 服务类目 (73.6%) - 蓝色 -->
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#1890ff" stroke-width="3.6" 
+                stroke-dasharray="73.6 26.4" stroke-dashoffset="100" />
+              <!-- 2. 小程序可用性 (9.4%) - 青色 -->
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#00c5dc" stroke-width="3.6" 
+                stroke-dasharray="9.4 90.6" stroke-dashoffset="26.4" />
+              <!-- 3. 小程序内容 (9.4%) - 绿色 -->
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#20c997" stroke-width="3.6" 
+                stroke-dasharray="9.4 90.6" stroke-dashoffset="17" />
+              <!-- 4. 小程序功能 (7.5%) - 黄色 -->
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#ffb822" stroke-width="3.6" 
+                stroke-dasharray="7.5 92.5" stroke-dashoffset="7.6" />
+              <!-- 5. 测试账号 (1.9%) - 粉红 -->
+              <circle cx="18" cy="18" r="15.915" fill="none" stroke="#fd397a" stroke-width="3.6" 
+                stroke-dasharray="1.9 98.1" stroke-dashoffset="0.1" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center select-none">
+              <span class="text-2xl font-bold text-wechat-dark">54次</span>
+              <span class="text-[10px] text-wechat-light scale-90">驳回总量</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 完整平铺非截断数据列表 -->
+        <div class="md:col-span-2 text-xs space-y-3.5 font-mono">
+          <div class="flex justify-between items-center py-2 border-b border-[#fbfbfb]">
+            <span class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-[#1890ff] shrink-0 shadow-sm"></span>
+              <span class="text-wechat-dark font-medium leading-relaxed">服务类目与提交代码审核时设置的功能不一致</span>
+            </span>
+            <div class="flex gap-6 shrink-0 ml-4">
+              <span class="text-wechat-dark font-semibold w-8 text-right">39次</span>
+              <span class="text-wechat-light w-12 text-right">73.6%</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-[#fbfbfb]">
+            <span class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-[#00c5dc] shrink-0 shadow-sm"></span>
+              <span class="text-wechat-dark font-medium leading-relaxed">小程序可用性和完整性不符合运营规范规则</span>
+            </span>
+            <div class="flex gap-6 shrink-0 ml-4">
+              <span class="text-wechat-dark font-semibold w-8 text-right">5次</span>
+              <span class="text-wechat-light w-12 text-right">9.4%</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-[#fbfbfb]">
+            <span class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-[#20c997] shrink-0 shadow-sm"></span>
+              <span class="text-wechat-dark font-medium leading-relaxed">小程序核心页面及业务内容不符合合规要求</span>
+            </span>
+            <div class="flex gap-6 shrink-0 ml-4">
+              <span class="text-wechat-dark font-semibold w-8 text-right">5次</span>
+              <span class="text-wechat-light w-12 text-right">9.4%</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-[#fbfbfb]">
+            <span class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-[#ffb822] shrink-0 shadow-sm"></span>
+              <span class="text-wechat-dark font-medium leading-relaxed">小程序实际承载功能不符合代码审核规范</span>
+            </span>
+            <div class="flex gap-6 shrink-0 ml-4">
+              <span class="text-wechat-dark font-semibold w-8 text-right">4次</span>
+              <span class="text-wechat-light w-12 text-right">7.5%</span>
+            </div>
+          </div>
+          <div class="flex justify-between items-center py-2">
+            <span class="flex items-center gap-3">
+              <span class="w-3 h-3 rounded-full bg-[#fd397a] shrink-0 shadow-sm"></span>
+              <span class="text-wechat-dark font-medium leading-relaxed">小程序测试账号/授权环境不符合审查要求</span>
+            </span>
+            <div class="flex gap-6 shrink-0 ml-4">
+              <span class="text-wechat-dark font-semibold w-8 text-right">1次</span>
+              <span class="text-wechat-light w-12 text-right">1.9%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-[11px] text-wechat-light text-center mt-6 select-none border-t border-[#fafafa] pt-4">
+        对审核规则有任何疑问，请参照官方 <a href="#" class="text-wechat-blue hover:underline">《审核专区使用手册》</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- 悬浮吸底式批量操作条 -->
+  <div id="floating-batch-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-wechat-border shadow-xl rounded-full py-3 px-6 flex items-center gap-5 z-40 transition-all duration-300 transform translate-y-24 opacity-0 pointer-events-none">
+    <span class="text-xs text-wechat-light">已选择 <strong id="floating-selected-count" class="text-wechat-green font-semibold">0</strong> 项</span>
+    <div class="h-4 w-px bg-wechat-border"></div>
+    <button onclick="alert('批量加急处理中...')" class="text-xs font-semibold text-wechat-green hover:text-wechat-greenHover transition">批量加急</button>
+    <button onclick="alert('批量撤销处理中...')" class="text-xs font-semibold text-red-500 hover:text-red-600 transition">批量撤销</button>
+    <div class="h-4 w-px bg-wechat-border"></div>
+    <button onclick="clearSelection()" class="text-xs text-wechat-light hover:underline focus:outline-none">取消选择</button>
+  </div>
+
+  <!-- 申请临时调额弹窗 -->
+  <div id="quota-modal" class="fixed inset-0 bg-black/40 z-50 flex justify-center items-center hidden transition-opacity">
+    <div class="bg-white rounded-sm w-[480px] border border-wechat-border shadow-xl">
+      <div class="px-6 py-4 border-b border-wechat-border flex justify-between items-center">
+        <h3 class="font-bold text-base text-wechat-dark" id="quota-modal-title">临时调额申请</h3>
+        <button onclick="closeQuotaModal()" class="text-wechat-light hover:text-wechat-dark">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-wechat-light mb-1.5">调额类别</label>
+          <input type="text" id="quota-modal-input-type" disabled class="w-full bg-[#f4f5f9] border border-wechat-border rounded-sm px-3 py-2 text-sm text-wechat-dark font-medium" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-wechat-light mb-1.5">增调额度数量</label>
+          <input type="number" min="1" placeholder="请填入期望增调的值" class="w-full border border-wechat-border rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-wechat-green" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-wechat-light mb-1.5">调额申请原由说明</label>
+          <textarea rows="3" placeholder="请详细描述临时上调额度的理由" class="w-full border border-wechat-border rounded-sm px-3 py-2 text-sm focus:outline-none focus:border-wechat-green resize-none"></textarea>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-wechat-border flex justify-end gap-3 bg-[#fbfbfb]">
+        <button onclick="closeQuotaModal()" class="px-4 py-1.5 border border-wechat-border text-wechat-dark rounded-sm hover:bg-[#f2f2f2] text-xs transition">
+          取消
+        </button>
+        <button onclick="submitQuotaRequest()" class="px-4 py-1.5 bg-wechat-green hover:bg-wechat-greenHover text-white rounded-sm text-xs transition font-semibold">
+          提交调额申请
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const database = {
+      auditing: [],
+      frozen: [],
+      rejected: []
+    };
+
+    let currentPage = 1;
+    let pageSize = 10; 
+    let searchQuery = '';
+    let selectedIds = new Set();
+
+    // 数据工厂：自动在后台生成大量真实风格数据
+    function initializeMockData() {
+      database.auditing.push(
+        { id: 101, name: '鲸喜回流仓', appId: 'wx7952d0415f9431aa', templateId: '53011', ticketId: '455421746', time: '2026/07/01', status: '审核中', logo: '🐳', logoColor: 'bg-blue-50 text-blue-500' },
+        { id: 102, name: '微盟小店', appId: 'wx66554433221100aa', templateId: '53012', ticketId: '455421910', time: '2026/07/01', status: '审核中', logo: '🛍️', logoColor: 'bg-purple-50 text-purple-500' },
+        { id: 103, name: '快麦ERP极速版', appId: 'wx1122334455667788', templateId: '53015', ticketId: '455422012', time: '2026/07/01', status: '审核中', logo: '📦', logoColor: 'bg-amber-50 text-amber-500' }
+      );
+
+      database.frozen.push(
+        { id: 201, name: '有赞微商城系统', appId: 'wxaa11bb22cc33dd44', templateId: '52880', ticketId: '441029831', time: '2026/06/28', status: '审核冻结', logo: '🛒', logoColor: 'bg-red-50 text-red-500' },
+        { id: 202, name: '智能快递助手', appId: 'wx9988112233445566', templateId: '52902', ticketId: '441030112', time: '2026/06/28', status: '审核冻结', logo: '🚚', logoColor: 'bg-sky-50 text-sky-500' }
+      );
+
+      // 已驳回 Tab 数据定义 (配合截图中 1:1 有无截图、截图16px Padding与254px宽度限制的规范)
+      database.rejected.push(
+        // 1. 新芭蕾蕾盘古鸟 (诱导分享，有截图 - 对应 State 1)
+        { id: 301, name: '新芭蕾蕾盘古鸟', appId: 'wx579dda1f294003bd', templateId: '53009', ticketId: '423771866', time: '2026/06/30', status: '已驳回', reason: '诱导分享', screenshot: true, logo: '🍵', logoColor: 'bg-green-50 text-green-500' },
+        // 2. 极速秒杀抢购宝 (无截图，只有文字原因 - 对应 State 2)
+        { id: 302, name: '极速秒杀抢购宝', appId: 'wx9988776655443322', templateId: '53005', ticketId: '423771999', time: '2026/06/29', status: '已驳回', reason: '代码功能涉及未开放类目，请修正。', screenshot: false, logo: '⚡', logoColor: 'bg-rose-50 text-rose-500' },
+        // 3. 本地圈外卖同城 (有截图 + 文字原因 - 对应 State 1)
+        { id: 303, name: '本地圈外卖同城', appId: 'wx8877665544332211', templateId: '53002', ticketId: '423771102', time: '2026/06/29', status: '已驳回', reason: '小程序涉及外卖代送，但未添加“外卖/代送”类目。', screenshot: true, logo: '🛵', logoColor: 'bg-teal-50 text-teal-500' }
+      );
+
+      // 自动循环填充测试项
+      const names = ['百果园极速购', '星巴克用心说', '瑞幸咖啡luckin', '奈雪官方点单', '喜茶GO小店', '自如租房助手', '企业打卡相机', '群工具助手', '顺丰速运平台', '美团神券联盟', '自营生鲜超市', '投票大作战'];
+      const logos = ['🍎', '☕', '🥤', '🍹', '🍵', '🏠', '📷', '🔧', '📦', '🎫', '🍉', '🗳️'];
+      const colors = ['bg-red-50 text-red-500', 'bg-amber-50 text-amber-500', 'bg-blue-50 text-blue-500', 'bg-emerald-50 text-emerald-500', 'bg-green-50 text-green-500', 'bg-teal-50 text-teal-500'];
+
+      // 审核中追加
+      for (let i = 0; i < 62; i++) {
+        const randIdx = i % names.length;
+        const randCol = i % colors.length;
+        database.auditing.push({
+          id: 1000 + i,
+          name: `${names[randIdx]}-${i+1}`,
+          appId: `wx${Math.floor(Math.random() * 899999 + 100000)}df${i}bc7a`,
+          templateId: `${53100 + i}`,
+          ticketId: `${455500000 + i}`,
+          time: `2026/07/01`,
+          status: '审核中',
+          logo: logos[randIdx],
+          logoColor: colors[randCol]
+        });
+      }
+
+      // 冻结追加
+      for (let i = 0; i < 10; i++) {
+        const randIdx = i % names.length;
+        const randCol = i % colors.length;
+        database.frozen.push({
+          id: 2000 + i,
+          name: `挂起-${names[randIdx]}-${i+1}`,
+          appId: `wx${Math.floor(Math.random() * 899999 + 100000)}ea${i}dd2e`,
+          templateId: `${52920 + i}`,
+          ticketId: `${441100000 + i}`,
+          time: `2026/06/28`,
+          status: '审核冻结',
+          logo: logos[randIdx],
+          logoColor: colors[randCol]
+        });
+      }
+
+      // 驳回追加 (混合有无截图逻辑)
+      for (let i = 0; i < 35; i++) {
+        const randIdx = i % names.length;
+        const randCol = i % colors.length;
+        database.rejected.push({
+          id: 3000 + i,
+          name: `重提-${names[randIdx]}-${i+1}`,
+          appId: `wx${Math.floor(Math.random() * 899999 + 100000)}cf${i}ab9c`,
+          templateId: `${52950 + i}`,
+          ticketId: `${423800000 + i}`,
+          time: `2026/06/29`,
+          status: '已驳回',
+          reason: i % 2 === 0 ? '诱导分享' : '代码包内含有未备案的第三方插件接口',
+          screenshot: i % 2 === 0, // 偶数行有截图，奇数行无截图
+          logo: logos[randIdx],
+          logoColor: colors[randCol]
+        });
+      }
+    }
+
+    // 渲染表格
+    function renderTable() {
+      const tableBody = document.getElementById('table-body');
+      const selectAllCheckbox = document.getElementById('select-all');
+      const dataTable = document.getElementById('data-table');
+      const emptyState = document.getElementById('empty-state');
+      
+      tableBody.innerHTML = '';
+
+      const rawData = database[currentTab];
+      const filteredData = rawData.filter(item => {
+        const query = searchQuery.toLowerCase();
+        return item.name.toLowerCase().includes(query) || 
+               item.appId.toLowerCase().includes(query) || 
+               item.ticketId.toLowerCase().includes(query);
+      });
+
+      const totalCount = filteredData.length;
+
+      if (totalCount === 0) {
+        dataTable.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        selectAllCheckbox.checked = false;
+        document.getElementById('total-count').innerText = '0';
+        renderPagination(0);
+        updateFloatingBar();
+        return;
+      }
+
+      dataTable.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+
+      const totalPages = Math.ceil(totalCount / pageSize) || 1;
+      if (currentPage > totalPages) {
+        currentPage = totalPages;
+      }
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, totalCount);
+      const paginatedData = filteredData.slice(startIndex, endIndex);
+
+      paginatedData.forEach(item => {
+        const isChecked = selectedIds.has(item.id);
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-[#fbfbfb] text-xs transition-colors ${isChecked ? 'bg-[#F2F9F5]' : ''}`;
+        
+        let statusBadge = '';
+        if (currentTab === 'auditing') {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#E8F8F0] text-wechat-green"><span class="w-1.5 h-1.5 rounded-full bg-wechat-green"></span>审核中</span>`;
+        } else if (currentTab === 'frozen') {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#E8F3FC] text-wechat-blue"><span class="w-1.5 h-1.5 rounded-full bg-wechat-blue"></span>审核冻结</span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#FDF2F2] text-[#FA5151]"><span class="w-1.5 h-1.5 rounded-full bg-[#FA5151]"></span>已驳回</span>`;
+        }
+
+        // 重构操作列：1:1 移除全局详情弹框，以极轻量级悬浮 Popover 代替
+        let actionButtons = '';
+        if (currentTab === 'auditing') {
+          actionButtons = `
+            <button onclick="singleExpedite(${item.id})" class="text-wechat-blue hover:text-wechat-blueHover hover:underline mr-4 font-semibold">加急</button>
+            <button onclick="singleWithdraw(${item.id})" class="text-wechat-blue hover:text-wechat-blueHover hover:underline font-semibold">撤销</button>
+          `;
+        } else if (currentTab === 'rejected') {
+          // 驳回状态下：按 State 1 和 State 2 分情况渲染
+          let reasonText = item.reason ? `<span class="text-wechat-dark block font-medium mb-1">${item.reason}</span>` : '';
+          let screenshotLink = '';
+
+          if (item.screenshot) {
+            // 截图 16px Padding & 254px 图片宽度规范弹框
+            screenshotLink = `
+              <div class="relative inline-block text-right">
+                <button onclick="togglePopover(event, ${item.id})" class="text-wechat-blue hover:text-wechat-blueHover hover:underline font-semibold text-xs flex items-center gap-1 select-none">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  违规截图
+                </button>
+                
+                <!-- 新增：完美对齐 16px Padding 规范的悬浮卡片 -->
+                <div id="popover-${item.id}" class="absolute right-0 top-full mt-2 w-[286px] bg-white border border-[#e7e7eb] shadow-xl p-4 rounded-sm hidden z-50 text-left animate-[zoomIn_0.15s_ease-out]">
+                  <!-- 三角箭头指示 -->
+                  <div class="absolute -top-1.5 right-6 w-3 h-3 bg-white border-t border-l border-[#e7e7eb] transform rotate-45"></div>
+                  
+                  <!-- 1. 精致海报截图微缩模拟 (对齐截图中的电影微缩排版比例) -->
+                  <div class="w-[254px] bg-[#fbfbfb] border border-[#e7e7eb] rounded-sm overflow-hidden flex flex-col text-[11px] select-none shadow-sm">
+                    <div class="flex justify-between items-center px-3 py-2 border-b border-[#f2f2f2] bg-white text-[11px] font-semibold text-wechat-dark">
+                      <div class="flex gap-3 text-wechat-light font-normal text-[10px]">
+                        <span class="text-wechat-green border-b-2 border-wechat-green pb-0.5">推荐</span>
+                        <span>新剧</span>
+                        <span>朋友看过</span>
+                      </div>
+                      <span class="text-[#888] scale-90">已选 4 🔻</span>
+                    </div>
+                    <!-- 精新手绘电影微缩排版 -->
+                    <div class="p-2.5 bg-white flex gap-2 justify-between">
+                      <div class="flex-1 flex flex-col gap-1">
+                        <div class="h-28 bg-gradient-to-t from-emerald-50 to-teal-50 rounded-sm relative flex items-center justify-center text-sm border border-stone-100">
+                          <span class="absolute top-1 right-1 bg-wechat-green text-white text-[8px] scale-90 px-1 py-0.5 rounded-sm">新剧</span>
+                          🎬
+                        </div>
+                        <span class="font-bold text-wechat-dark text-[10px] truncate mt-1">时光不及你温柔</span>
+                        <span class="text-[8px] text-wechat-light leading-normal scale-90 -ml-1 text-stone-400">电梯维修中，监控拍到...</span>
+                      </div>
+                      <div class="flex-1 flex flex-col gap-1">
+                        <div class="h-28 bg-gradient-to-t from-orange-50 to-amber-50 rounded-sm relative flex items-center justify-center text-sm border border-stone-100">
+                          <span class="absolute top-1 right-1 bg-wechat-green text-white text-[8px] scale-90 px-1 py-0.5 rounded-sm">新剧</span>
+                          🎬
+                        </div>
+                        <span class="font-bold text-wechat-dark text-[10px] truncate mt-1">子不孝枉为人</span>
+                        <span class="text-[8px] text-wechat-light leading-normal scale-90 -ml-1 text-stone-400">热评：我就不信有男生可以...</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="text-[10px] text-stone-400 mt-2 text-center select-none scale-90">只会有一张截图 (宽度固定254px)</div>
+                  
+                  <!-- 2. 反馈按钮 -->
+                  <button onclick="alert('已建立智能咨询通道。单号: ' + '${item.ticketId}')" class="w-full mt-3 py-2 bg-wechat-green text-white text-xs font-semibold rounded-sm hover:bg-wechat-greenHover transition shadow-sm active:scale-98">
+                    咨询反馈
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+
+          actionButtons = `
+            <div class="flex flex-col items-end pr-2 gap-1 py-1">
+              ${reasonText}
+              ${screenshotLink}
+            </div>
+          `;
+        } else {
+          actionButtons = `<span class="text-wechat-light font-mono">-</span>`;
+        }
+
+        const appCellHTML = `
+          <div class="flex items-center gap-2.5 py-1 select-none">
+             <span class="w-7 h-7 rounded-full flex items-center justify-center ${item.logoColor} text-xs font-bold shadow-sm">${item.logo}</span>
+             <div class="flex flex-col">
+                <span class="font-semibold text-wechat-dark text-[13px]">${item.name}</span>
+                <span class="text-[11px] text-wechat-light font-mono mt-0.5 select-all">${item.appId}</span>
+             </div>
+          </div>
+        `;
+
+        tr.innerHTML = `
+          <td class="p-4 text-center">
+            <input type="checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleSelectRow(this, ${item.id})" class="w-4 h-4 accent-wechat-green cursor-pointer" />
+          </td>
+          <td class="p-4">${appCellHTML}</td>
+          <td class="p-4 font-mono text-wechat-light text-xs">${item.templateId}</td>
+          <td class="p-4 font-mono text-wechat-light text-xs">${item.ticketId}</td>
+          <td class="p-4 text-wechat-light text-xs">${item.time}</td>
+          <td class="p-4">${statusBadge}</td>
+          <td class="p-4 text-right pr-6 whitespace-nowrap">${actionButtons}</td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
+
+      const allChecked = paginatedData.every(item => selectedIds.has(item.id));
+      selectAllCheckbox.checked = allChecked && paginatedData.length > 0;
+
+      document.getElementById('total-count').innerText = totalCount;
+
+      renderPagination(totalCount);
+      updateFloatingBar();
+    }
+
+    // 行内 Popover 弹出控制
+    function togglePopover(event, id) {
+      event.stopPropagation(); // 阻止点击事件冒泡到 document
+      const popover = document.getElementById(`popover-${id}`);
+      const allPopovers = document.querySelectorAll('[id^="popover-"]');
+      
+      // 关闭其他已经开启的截图气泡
+      allPopovers.forEach(p => {
+        if (p.id !== `popover-${id}`) {
+          p.classList.add('hidden');
+        }
+      });
+
+      // 切换当前气泡显示状态
+      popover.classList.toggle('hidden');
+    }
+
+    // 全局点击空白自动关闭气泡卡片
+    document.addEventListener('click', () => {
+      const allPopovers = document.querySelectorAll('[id^="popover-"]');
+      allPopovers.forEach(p => p.classList.add('hidden'));
+    });
+
+    // 绘制分页页码
+    function renderPagination(totalCount) {
+      const controlsContainer = document.getElementById('pagination-controls');
+      controlsContainer.innerHTML = '';
+
+      const totalPages = Math.ceil(totalCount / pageSize) || 1;
+
+      const prevBtn = document.createElement('button');
+      prevBtn.className = `px-2.5 py-1 border rounded-sm transition-colors ${currentPage === 1 ? 'border-wechat-border bg-white text-[#b2b2b2] cursor-not-allowed' : 'border-wechat-border bg-white text-wechat-dark hover:bg-gray-50'}`;
+      prevBtn.innerText = '上一页';
+      prevBtn.disabled = (currentPage === 1);
+      prevBtn.onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderTable();
+        }
+      };
+      controlsContainer.appendChild(prevBtn);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        const isActive = (i === currentPage);
+        pageBtn.className = `px-2.5 py-1 border rounded-sm font-medium transition-colors ${isActive ? 'border-wechat-green bg-wechat-green text-white' : 'border-wechat-border bg-white text-wechat-dark hover:bg-gray-50'}`;
+        pageBtn.innerText = i;
+        pageBtn.onclick = () => {
+          currentPage = i;
+          renderTable();
+        };
+        controlsContainer.appendChild(pageBtn);
+      }
+
+      const nextBtn = document.createElement('button');
+      nextBtn.className = `px-2.5 py-1 border rounded-sm transition-colors ${currentPage === totalPages ? 'border-wechat-border bg-white text-[#b2b2b2] cursor-not-allowed' : 'border-wechat-border bg-white text-wechat-dark hover:bg-gray-50'}`;
+      nextBtn.innerText = '下一页';
+      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderTable();
+        }
+      };
+      controlsContainer.appendChild(nextBtn);
+    }
+
+    function handlePageSizeChange(selector) {
+      pageSize = parseInt(selector.value, 10);
+      currentPage = 1; 
+      renderTable();
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      selectedIds.clear();
+      document.getElementById('search-input').value = '';
+      searchQuery = '';
+      currentPage = 1; 
+
+      const tabs = ['auditing', 'frozen', 'rejected'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (t === tabName) {
+          el.className = "py-2 px-1 text-[15px] font-medium border-b-2 border-wechat-green text-wechat-green focus:outline-none";
+        } else {
+          el.className = "py-2 px-1 text-[15px] text-wechat-light hover:text-wechat-dark border-b-2 border-transparent focus:outline-none";
+        }
+      });
+
+      renderTable();
+    }
+
+    function handleSearch() {
+      searchQuery = document.getElementById('search-input').value;
+      currentPage = 1; 
+      renderTable();
+    }
+
+    function toggleSelectRow(checkbox, id) {
+      if (checkbox.checked) {
+        selectedIds.add(id);
+      } else {
+        selectedIds.delete(id);
+      }
+      renderTable();
+    }
+
+    function toggleSelectAll(selectAllCheckbox) {
+      const rawData = database[currentTab];
+      const filteredData = rawData.filter(item => {
+        const query = searchQuery.toLowerCase();
+        return item.name.toLowerCase().includes(query) || 
+               item.appId.toLowerCase().includes(query) || 
+               item.ticketId.toLowerCase().includes(query);
+      });
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, filteredData.length);
+      const currentPageData = filteredData.slice(startIndex, endIndex);
+
+      if (selectAllCheckbox.checked) {
+        currentPageData.forEach(item => selectedIds.add(item.id));
+      } else {
+        currentPageData.forEach(item => selectedIds.delete(item.id));
+      }
+      renderTable();
+    }
+
+    function clearSelection() {
+      selectedIds.clear();
+      renderTable();
+    }
+
+    function updateFloatingBar() {
+      const bar = document.getElementById('floating-batch-bar');
+      const countEl = document.getElementById('floating-selected-count');
+      const count = selectedIds.size;
+
+      if (currentTab === 'auditing' && count > 0) {
+        countEl.innerText = count;
+        bar.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+        bar.classList.add('translate-y-0', 'opacity-100');
+      } else {
+        bar.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+        bar.classList.remove('translate-y-0', 'opacity-100');
+      }
+    }
+
+    function singleExpedite(id) {
+      const item = database[currentTab].find(i => i.id === id);
+      alert(`已成功发送对「${item.name}」的加急提审。`);
+    }
+
+    function singleWithdraw(id) {
+      const item = database[currentTab].find(i => i.id === id);
+      if (confirm(`确定要撤销对「${item.name}」的版本提审吗？`)) {
+        alert('该提审已成功撤销。');
+      }
+    }
+
+    function openQuotaModal(type) {
+      document.getElementById('quota-modal-title').innerText = `申请临时${type}调额`;
+      document.getElementById('quota-modal-input-type').value = `本月${type}额度`;
+      document.getElementById('quota-modal').classList.remove('hidden');
+    }
+
+    function closeQuotaModal() {
+      document.getElementById('quota-modal').classList.add('hidden');
+    }
+
+    function submitQuotaRequest() {
+      alert('调额请求已提交。');
+      closeQuotaModal();
+    }
+
+    window.onload = function() {
+      initializeMockData();
+      renderTable();
+    }
+  </script>
+</body>
+</html>

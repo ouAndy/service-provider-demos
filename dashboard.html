@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信服务商平台 - 经营控制台综合看板</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            color: #353535;
+        }
+        /* 隐藏滚动条并保留滚动 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-[#F7F7F7] min-h-screen flex overflow-hidden">
+
+    <!-- ========================================== -->
+    <!-- 1:1 还原的微信服务商平台左侧侧边栏 (220px) -->
+    <!-- ========================================== -->
+    <aside class="w-[220px] bg-white border-r border-[#EDEDED] flex flex-col justify-between h-screen shrink-0 select-none px-3 pt-10 pb-6 z-20">
+        
+        <!-- 上部：Logo 与菜单区域 -->
+        <div class="flex flex-col flex-1 overflow-y-auto no-scrollbar">
+            <!-- 平台 Logo -->
+            <div class="flex items-center gap-2 px-1">
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 17H9V15H11V17ZM11 13H9V7H11V13ZM15 17H13V15H15V17ZM15 13H13V7H15V13Z" fill="#07C160"/>
+                    <path d="M13 7H15V13H13V7Z" fill="#57B2F7"/>
+                </svg>
+                <span class="text-[13px] font-semibold text-[#353535] tracking-wide">微信服务商平台</span>
+            </div>
+
+            <!-- 主导航菜单 -->
+            <nav class="mt-5 space-y-2">
+                <a href="#" id="menu-home" class="flex items-center gap-2.5 px-3 py-2 rounded text-[13px] font-medium transition-colors text-[#576B95] bg-[#EDF2FC]">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>首页</span>
+                </a>
+
+                <!-- 服务市场 -->
+                <div class="space-y-1">
+                    <button class="menu-trigger w-full flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors" data-target="submenu-market">
+                        <div class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <span>服务市场</span>
+                        </div>
+                        <svg class="arrow-icon w-3.5 h-3.5 text-[#B2B2B2] transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="submenu-market" class="hidden pl-9 pr-2 py-1 space-y-1.5 transition-all">
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">服务上架</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">服务概览</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">服务管理</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">订单管理</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">客资管理</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">案例上传</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">国际版管理</a>
+                    </div>
+                </div>
+
+                <!-- 小程序运营 -->
+                <div class="space-y-1">
+                    <button class="menu-trigger w-full flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors" data-target="submenu-operations">
+                        <div class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                            </svg>
+                            <span>小程序运营</span>
+                        </div>
+                        <svg class="arrow-icon w-3.5 h-3.5 text-[#B2B2B2] transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="submenu-operations" class="hidden pl-9 pr-2 py-1 space-y-1.5 transition-all">
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">流量主代运营</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">违规申诉代办</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">专项事务管理</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">小程序能力采购</a>
+                    </div>
+                </div>
+
+                <!-- 经营管理 -->
+                <div class="space-y-1">
+                    <button class="menu-trigger w-full flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors" data-target="submenu-management">
+                        <div class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <span>经营管理</span>
+                        </div>
+                        <svg class="arrow-icon w-3.5 h-3.5 text-[#B2B2B2] transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div id="submenu-management" class="hidden pl-9 pr-2 py-1 space-y-1.5 transition-all">
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">经营数据</a>
+                        <a href="#" class="submenu-item block py-1.5 px-2 rounded text-xs text-[#888888] hover:text-[#353535] hover:bg-gray-50 transition-colors">资金对账</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- 下部固定区域 -->
+        <div class="border-t border-[#F0F0F0] pt-4 space-y-1">
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <span>平台客服</span>
+                </div>
+                <svg class="w-3 h-3 text-[#B2B2B2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+            </a>
+
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                        <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        <span class="absolute top-0 right-0 w-1.5 h-1.5 bg-[#FA5151] rounded-full"></span>
+                    </div>
+                    <span>通知</span>
+                </div>
+                <svg class="w-3 h-3 text-[#B2B2B2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+            </a>
+
+            <a href="#" class="flex items-center justify-between px-3 py-2 rounded text-[13px] font-medium text-[#353535] hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-4 h-4 bg-[#FA5151] rounded-full flex items-center justify-center shrink-0">
+                        <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2 20h2v-8H2v8zm10-10l-.15.09c-.4.24-.65.68-.65 1.16v2.5H7v2h4.5c.28 0 .5.22.5.5v5.5c0 .55.45 1 1 1h2.5c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1h-1.5v-3.5c0-1.1-.9-2-2-2z" />
+                        </svg>
+                    </div>
+                    <span>有赞</span>
+                </div>
+                <svg class="w-3 h-3 text-[#B2B2B2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- 右侧：流式居中内容排版区 -->
+    <!-- ========================================== -->
+    <main class="flex-1 overflow-y-auto no-scrollbar bg-[#F7F7F7] h-screen">
+        <div class="max-w-[1360px] w-full mx-auto p-6 md:p-10 space-y-8">
+
+            <!-- ========================================== -->
+            <!-- 模块零：平台公告栏 -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded border border-[#EDEDED] px-6 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center justify-between">
+                <div class="flex items-center gap-3 truncate">
+                    <svg class="w-4 h-4 text-[#888888] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                    <span class="text-xs text-[#353535] font-medium truncate">
+                        关于服务商平台小程序 API 接口升级维护的通知
+                    </span>
+                    <span class="bg-[#FA5151] text-white text-[9px] px-1 py-0.5 rounded-sm font-semibold tracking-wide leading-none shrink-0 scale-90">
+                        NEW
+                    </span>
+                </div>
+                <div class="flex items-center gap-4 text-xs text-[#888888] shrink-0 ml-4">
+                    <span>2026-06-30</span>
+                    <span class="text-[#D8D8D8]">|</span>
+                    <a href="#" class="text-[#576B95] hover:underline font-medium flex items-center gap-0.5">
+                        更多
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 模块一：风险概览 (7天 | 30天 筛选) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex items-center justify-between border-b border-[#F0F0F0] pb-4 mb-6">
+                    <div>
+                        <h2 class="text-[15px] font-semibold text-[#353535]">风险概览</h2>
+                        <div class="flex items-center gap-1.5 mt-1 text-[11px] text-[#888888]">
+                            <span class="flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#07C160]"></span>
+                                当前未整改违规 (分钟级更新)
+                            </span>
+                            <span class="text-[#E0E0E0]">|</span>
+                            <span>数据更新于 14:32</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 实时指标行 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 mb-6">
+                    <!-- 违规小程序 -->
+                    <div class="pr-6 md:border-r border-[#EDEDED] flex flex-col justify-between h-[120px]">
+                        <div>
+                            <span class="text-xs text-[#888888] font-medium">当前违规小程序数</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] tracking-tight">42</div>
+                        </div>
+                        <div class="space-y-0.5 text-[11px] text-[#888888] mt-2">
+                            <div class="flex items-center gap-3"><span>日</span><span class="text-[#888888]">持平</span></div>
+                            <div class="flex items-center gap-3"><span>周</span><span class="text-[#888888]">持平</span></div>
+                        </div>
+                        <div class="text-[11px] text-[#888888] mt-3 flex items-center gap-1">
+                            <span>* 另有 5 个需商家授权 76 权限集后方可代办</span>
+                        </div>
+                    </div>
+                    <!-- 待处理违规记录数 -->
+                    <div class="pl-0 md:pl-8 flex flex-col justify-between h-[120px] mt-6 md:mt-0">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-[#888888] font-medium">待处理违规记录数</span>
+                                <a href="#" class="text-xs text-[#07C160] hover:underline font-medium">立即处理 →</a>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] tracking-tight">8 <span class="text-xs text-[#888888] font-normal">条</span></div>
+                        </div>
+                        <div class="space-y-0.5 text-[11px] text-[#888888] mt-2">
+                            <div class="flex items-center gap-3"><span>日</span><span class="text-[#07C160]">+2.10%</span></div>
+                            <div class="flex items-center gap-3"><span>周</span><span class="text-[#07C160]">+5.30%</span></div>
+                        </div>
+                        <div class="text-[11px] text-[#888888] mt-3">
+                            <span>* 列表按违规记录展示，一条记录算一次</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-px bg-[#F0F0F0] my-6"></div>
+
+                <!-- 违规处理实效分析 -->
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-semibold text-[#353535]">违规处理实效分析</h3>
+                    <div class="flex items-center gap-3 text-xs font-medium shrink-0">
+                        <button class="text-[#07C160] font-semibold">7天</button>
+                        <span class="text-[#E0E0E0]">|</span>
+                        <button class="text-[#888888] hover:text-[#07C160] transition-colors">30天</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
+                    <!-- 平均违规处理耗时 -->
+                    <div class="pr-6 md:border-r border-[#EDEDED] flex flex-col justify-between h-[110px]">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888] font-medium">平均违规处理耗时</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-52 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-center font-normal">
+                                        指收到违规通知起，至官方整改审核通过或处罚解除止的平均自然日天数
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">6.2 <span class="text-xs text-[#888888] font-normal">天</span></div>
+                        </div>
+                        <div class="space-y-0.5 text-[11px] text-[#888888]">
+                            <div class="flex items-center gap-3"><span>日变动</span><span class="text-[#FA5151]">+0.3天</span></div>
+                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
+                                行业标杆 (Top 10%): <strong class="text-[#353535] font-semibold">3.1天</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">5.2天</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="text-[#FA5151] font-semibold">慢 3.1天</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 警告超时升级处罚率 -->
+                    <div class="pl-0 md:pl-8 flex flex-col justify-between h-[110px] mt-6 md:mt-0">
+                        <div>
+                            <span class="text-xs text-[#888888] font-medium">警告超时升级处罚率</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">18.5 <span class="text-xs text-[#888888] font-normal">%</span></div>
+                        </div>
+                        <div class="space-y-0.5 text-[11px] text-[#888888]">
+                            <div class="flex items-center gap-3"><span>日变动</span><span class="text-[#FA5151]">+1.5%</span></div>
+                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
+                                行业标杆 (Top 10%): <strong class="text-[#353535] font-semibold">6.5%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">12.0%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="text-[#FA5151] font-semibold">高 12.0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 模块二：核心数据 -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex flex-wrap items-start justify-between gap-4 border-b border-[#F0F0F0] pb-4 mb-4">
+                    <div>
+                        <h2 class="text-[15px] font-semibold text-[#353535]">核心数据</h2>
+                        <p class="text-[11px] text-[#888888] mt-1">数据更新至 2026-07-02 · 有赞（thirduin 3078907516）</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 text-xs shrink-0">
+                        <select id="industry-select" class="border border-[#EDEDED] rounded px-2 py-1.5 text-[#353535] bg-white min-w-[120px]">
+                            <option value="食品/饮料" selected>食品/饮料</option>
+                            <option value="餐饮">餐饮</option>
+                            <option value="鞋服/运动">鞋服/运动</option>
+                            <option value="未知">未知</option>
+                        </select>
+                        <div class="flex items-center gap-2 font-medium">
+                            <button type="button" id="bench-industry" class="text-[#07C160] font-semibold">本行业</button>
+                            <span class="text-[#E0E0E0]">|</span>
+                            <button type="button" id="bench-platform" class="text-[#888888] hover:text-[#07C160]">全平台</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资产摘要 -->
+                <p class="text-[11px] text-[#888888] mb-6">
+                    授权商户 <span class="text-[#353535] font-medium">144,628</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    已授权 <span class="text-[#353535] font-medium">152,929</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    已发布 <span class="text-[#353535] font-medium">152,929</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    开通支付 <span class="text-[#353535] font-medium">131,506</span>
+                </p>
+
+                <!-- 转化漏斗 -->
+                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
+                    <span>转化漏斗</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-0 mb-6">
+                    <div class="md:border-r border-[#EDEDED] pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="publish">
+                        <div>
+                            <span class="text-xs text-[#888888]">发布转化率</span>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">截至昨日</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">100.0<span class="text-xs font-normal text-[#888888]">%</span></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="md:border-r border-[#EDEDED] md:pl-6 pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="active">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888]">活跃转化率</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-52 p-2 bg-gray-900 text-white text-[10px] rounded shadow-lg z-30">Demo 取数暂用月有效活跃/已发布；持续活跃阈值待定</div>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">近 7 日（代理口径）</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">11.0<span class="text-xs font-normal text-[#888888]">%</span></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="md:pl-6 flex flex-col justify-between min-h-[120px]" data-metric="pay">
+                        <div>
+                            <span class="text-xs text-[#888888]">支付转化率</span>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">10.0<span class="text-xs font-normal text-[#888888]">%</span></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                </div>
+
+                <!-- 强度与趋势 -->
+                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
+                    <span>强度与趋势</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+                    <div class="md:border-r border-[#EDEDED] pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="growth">
+                        <div>
+                            <span class="text-xs text-[#888888]">活跃增长小程序占比</span>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">近 30 日 vs 上 30 日</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">22.3<span class="text-xs font-normal text-[#888888]">%</span></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2">对标：待补跑</div>
+                    </div>
+                    <div class="md:border-r border-[#EDEDED] md:pl-6 pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="avgUv">
+                        <div>
+                            <span class="text-xs text-[#888888]">单小程序日均访问用户</span>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">152</div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="md:pl-6 flex flex-col justify-between min-h-[120px]" data-metric="avgPay">
+                        <div>
+                            <span class="text-xs text-[#888888]">单小程序日均支付笔数</span>
+                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">32.2</div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                </div>
+                <p id="industry-hint" class="hidden text-[10px] text-[#FA9D3B] mt-4">该行业的服务商有效活跃小程序数目较少，可能失真。</p>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 模块三：小程序上线时效分析 (7天 | 30天 筛选) -->
+            <!-- ========================================== -->
+            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex items-center justify-between border-b border-[#F0F0F0] pb-4 mb-6">
+                    <div>
+                        <h2 class="text-[15px] font-semibold text-[#353535]">小程序上线时效分析</h2>
+                        <p class="text-[11px] text-[#888888] mt-1">Top 10% = 平台头部服务商均值</p>
+                    </div>
+                    <!-- 30天和180天平铺选择器 -->
+                    <div class="flex items-center gap-3 text-xs font-medium shrink-0">
+                        <button class="text-[#07C160] font-semibold">7天</button>
+                        <span class="text-[#E0E0E0]">|</span>
+                        <button class="text-[#888888] hover:text-[#07C160] transition-colors">30天</button>
+                    </div>
+                </div>
+
+                <!-- 审核通过率双列对齐：左列为数字，右列为专属波动小趋势图 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 items-center">
+                    <!-- 左列：审核通过率主数值 -->
+                    <div class="flex flex-col justify-between h-[110px]">
+                        <div>
+                            <span class="text-xs text-[#888888] font-medium">审核通过率</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535]">99.7 <span class="text-xs text-[#888888] font-normal">%</span></div>
+                        </div>
+                        <div class="space-y-0.5 text-[11px] text-[#888888]">
+                            <div class="flex items-center gap-3"><span>上周期对比</span><span class="text-[#FA5151]">-1.8%</span></div>
+                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
+                                头部 (Top 10%): <strong class="text-[#353535] font-semibold">96.0%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">92.5%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 右列：审核通过率近周期波动走势微幅图 -->
+                    <div class="h-[100px] relative">
+                        <div class="absolute top-0 left-0 text-[10px] text-[#888888]">审核通过率近周期波动趋势</div>
+                        <canvas id="passRateChart" class="pt-4"></canvas>
+                    </div>
+                </div>
+
+                <!-- 分割线 -->
+                <div class="h-px bg-[#F0F0F0] my-6"></div>
+
+                <!-- 趋势分析图表区 (已移除多余图例，完全靠下方底表的色彩与文字直观对齐) -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-1.5">
+                        <h3 class="text-xs font-semibold text-[#353535]">近周期三阶段耗时趋势</h3>
+                        <div class="relative group inline-block leading-none">
+                            <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-3 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30">
+                                统计口径：X 轴为自然日；当日 point = 已发布在架小程序的注册→认证/备案/发布平均耗时。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 折线图区域 -->
+                <div class="relative w-full h-[220px] mb-6">
+                    <canvas id="trendChart"></canvas>
+                </div>
+
+                <!-- 数据明细表格 (包含直观的色彩和文字标注，作为唯一图例载体) -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-[#888888]">
+                        <thead class="text-[11px] text-[#888888] bg-[#F7F7F7]/80">
+                            <tr>
+                                <th scope="col" class="py-2.5 px-4 font-normal">流程节点 (自注册起累计耗时)</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">你的</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">大盘中位数</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">大盘 Top 10% 均值</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#F0F0F0]">
+                            <tr class="hover:bg-[#F9F9F9] transition-colors">
+                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-[#57B2F7] rounded-sm"></span>注册到认证
+                                </td>
+                                <td class="py-3 px-4 text-[#353535] font-semibold">239天</td>
+                                <td class="py-3 px-4">358天</td>
+                                <td class="py-3 px-4">3.64天</td>
+                            </tr>
+                            <tr class="hover:bg-[#F9F9F9] transition-colors">
+                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-[#07C160] rounded-sm"></span>注册到备案
+                                </td>
+                                <td class="py-3 px-4 text-[#353535] font-semibold">432天</td>
+                                <td class="py-3 px-4">229天</td>
+                                <td class="py-3 px-4">5.41天</td>
+                            </tr>
+                            <tr class="hover:bg-[#F9F9F9] transition-colors">
+                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-[#F5D130] rounded-sm"></span>注册到首次发布
+                                </td>
+                                <td class="py-3 px-4 text-[#353535] font-semibold">27天</td>
+                                <td class="py-3 px-4">16.8天</td>
+                                <td class="py-3 px-4">1.20天</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- JavaScript: 侧边栏折叠交互 & 双图表初始化 -->
+    <!-- ========================================== -->
+    <script>
+        // --- 1. 左侧菜单折叠与状态定位交互逻辑 ---
+        const menuHome = document.getElementById('menu-home');
+        const triggers = document.querySelectorAll('.menu-trigger');
+        const submenuItems = document.querySelectorAll('.submenu-item');
+
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const targetId = trigger.getAttribute('data-target');
+                const submenu = document.getElementById(targetId);
+                const arrow = trigger.querySelector('.arrow-icon');
+                const isHidden = submenu.classList.contains('hidden');
+                
+                document.querySelectorAll('aside [id^="submenu-"]').forEach(el => {
+                    if (el.id !== targetId) {
+                        el.classList.add('hidden');
+                        const otherTrigger = document.querySelector(`[data-target="${el.id}"]`);
+                        if (otherTrigger) {
+                            const otherArrow = otherTrigger.querySelector('.arrow-icon');
+                            otherArrow.classList.remove('rotate-180');
+                        }
+                    }
+                });
+
+                if (isHidden) {
+                    submenu.classList.remove('hidden');
+                    arrow.classList.add('rotate-180');
+                } else {
+                    submenu.classList.add('hidden');
+                    arrow.classList.remove('rotate-180');
+                }
+            });
+        });
+
+        submenuItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                submenuItems.forEach(el => {
+                    el.classList.remove('bg-[#EDF2FC]', 'text-[#576B95]', 'font-semibold');
+                    el.classList.add('text-[#888888]');
+                });
+                menuHome.classList.remove('bg-[#EDF2FC]', 'text-[#576B95]');
+                menuHome.classList.add('text-[#353535]', 'hover:bg-gray-50');
+
+                item.classList.remove('text-[#888888]');
+                item.classList.add('bg-[#EDF2FC]', 'text-[#576B95]', 'font-semibold');
+            });
+        });
+
+        menuHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            menuHome.classList.add('bg-[#EDF2FC]', 'text-[#576B95]');
+            menuHome.classList.remove('text-[#353535]', 'hover:bg-gray-50');
+            submenuItems.forEach(el => {
+                el.classList.remove('bg-[#EDF2FC]', 'text-[#576B95]', 'font-semibold');
+                el.classList.add('text-[#888888]');
+            });
+        });
+
+
+        // --- 核心数据：有赞真实对标（ds=20260702，见 内部过程/Demo取数-有赞_20260703.md）---
+        const YOUZAN_SELF = {
+            publish: 100.0, active: 11.0, pay: 10.0, growth: 22.3, avgUv: 152, avgPay: 32.2
+        };
+        const BENCHMARKS = {
+            platform: {
+                publish: { p50: 100, top10: 100 },
+                active: { p50: 0, top10: 47.0 },
+                pay: { p50: 0, top10: 38.9 },
+                avgUv: { p50: 9.5, top10: 2310.2 },
+                avgPay: { p50: 8.8, top10: 617.9 }
+            },
+            '食品/饮料': {
+                publish: { p50: 100, top10: 100 },
+                active: { p50: 0, top10: 33.0 },
+                pay: { p50: 0, top10: 23.4 },
+                avgUv: { p50: 6.0, top10: 958.1 },
+                avgPay: { p50: 5.0, top10: 82.6 }
+            },
+            '餐饮': {
+                publish: { p50: 100, top10: 100 },
+                active: { p50: 0, top10: 34.2 },
+                pay: { p50: 0, top10: 34.9 },
+                avgUv: { p50: 9.4, top10: 267.1 },
+                avgPay: { p50: 12.0, top10: 174.5 }
+            },
+            '鞋服/运动': {
+                publish: { p50: 100, top10: 100 },
+                active: { p50: 0, top10: 33.7 },
+                pay: { p50: 0, top10: 19.2 },
+                avgUv: { p50: 5.0, top10: 336.0 },
+                avgPay: { p50: 3.6, top10: 29.0 }
+            },
+            '未知': {
+                publish: { p50: 100, top10: 100 },
+                active: { p50: 76.1, top10: 100.0 },
+                pay: { p50: 77.8, top10: 103.1 },
+                avgUv: { p50: 78.1, top10: 3390.3 },
+                avgPay: { p50: 27.1, top10: 1327.3 }
+            }
+        };
+
+        let benchScope = 'industry';
+
+        function fmtPct(v) { return (Math.round(v * 10) / 10).toFixed(1) + '%'; }
+        function fmtNum(v) {
+            if (v >= 100) return Math.round(v).toLocaleString('zh-CN');
+            return (Math.round(v * 10) / 10).toString();
+        }
+
+        function gapText(self, bench, isPct) {
+            const diff = self - bench;
+            if (Math.abs(diff) < (isPct ? 0.05 : 0.5)) return '持平';
+            const label = diff > 0 ? '高' : '低';
+            return label + ' ' + (isPct ? Math.abs(diff).toFixed(1) + ' pct' : Math.abs(diff).toFixed(isPct ? 1 : 0));
+        }
+
+        function renderBenchLine(metric, selfVal, bench) {
+            const isPct = ['publish', 'active', 'pay', 'growth'].includes(metric);
+            const p50 = isPct ? fmtPct(bench.p50) : fmtNum(bench.p50);
+            const top = isPct ? fmtPct(bench.top10) : fmtNum(bench.top10);
+            const gap = gapText(selfVal, bench.top10, isPct);
+            const gapColor = (selfVal >= bench.top10) ? 'text-[#07C160]' : 'text-[#FA5151]';
+            return `Top 10%: <strong class="text-[#353535] font-semibold">${top}</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">${p50}</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="${gapColor} font-semibold">${gap}</strong>`;
+        }
+
+        function refreshCoreBenchmarks() {
+            const industry = document.getElementById('industry-select').value;
+            const bench = benchScope === 'platform' ? BENCHMARKS.platform : (BENCHMARKS[industry] || BENCHMARKS.platform);
+            document.querySelectorAll('[data-metric]').forEach(el => {
+                const key = el.getAttribute('data-metric');
+                if (key === 'growth') return;
+                const line = el.querySelector('.bench-line');
+                if (!line || !YOUZAN_SELF[key] || !bench[key]) return;
+                line.innerHTML = renderBenchLine(key, YOUZAN_SELF[key], bench[key]);
+            });
+            const hint = document.getElementById('industry-hint');
+            if (benchScope === 'platform') {
+                hint.classList.add('hidden');
+            } else {
+                hint.classList.toggle('hidden', industry !== '未知');
+            }
+        }
+
+        document.getElementById('industry-select').addEventListener('change', refreshCoreBenchmarks);
+        document.getElementById('bench-industry').addEventListener('click', () => {
+            benchScope = 'industry';
+            document.getElementById('bench-industry').className = 'text-[#07C160] font-semibold';
+            document.getElementById('bench-platform').className = 'text-[#888888] hover:text-[#07C160]';
+            refreshCoreBenchmarks();
+        });
+        document.getElementById('bench-platform').addEventListener('click', () => {
+            benchScope = 'platform';
+            document.getElementById('bench-platform').className = 'text-[#07C160] font-semibold';
+            document.getElementById('bench-industry').className = 'text-[#888888] hover:text-[#07C160]';
+            refreshCoreBenchmarks();
+        });
+        refreshCoreBenchmarks();
+
+
+        // --- 2. Chart 1: 审核通过率近周期趋势微幅图 ---
+        const passRateCtx = document.getElementById('passRateChart').getContext('2d');
+        const passRateGradient = passRateCtx.createLinearGradient(0, 0, 0, 100);
+        passRateGradient.addColorStop(0, 'rgba(7, 193, 96, 0.08)');
+        passRateGradient.addColorStop(1, 'rgba(7, 193, 96, 0.00)');
+
+        new Chart(passRateCtx, {
+            type: 'line',
+            data: {
+                labels: ['05-30', '06-04', '06-09', '06-14', '06-19', '06-24', '06-30'],
+                datasets: [{
+                    data: [99.1, 99.3, 99.5, 99.6, 99.4, 99.6, 99.7],
+                    borderColor: '#07C160',
+                    backgroundColor: passRateGradient,
+                    borderWidth: 2,
+                    tension: 0.35,
+                    pointRadius: 2,
+                    pointHoverRadius: 4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        padding: 8,
+                        backgroundColor: 'rgba(53, 53, 53, 0.95)',
+                        callbacks: {
+                            label: function(context) { return '通过率: ' + context.raw + '%'; }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 95,
+                        max: 100,
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: { display: false }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#B2B2B2', font: { size: 9 } }
+                    }
+                }
+            }
+        });
+
+
+        // --- 3. Chart 2: 小程序三阶段耗时趋势图 (已彻底移除多余图例) ---
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        const blueGradient = trendCtx.createLinearGradient(0, 0, 0, 220);
+        blueGradient.addColorStop(0, 'rgba(7, 193, 96, 0.04)');
+        blueGradient.addColorStop(1, 'rgba(7, 193, 96, 0.00)');
+
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['05-30', '06-04', '06-09', '06-14', '06-19', '06-24', '06-30'],
+                datasets: [
+                    {
+                        label: '注册到首次发布',
+                        data: [28, 27, 27, 26, 27, 27, 27],
+                        borderColor: '#F5D130',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#F5D130',
+                        fill: false
+                    },
+                    {
+                        label: '注册到备案',
+                        data: [435, 433, 432, 431, 432, 432, 432],
+                        borderColor: '#07C160',
+                        backgroundColor: blueGradient,
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#07C160',
+                        fill: true
+                    },
+                    {
+                        label: '注册到认证',
+                        data: [242, 241, 240, 239, 239, 239, 239],
+                        borderColor: '#57B2F7',
+                        borderWidth: 2,
+                        tension: 0.35,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#57B2F7',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        padding: 10,
+                        backgroundColor: 'rgba(53, 53, 53, 0.95)',
+                        titleFont: { size: 11 },
+                        bodyFont: { size: 11 },
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '天';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 500,
+                        grid: { color: '#F0F0F0', drawTicks: false },
+                        border: { dash: [4, 4], display: false },
+                        ticks: {
+                            color: '#B2B2B2',
+                            stepSize: 100,
+                            callback: function(value) { return value + '天'; }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#B2B2B2' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
