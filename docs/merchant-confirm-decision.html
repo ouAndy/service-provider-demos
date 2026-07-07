@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商家确认入口 · 深链页 vs MP 后台内嵌</title>
+<style>
+:root {
+  --bg: #F5F0E8;
+  --bg-sidebar: #EBE4D9;
+  --surface: #FAF7F2;
+  --accent: #A85A3A;
+  --accent-deep: #8B4A30;
+  --text: #3A342E;
+  --text-muted: #6B635B;
+  --text-faint: #9A9288;
+  --border: #DDD5C8;
+  --callout-bg: #EDE6DC;
+  --sidebar-w: 210px;
+  --content-max: 900px;
+  --prose-max: 72ch;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Songti SC", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.layout { min-height: 100vh; }
+
+.sidebar-toggle {
+  position: fixed; top: 12px; left: calc(var(--sidebar-w) - 14px); z-index: 200;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 13px; color: var(--text-muted);
+  transition: left 0.25s, background 0.15s;
+}
+.sidebar-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.sidebar-collapsed .sidebar-toggle { left: 12px; }
+body.sidebar-collapsed .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+body.sidebar-collapsed .main { margin-left: 0; }
+
+.sidebar {
+  width: var(--sidebar-w);
+  position: fixed; top: 0; left: 0; bottom: 0;
+  padding: 16px 0; overflow-y: auto; z-index: 100;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  transition: transform 0.25s ease;
+}
+.sidebar-label {
+  font-size: 13px; font-weight: 600; color: var(--text-faint);
+  padding: 0 16px 10px;
+}
+.sidebar nav a {
+  display: block; padding: 6px 16px; font-size: 16px;
+  color: var(--text-muted); text-decoration: none;
+  border-left: 3px solid transparent; transition: all 0.15s;
+  line-height: 1.4;
+}
+.sidebar nav a.sub { padding-left: 28px; font-size: 14px; }
+.sidebar nav a.sub.nav-chosen { color: var(--accent-deep); font-weight: 600; }
+.sidebar nav a:hover { color: var(--accent-deep); background: rgba(168, 90, 58, 0.08); }
+.sidebar nav a.active {
+  color: var(--accent-deep); font-weight: 600;
+  border-left-color: var(--accent); background: rgba(168, 90, 58, 0.12);
+}
+
+.main {
+  margin-left: var(--sidebar-w);
+  min-width: 0; min-height: 100vh;
+  padding: 28px 32px 48px;
+  background: var(--surface);
+  transition: margin-left 0.25s ease;
+}
+.content {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  font-size: 12px; color: var(--text-faint); margin-bottom: 20px;
+}
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+
+.doc-title {
+  font-size: 2em; font-weight: 700; line-height: 1.25;
+  color: var(--accent-deep); margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.callout {
+  padding: 12px 16px 12px 14px;
+  background: var(--callout-bg);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: var(--prose-max);
+}
+.callout strong { color: var(--accent-deep); font-weight: 600; }
+.callout.meta { margin-bottom: 8px; max-width: none; }
+.callout.meta p { margin: 0; color: var(--text-muted); font-size: 14px; }
+.callout.meta p + p { margin-top: 4px; }
+
+.callout-key {
+  border-left-width: 4px;
+  background: rgba(168, 90, 58, 0.14);
+  font-size: 15px;
+  max-width: none;
+}
+.status-pill {
+  display: inline-block; padding: 2px 10px; margin-left: 2px;
+  background: var(--accent); color: #fff;
+  border-radius: 4px; font-size: 13px; font-weight: 600;
+}
+.hl {
+  background: linear-gradient(180deg, transparent 58%, rgba(168, 90, 58, 0.28) 58%);
+  font-weight: 600; color: var(--accent-deep);
+}
+.plan-block-a {
+  margin: 0.25em 0 1.75em;
+  padding: 4px 16px 14px;
+  border: 1px solid rgba(168, 90, 58, 0.22);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: rgba(168, 90, 58, 0.07);
+}
+.plan-block-a h3 { margin-top: 0.75em; }
+.plan-block-a .flow-box { border-left-color: var(--accent); color: var(--text); font-weight: 500; }
+
+.section { margin-top: 2.25em; }
+.section:first-of-type { margin-top: 1.75em; }
+
+h2 {
+  font-size: 1.35em; font-weight: 700;
+  color: var(--accent-deep);
+  margin-bottom: 0.75em;
+  line-height: 1.35;
+}
+h3 {
+  font-size: 1.05em; font-weight: 600;
+  margin: 1.5em 0 0.5em;
+  color: var(--text);
+  max-width: var(--prose-max);
+}
+h3:first-of-type { margin-top: 0.75em; }
+h3.plan-a { color: var(--accent-deep); }
+h3.plan-b { color: var(--text-muted); }
+
+.section > p {
+  color: var(--text);
+  margin-bottom: 0.75em;
+  max-width: var(--prose-max);
+}
+
+.flow-box {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 13px; padding: 10px 14px;
+  background: var(--callout-bg);
+  border-left: 3px solid var(--border);
+  border-radius: 0 6px 6px 0;
+  color: var(--text-muted);
+  margin: 0.5em 0 1em;
+  line-height: 1.55;
+  max-width: var(--prose-max);
+}
+
+.mermaid-wrap {
+  margin: 1em 0 1.25em;
+  padding: 16px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.mermaid-wrap .mermaid { display: flex; justify-content: center; }
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 0.75em 0 1em;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+thead th {
+  background: var(--callout-bg);
+  color: var(--text);
+  font-weight: 600; text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text);
+}
+tbody tr:last-child td { border-bottom: none; }
+.col-a { background: rgba(168, 90, 58, 0.07); }
+th.col-a {
+  color: var(--accent-deep);
+  background: rgba(168, 90, 58, 0.16);
+  font-weight: 700;
+}
+tr.focus td { background: rgba(168, 90, 58, 0.09); }
+tr.focus td:first-child { font-weight: 600; color: var(--accent-deep); }
+td.em { font-weight: 600; color: var(--accent-deep); }
+
+code {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 0.88em;
+  background: rgba(168, 90, 58, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--accent-deep);
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle { display: none; }
+  .sidebar {
+    position: relative; width: 100%; transform: none !important;
+    height: auto; padding: 8px 0;
+  }
+  .sidebar nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 0 10px; }
+  .sidebar nav a { border-left: none; border-radius: 6px; padding: 4px 10px; }
+  .sidebar-label { display: none; }
+  .main { margin-left: 0; padding: 16px 16px 32px; }
+}
+</style>
+</head>
+<body>
+<button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收起或展开目录" title="收起/展开目录">‹</button>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sidebar-label">目录</div>
+  <nav>
+    <a href="#conclusion" class="active">一句话结论</a>
+    <a href="#problem">要解决的问题</a>
+    <a href="#plans">两个实质方案</a>
+    <a href="#plan-a" class="sub nav-chosen">A · 深链移动确认页</a>
+    <a href="#plan-b" class="sub">B · MP 后台内嵌</a>
+    <a href="#compare">核心对比</a>
+    <a href="#cost">成本对比</a>
+    <a href="#pros">优劣归纳</a>
+    <a href="#decision">决策建议</a>
+    <a href="#relation">与主方案关系</a>
+  </nav>
+</aside>
+
+<main class="main">
+<div class="content">
+
+<nav class="breadcrumb">决策记录 / 商家确认入口</nav>
+
+<h1 class="doc-title">商家确认入口 · 深链页 vs MP 后台内嵌</h1>
+
+<div class="callout meta">
+  <p>决策日期：<strong>待定</strong>　｜　状态：<span class="status-pill">选择方案 A</span>　｜　关联：<strong>01_项目方案</strong> §5.5、§6</p>
+</div>
+
+<section class="section" id="conclusion">
+  <h2>一句话结论</h2>
+  <div class="callout callout-key">实质只有两条路：<strong>① 通知深链打开独立移动确认页</strong>（当前开平 H5）；<strong>② 在 MP 后台违规区新增「待确认」Tab</strong>，登录后台后在 Tab 内查看并确认。二者体验差异在<span class="hl">「手机点通知能否直达」</span>，不在域名或按钮形态。</div>
+</section>
+
+<section class="section" id="problem">
+  <h2>要解决的问题</h2>
+  <p>服务商代填申诉后，商家需在 <span class="hl">24 小时内</span>查看内容并确认或拒绝。</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>要求</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr class="focus"><td>路径短</td><td>从触达到完成确认，步骤尽量少</td></tr>
+        <tr class="focus"><td>移动可用</td><td>商家多在手机微信收通知，主路径须在手机上顺畅完成</td></tr>
+        <tr><td>身份一致</td><td>通知对象与可操作身份一致（管理员、运营者、违规处理权限人员）</td></tr>
+        <tr><td>业务规则</td><td>确认才扣次数；拒绝/超时不提交；待确认期间冻结商家自申诉</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="plans">
+  <h2>两个实质方案</h2>
+  <div class="mermaid-wrap">
+    <pre class="mermaid">
+flowchart LR
+  subgraph A["A · 深链移动确认页"]
+    T1[模板消息] --> L[独立确认页]
+    T2[服务商复制链接] --> L
+    T3[MP 站内信] --> L
+    L --> C[查看 → 确认/拒绝]
+  end
+  subgraph B["B · MP 后台内嵌"]
+    M[登录 MP 后台] --> Tab[违规区 · 待确认 Tab]
+    Tab --> D[列表中查看 → 确认/拒绝]
+  end
+    </pre>
+  </div>
+
+  <div class="plan-block-a">
+  <h3 class="plan-a" id="plan-a">A · 深链移动确认页（当前主方案）</h3>
+  <div class="flow-box">触达（三选一或并行）→ 点链接 → 独立确认页 → 查看只读内容 → 确认 / 拒绝</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>页面</td><td>独立移动页；信息结构对齐 MP 申诉页，改为只读确认态</td></tr>
+        <tr><td>身份</td><td>微信 OAuth，范围与通知对象一致</td></tr>
+        <tr><td>承载</td><td>默认开平 H5 域；若 MP 愿做同等移动深链页，可挂在 <code>mp.weixin.qq.com</code>，<strong>交互不变，仅域名不同</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>触达形式</strong>（均跳转同一确认页链接）：</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>触达</th><th>触发方</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr class="focus"><td>模板消息</td><td>平台自动</td><td>通知中心 <code>SendMsg</code> → 安全助手模板消息，<code>url</code> 跳转确认页</td></tr>
+        <tr class="focus"><td>服务商复制链接</td><td>服务商手动</td><td>发起确认后，处理弹窗展示可复制的确认链接，转发给商家相关人员（企微/微信等）</td></tr>
+        <tr class="focus"><td>MP 站内信</td><td>平台自动</td><td>同动作同步下发站内信，留痕；链接指向同一确认页</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout callout-key">三种触达共用一条确认链接，商家从任一入口进入后体验一致。</div>
+  </div>
+
+  <h3 class="plan-b" id="plan-b">B · MP 后台内嵌（违规区新增待确认 Tab）</h3>
+  <div class="flow-box">登录 MP 后台 → 违规与申诉 → [待确认] Tab → 点开记录 → 查看内容 → 确认 / 拒绝</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>页面</td><td>在 MP 违规模块内增 Tab；列表展示待确认单，点进后在后台内完成查看与确认</td></tr>
+        <tr><td>触达</td><td>依赖商家主动登录 MP，或站内信引导进入后台再找 Tab</td></tr>
+        <tr><td>身份</td><td>MP 登录态 + 后台权限</td></tr>
+        <tr><td>体验本质</td><td><strong>就是 MP 后台 Web</strong>：PC 上可用，手机上打开也是后台界面，不是为「点通知即确认」设计的移动页</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="compare">
+  <h2>核心对比</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>维度</th><th class="col-a">A · 深链移动确认页</th><th>B · MP 后台内嵌</th></tr>
+      </thead>
+      <tbody>
+        <tr class="focus"><td>点通知直达确认</td><td class="col-a em">链接即达</td><td>需先登录 MP，再找到 Tab</td></tr>
+        <tr class="focus"><td>手机完成确认</td><td class="col-a em">专为此设计</td><td>用手机打开 MP 后台，体验偏 PC</td></tr>
+        <tr class="focus"><td>操作步数（通知场景）</td><td class="col-a">点链 → 确认页 → 操作</td><td>点链/站内信 → 登录 → 找 Tab → 点记录 → 操作</td></tr>
+        <tr><td>心智统一</td><td class="col-a">独立外链（或 MP 域深链）</td><td>全在 MP 后台</td></tr>
+        <tr><td>漏看通知后补操作</td><td class="col-a">服务商复制链接转发；或等站内信/再次触达</td><td>商家进后台即可找</td></tr>
+        <tr class="focus"><td>建设依赖</td><td class="col-a em">开平侧（现状可控）</td><td><strong>MP 产品/研发排期</strong></td></tr>
+        <tr class="focus"><td>原型就绪</td><td class="col-a em">H5.html 已完成</td><td>需 MP 新建 Tab + 确认态</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="cost">
+  <h2>成本对比</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>成本项</th><th class="col-a">A · 深链移动确认页</th><th>B · MP 后台内嵌</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>产品设计</td><td class="col-a">已完成原型</td><td>MP 违规模块增 Tab、列表、确认态、空态</td></tr>
+        <tr><td>研发</td><td class="col-a">开平/服务商侧页面 + 联调</td><td>MP 前端 + 列表/状态接口</td></tr>
+        <tr><td>通知集成</td><td class="col-a">模板消息 + MP 站内信（自动）；服务商复制链接（手动）；均指向同一确认页</td><td>站内信引到 MP 后台，无法直达 Tab 内某条</td></tr>
+        <tr><td>身份校验</td><td class="col-a">OAuth（已定）</td><td>MP 登录态</td></tr>
+        <tr><td>状态回传服务商专区</td><td class="col-a">需接口</td><td>需接口（同左）</td></tr>
+        <tr class="focus"><td>排期风险</td><td class="col-a em">低</td><td>高（依赖 MP）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout"><strong>A 的域名选择</strong>（开平 H5 vs MP 域）不增加方案数量：页面与交互相同，只影响谁部署、域名是否落在 MP 下。</div>
+</section>
+
+<section class="section" id="pros">
+  <h2>优劣归纳</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th></th><th class="col-a">A · 深链移动确认页</th><th>B · MP 后台内嵌</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>优势</strong></td>
+          <td class="col-a">三种触达互补；移动体验好；平台自动 + 服务商手动双保险；不绑 MP 排期</td>
+          <td>商家只在 MP 操作；可批量看待确认；漏看通知后可自行补</td>
+        </tr>
+        <tr>
+          <td><strong>劣势</strong></td>
+          <td class="col-a">外链域名，心智略分散（MP 域深链可缓解）</td>
+          <td>不能承接<span class="hl">「点通知即确认」</span>；商家少开 MP；手机体验差</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="decision">
+  <h2>决策建议</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>场景</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr class="focus"><td>以通知驱动商家确认为主</td><td><strong>选 A</strong>；B 无法替代</td></tr>
+        <tr><td>强诉求「商家只在 MP 操作」且 MP 能同期做移动深链</td><td>A 的承载改为 MP 域名，仍走深链路径</td></tr>
+        <tr class="focus"><td>MP 只做 B、不做深链页</td><td><strong>不满足</strong>手机通知主场景；A 仍须保留</td></tr>
+        <tr class="focus"><td>资源允许</td><td><strong>A 作主路径，B 作补入口</strong>（漏看通知、主动进后台）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="relation">
+  <h2>与主方案关系</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>主方案章节</th><th>本决策影响</th></tr></thead>
+      <tbody>
+        <tr><td>§5.5 商家 H5 确认页</td><td>A 的页面规格；B 共用同一套信息与确认规则，入口不同</td></tr>
+        <tr><td>§6 通知流程</td><td>A：模板消息 + MP 站内信 + 服务商复制链接，均跳转确认页；B：站内信引到 MP 后台</td></tr>
+        <tr><td>§8 决策清单</td><td>落地后建议新增「商家确认入口：深链页 / MP 内嵌」条目</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#EDE6DC',
+    primaryTextColor: '#3A342E',
+    primaryBorderColor: '#A85A3A',
+    lineColor: '#8B7355',
+    secondaryColor: '#F5F0E8',
+    tertiaryColor: '#FAF7F2',
+    fontFamily: '-apple-system, PingFang SC, sans-serif'
+  },
+  flowchart: { curve: 'basis', padding: 12 }
+});
+(function () {
+  const toggle = document.getElementById('sidebarToggle');
+  toggle.addEventListener('click', () => {
+    const collapsed = document.body.classList.toggle('sidebar-collapsed');
+    toggle.textContent = collapsed ? '›' : '‹';
+  });
+  const links = document.querySelectorAll('.sidebar nav a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll() {
+    let current = sections[0];
+    sections.forEach(sec => {
+      if (sec.getBoundingClientRect().top <= 120) current = sec;
+    });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>服务商违规申诉代办专区：代申诉能力开放方案</title>
+<style>
+:root {
+  --primary: #2F6FED;
+  --primary-light: #E8F0FE;
+  --text-1: #1A1A1A;
+  --text-2: #4A4A4A;
+  --text-3: #8C8C8C;
+  --bg: #FFFFFF;
+  --bg-soft: #F7F8FA;
+  --border: #E8E8E8;
+  --green: #52C41A;
+  --orange: #FA8C16;
+  --red: #F5222D;
+  --highlight: #C41D7F;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: var(--bg-soft);
+  color: var(--text-1);
+  line-height: 1.7;
+  font-size: 15px;
+}
+.layout { display: flex; }
+
+/* Sidebar toggle button */
+.sidebar-toggle {
+  position: fixed; top: 16px; left: 248px; z-index: 200;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #fff; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px; color: var(--text-2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s;
+}
+.sidebar-toggle:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+body.sidebar-collapsed .sidebar-toggle { left: 16px; }
+body.sidebar-collapsed .sidebar { transform: translateX(-240px); }
+body.sidebar-collapsed .main { margin-left: 0; }
+
+.sidebar {
+  width: 240px; position: fixed; top: 0; left: 0; bottom: 0;
+  background: #fff; border-right: 1px solid var(--border);
+  padding: 24px 0; overflow-y: auto; z-index: 100;
+  transition: transform 0.25s ease;
+}
+.sidebar-title { font-size: 13px; font-weight: 600; color: var(--text-3); padding: 0 24px 10px; letter-spacing: 1px; }
+.sidebar nav a {
+  display: block; padding: 7px 24px; font-size: 14px;
+  color: var(--text-2); text-decoration: none;
+  border-left: 3px solid transparent; transition: all 0.15s;
+}
+.sidebar nav a:hover { background: var(--bg-soft); color: var(--primary); }
+.sidebar nav a.active { border-left-color: var(--primary); color: var(--primary); font-weight: 500; background: var(--primary-light); }
+.sidebar nav a.sub { padding-left: 40px; font-size: 13px; }
+.sidebar nav a.sub2 { padding-left: 56px; font-size: 12px; }
+.toc-group { margin-bottom: 2px; }
+.toc-group > .toc-parent {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 24px; font-size: 14px; color: var(--text-2);
+  cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s;
+}
+.toc-group > .toc-parent:hover { background: var(--bg-soft); color: var(--primary); }
+.toc-group > .toc-parent.active { border-left-color: var(--primary); color: var(--primary); font-weight: 500; background: var(--primary-light); }
+.toc-group > .toc-parent .arrow { font-size: 10px; transition: transform 0.2s; color: var(--text-3); }
+.toc-group.collapsed > .toc-parent .arrow { transform: rotate(-90deg); }
+.toc-children { overflow: hidden; transition: max-height 0.2s ease; }
+.toc-group.collapsed .toc-children { max-height: 0; }
+
+.main {
+  margin-left: 240px; flex: 1; min-width: 0;
+  padding: 48px 40px 80px;
+  display: flex; justify-content: center;
+  transition: margin-left 0.25s ease;
+}
+.content-inner { width: 100%; max-width: 820px; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+h2 {
+  font-size: 22px; font-weight: 600; margin-top: 48px; margin-bottom: 20px;
+  padding-bottom: 12px; border-bottom: 2px solid var(--primary);
+  display: flex; align-items: center; gap: 8px;
+}
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.tag-ok { background: #E6F7E6; color: #237804; }
+.tag-warn { background: #FFF7E6; color: #D46B08; }
+.tag-no { background: #FFF1F0; color: #CF1322; }
+.tag-info { background: var(--primary-light); color: var(--primary); }
+.em { font-style: italic; color: #595959; }
+.u { text-decoration: underline; text-underline-offset: 3px; }
+.mark { background: linear-gradient(180deg, transparent 60%, #FFE58F 60%); font-weight: 600; }
+.user-hl {
+  background: #FFE58F;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.hl-toolbar {
+  position: fixed; right: 20px; bottom: 20px; z-index: 300;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  max-width: min(420px, calc(100vw - 40px));
+  padding: 10px 14px; background: #fff;
+  border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  font-size: 13px; color: var(--text-2);
+}
+.hl-toolbar.is-hidden { display: none; }
+.hl-toolbar-head {
+  flex: 1 1 100%; display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 8px;
+}
+.hl-toolbar-head .hl-tip { flex: 1; }
+.hl-toolbar button.hl-ghost {
+  flex-shrink: 0; padding: 4px 10px; font-size: 12px; color: var(--text-3);
+}
+.hl-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 300;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: #FFE58F; border: 1px solid #FFC53D;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  cursor: pointer; font-size: 15px; font-weight: 700; color: #614700;
+  display: none; align-items: center; justify-content: center;
+}
+.hl-fab.is-visible { display: flex; }
+.hl-fab:hover { background: #FFD666; }
+.hl-toolbar button {
+  padding: 6px 12px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg-soft);
+  cursor: pointer; font-size: 13px; color: var(--text-1);
+  transition: background 0.15s, border-color 0.15s;
+}
+.hl-toolbar button:hover { background: #EEEFF2; }
+.hl-toolbar button.hl-primary {
+  background: #FFE58F; border-color: #FFC53D; font-weight: 600;
+}
+.hl-toolbar button.hl-primary:hover { background: #FFD666; }
+.hl-toolbar button.hl-danger { color: var(--red); }
+.hl-toolbar .hl-tip { flex: 1 1 100%; font-size: 12px; color: var(--text-3); line-height: 1.4; }
+.hl-toolbar .hl-tip.on { color: var(--primary); font-weight: 500; }
+.decided { color: var(--green); font-weight: 600; }
+.pending { color: var(--orange); font-weight: 600; }
+h2 .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--primary); color: #fff; font-size: 14px;
+  flex-shrink: 0;
+}
+h3 { font-size: 17px; font-weight: 600; margin-top: 32px; margin-bottom: 14px; }
+h4 { font-size: 15px; font-weight: 600; margin-top: 24px; margin-bottom: 12px; color: var(--text-1); }
+p { margin-bottom: 14px; color: var(--text-2); }
+.summary {
+  background: linear-gradient(135deg, #2F6FED 0%, #1E50C9 100%);
+  color: #fff; border-radius: 12px; padding: 24px 28px;
+  margin-bottom: 40px; font-size: 14px; line-height: 1.8;
+}
+.summary strong { font-weight: 600; }
+blockquote {
+  background: var(--primary-light); border-left: 4px solid var(--primary);
+  border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 16px 0;
+  font-size: 14px; color: var(--text-2);
+}
+.table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 14px; border-radius: 8px; overflow: hidden;
+}
+thead { background: #F0F4FF; }
+th {
+  padding: 12px 16px; text-align: left; font-weight: 600;
+  color: var(--text-1); border-bottom: 2px solid var(--primary); white-space: nowrap;
+}
+td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-2); vertical-align: top; }
+tbody tr:nth-child(even) { background: var(--bg-soft); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #EEF4FF; }
+td .yes { color: var(--green); font-weight: 600; }
+td .no { color: var(--red); font-weight: 600; }
+code {
+  background: #F0F2F5; padding: 2px 6px; border-radius: 4px;
+  font-size: 13px; font-family: "SF Mono", "Fira Code", monospace; color: var(--primary);
+}
+.svg-container {
+  background: #fff; border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; margin: 20px 0; text-align: center; overflow-x: auto;
+}
+.svg-container svg { max-width: 100%; height: auto; cursor: zoom-in; }
+.svg-container img { max-width: 100%; height: auto; cursor: zoom-in; }
+.demo-wrapper {
+  margin: 24px 0; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); border: 1px solid var(--border);
+}
+.demo-header {
+  background: #1A1A1A; color: #fff; padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; font-size: 14px;
+}
+.demo-header .dots { display: flex; gap: 6px; }
+.demo-header .dot { width: 12px; height: 12px; border-radius: 50%; }
+.demo-header .dot.r { background: #FF5F57; }
+.demo-header .dot.y { background: #FEBC2E; }
+.demo-header .dot.g { background: #28C840; }
+.demo-header .title { font-weight: 500; opacity: 0.9; }
+.demo-header .open-btn {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 12px;
+  cursor: pointer; text-decoration: none; transition: background 0.15s;
+}
+.demo-header .open-btn:hover { background: rgba(255,255,255,0.25); }
+.demo-frame { width: 100%; height: 820px; border: none; background: #f6f8f9; }
+hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+.doc-footer {
+  margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--text-3); text-align: center;
+}
+
+/* Highlight: key content */
+.hl { color: var(--highlight); font-weight: 600; }
+.hl-blue { color: var(--primary); font-weight: 600; }
+.hl-green { color: var(--green); font-weight: 600; }
+.hl-red { color: var(--red); font-weight: 600; }
+
+/* Callout alert box */
+.callout {
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary-light);
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+}
+.callout.warning {
+  border-left-color: var(--orange);
+  background-color: #FFFBE6;
+  color: #D46B08;
+}
+.callout.danger {
+  border-left-color: var(--red);
+  background-color: #FFF1F0;
+  color: #A8071A;
+}
+.callout a { color: var(--primary); font-weight: 600; }
+.callout strong { font-weight: 600; }
+
+/* Lightbox modal style */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.lightbox.show {
+  display: flex;
+  opacity: 1;
+}
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  transform: scale(0.9);
+  transition: transform 0.25s ease;
+  cursor: default;
+}
+.lightbox.show img {
+  transform: scale(1);
+}
+.svg-container img {
+  cursor: zoom-in;
+  transition: transform 0.2s ease;
+}
+.svg-container img:hover {
+  transform: scale(1.01);
+}
+
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-240px); }
+  .sidebar-toggle { left: 16px; }
+  .main { margin-left: 0; padding: 24px 16px; }
+  .content-inner { max-width: 100%; }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-toggle" onclick="document.body.classList.toggle('sidebar-collapsed')">&#9776;</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">目录</div>
+    <nav id="toc">
+      <a href="#sec-1">1. 背景与目标</a>
+      <a href="#sec-2">2. 本版范围</a>
+      <div class="toc-group" data-parent="sec-3">
+        <div class="toc-parent"><span>3. 调研情况</span><span class="arrow">&#9660;</span></div>
+        <div class="toc-children">
+          <a href="#sec-3-1" class="sub">3.1 问卷情况</a>
+          <a href="#sec-3-2" class="sub">3.2 访谈情况</a>
+        </div>
+      </div>
+      <div class="toc-group" data-parent="sec-4">
+        <div class="toc-parent"><span>4. 流程与状态</span><span class="arrow">&#9660;</span></div>
+        <div class="toc-children">
+          <a href="#sec-4-1" class="sub">4.1 处理路径总览</a>
+          <a href="#sec-4-2" class="sub">4.2 代申诉确认流程</a>
+          <a href="#sec-4-3" class="sub">4.3 状态体系</a>
+          <a href="#sec-4-4" class="sub">4.4 处理状态归属规则</a>
+        </div>
+      </div>
+      <div class="toc-group" data-parent="sec-5">
+        <div class="toc-parent"><span>5. 页面设计</span><span class="arrow">&#9660;</span></div>
+        <div class="toc-children">
+          <a href="#sec-5-1" class="sub">5.1 列表设计</a>
+          <a href="#sec-5-2" class="sub">5.2 处理弹窗</a>
+          <a href="#sec-5-3" class="sub">5.3 查看弹窗</a>
+          <a href="#sec-5-4" class="sub">5.4 提交确认弹窗</a>
+          <a href="#sec-5-5" class="sub">5.5 商家 H5 确认页</a>
+        </div>
+      </div>
+      <a href="#sec-6">6. 通知流程</a>
+      <a href="#sec-7">7. 风险与控制</a>
+      <div class="toc-group" data-parent="sec-9">
+        <div class="toc-parent"><span>附录</span><span class="arrow">&#9660;</span></div>
+        <div class="toc-children">
+          <a href="#sec-9-api" class="sub">官方接口能力</a>
+          <a href="#sec-9-glossary" class="sub">术语</a>
+          <a href="#sec-9-1" class="sub">权责问题</a>
+          <a href="#sec-9-enum" class="sub">字段枚举</a>
+          <a href="#sec-9-2" class="sub">权限口径</a>
+          <a href="#sec-9-3" class="sub">上线边界</a>
+          <a href="#sec-9-4" class="sub">决策清单</a>
+        </div>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="content-inner" data-doc-version="2026-07-01">
+    <h1>服务商违规申诉代办专区：代申诉能力开放方案</h1>
+    <div class="summary">
+      服务商<strong>不能绕过商家直接提交</strong>；服务商负责专业处理，<strong>商家保留最终确认权</strong>。
+    </div>
+
+    <h2 id="sec-1"><span class="num">1</span> 背景与目标</h2>
+    <p>服务商现在已经在协助商家处理小程序违规，但很多动作还在线下完成：商家发现违规后找服务商，服务商再整理材料、写申诉说明、指导或登录 MP 后台处理。<span class="hl">这个链路依赖人工沟通，处理状态不集中，关键操作也缺少统一记录。</span></p>
+    <p>本项目在服务商平台建设违规申诉代办专区，让服务商集中查看违规、跟进整改和处罚状态，并在商家确认后提交申诉。</p>
+    
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>当前现状</th><th>问题</th><th>影响</th></tr></thead>
+      <tbody>
+        <tr><td>商家收到违规后再找服务商</td><td>服务商被动响应</td><td>容易错过警告整改和申诉窗口</td></tr>
+        <tr><td>服务商指导商家去 MP 后台处理</td><td>协同成本高</td><td>处理结果不同步，服务商难持续跟进</td></tr>
+        <tr><td>商家自行申诉</td><td>申诉质量不稳定</td><td>可能浪费申诉次数</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>场景</th><th>本版目标</th><th>产品口径</th></tr></thead>
+      <tbody>
+        <tr><td>警告整改</td><td>降低警告升级为处罚的风险</td><td>警告不进入申诉链路，只引导客服在整改期限内完成整改</td></tr>
+        <tr><td>处罚申诉</td><td>提升处罚后的处理和跟进效率</td><td>处罚类先整改，再按平台规则提交 / 跟进申诉</td></tr>
+        <tr><td>队列收敛</td><td>降低客服在多入口间跳转的成本</td><td>用 <code>主列表 + 聚合弹窗 + 链接</code> 承载主流程</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p><strong>问题规模与不做的代价（数据来源：2025-10 ~ 2026-03 违规数据）：</strong></p>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>指标</th>
+          <th>数据</th>
+          <th>含义</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>服务商功能封禁月均量</td>
+          <td>2.0 ~ 3.5 万起（占全量 20-29%）</td>
+          <td>服务商违规主战场在功能类处罚，不是账号封禁</td>
+        </tr>
+        <tr>
+          <td>功能警告 &rarr; 封禁升级率</td>
+          <td>服务商 47-58%，高于非服务商 4-9 个百分点</td>
+          <td>服务商警告期整改力度不足，升级风险更高</td>
+        </tr>
+        <tr>
+          <td>功能封禁平均恢复时长</td>
+          <td>服务商 7.50 天 vs 非服务商 7.11 天（2026-03）</td>
+          <td>服务商比大盘多花 0.4 天，有下降空间</td>
+        </tr>
+        <tr>
+          <td>功能封禁恢复率</td>
+          <td>服务商 15-30%，高于非服务商 6.5-16%，但恢复时长更长</td>
+          <td>服务商申诉能力本身不弱，瓶颈在流程效率而非申诉质量</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="callout"><strong>上线目标：</strong>恢复时长保底对齐非服务商（6.65 天），推荐 5.8-6.2 天；升级率保底对齐非服务商（44.8%），推荐 40-42%。</div>
+    <div class="callout danger"><strong>边界声明：</strong><span class="hl-red">服务商不能绕过商家直接提交。</span>代申诉的本质是服务商负责专业处理，商家保留确认权。</div>
+
+    <h2 id="sec-2"><span class="num">2</span> 本版范围</h2>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>模块</th><th>本版口径</th></tr></thead>
+      <tbody>
+        <tr><td>入口</td><td>在服务商平台「小程序」菜单下新增「监管专区」入口</td></tr>
+        <tr><td>数据范围</td><td>仅展示已绑定消费的第三方平台账号下、同时授权 <span class="hl-blue">18 + 76</span> 的小程序违规记录</td></tr>
+        <tr><td>记录范围</td><td>覆盖警告提醒、功能限制、账号限制、页面封禁、下架</td></tr>
+        <tr><td>列表队列</td><td>单列表展示；<span class="mark">处理状态为筛选项</span>（待处理 / 申诉中 / 已处理 / 全部），进入页面默认待处理；待处理、申诉中展示数量角标</td></tr>
+        <tr><td>列表粒度</td><td>每行一条违规记录；同一小程序多条违规全部展示，不做小程序级聚合</td></tr>
+        <tr><td>主流程</td><td>列表每行只保留 1 个操作入口，进入处理弹窗、查看弹窗或外部指引链接</td></tr>
+        <tr><td>弹窗</td><td>仅保留处理弹窗、查看弹窗、提交确认弹窗 3 类弹窗</td></tr>
+        <tr><td>代申诉</td><td>仅处罚类可申诉记录展示；能否提交取决于<span class="hl u">代提交申诉 API</span>是否可用</td></tr>
+        <tr><td>证明材料</td><td>本平台提交材料支持上传；历史材料预览不作为 V1 默认承诺</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>项目覆盖的能力：</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>能力</th><th style="text-align:center">覆盖</th></tr></thead>
+      <tbody>
+        <tr><td>查看违规记录、违规原因、处罚状态</td><td style="text-align:center"><span class="yes">是</span></td></tr>
+        <tr><td>查看整改指引</td><td style="text-align:center"><span class="yes">是</span></td></tr>
+        <tr><td>跟进警告整改和处罚结果</td><td style="text-align:center"><span class="yes">是</span></td></tr>
+        <tr><td>服务商提交申诉说明和证明材料</td><td style="text-align:center"><span class="yes">是</span></td></tr>
+        <tr><td>申诉提交、确认、状态等与商家双向同步</td><td style="text-align:center"><span class="yes">是</span></td></tr>
+        <tr><td><span class="hl-blue">商家确认后申诉才正式进入审核队列</span></td><td style="text-align:center"><span class="yes">是</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout"><em>权限口径、上线边界、决策清单</em>见 <a href="#sec-9-2"><strong>附录末尾</strong></a>。</div>
+
+    <h2 id="sec-3"><span class="num">3</span> 调研情况</h2>
+    
+    <h3 id="sec-3-1">3.1 问卷情况</h3>
+    <p>问卷说明，服务商已经在处理大量违规相关事项，且处理所需信息多数来自服务商已有资料或商家本次提供。真正需要产品补齐的，不是让服务商"第一次接触这些信息"，而是把商家确认、次数提示、操作记录和双方通知做成标准流程。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>问卷发现</th><th>对项目的含义</th></tr></thead>
+      <tbody>
+        <tr><td>80.3% 会接触违规记录、原因、整改指引、申诉状态等处理信息；73.8% 会接触商家主体/经营材料</td><td>代申诉需要的信息本来就在服务商日常处理范围内</td></tr>
+        <tr><td>违规处理信息主要由商家在本次处理中提供（75.4%），主体/经营材料也主要由商家在本次处理中提供（67.2%）；一部分来自服务商原本可见或已持有</td><td>多数材料可由"服务商已有 + 商家本次提供 + 处理过程生成"覆盖，不需要平台额外拉取大量新信息</td></tr>
+        <tr><td>仅 15% 不到认为不需要通知商家</td><td>绝大部分服务商本身认为商家确认是必要环节</td></tr>
+        <tr><td>0% 选择"商家不可以停止授权、撤回处理或接管申诉"</td><td>服务商普遍认可商家保留控制权</td></tr>
+        <tr><td>申诉异常后，77.0% 会继续协助整改/补件/重新申诉，75.4% 会通知商家状态，63.9% 会要求商家补充或确认材料</td><td>申诉不是提交后就结束，服务商仍会参与后续处理</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-3-2">3.2 访谈情况</h3>
+    <p>访谈说明，不同服务商处理能力不一样，但共同点是：服务商希望更早看到违规、更快判断处理路径，并减少商家来回沟通成本。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>访谈收获</th><th>对项目的含义</th></tr></thead>
+      <tbody>
+        <tr><td>有赞、爨火都会介入旗下小程序违规处理</td><td>服务商有动力也有能力处理一部分违规问题</td></tr>
+        <tr><td>当前很多处理仍是商家来找服务商后才开始</td><td>监管专区应帮助服务商主动发现违规，而不是只等商家求助</td></tr>
+        <tr><td>多数常见申诉材料服务商可以拿到，或可由商家在本次处理中补充</td><td>代申诉不要求平台额外收集大量新材料，重点是把材料整理和商家确认放到线上</td></tr>
+        <tr><td>警告期前置整改优先于处罚后申诉</td><td>项目不能只做申诉，也要支持查看指引、整改跟进</td></tr>
+        <tr><td>代申诉消耗商家次数不是绝对阻碍</td><td>关键是提交前让商家明确知道并确认</td></tr>
+        <tr><td>不宜完全冻结商家自行申诉</td><td>商家和服务商都可处理，但同一条违规不能重复提交</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>服务商</th><th>差异</th></tr></thead>
+      <tbody>
+        <tr><td>有赞</td><td>多数常见整改和申诉材料组织可由服务商完成；常见材料如小程序截图通常可获取，主体材料等复杂情况需要商家配合或内部确认</td></tr>
+        <tr><td>爨火</td><td>已有常见违规处理流程和模板；多数客户从注册开始由爨火接手，相关资料和文件服务商侧已有掌握</td></tr>
+        <tr><td>银豹</td><td>更偏向给商家指引，不明显承担完整代处理流程</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>综合问卷和访谈，服务商已经具备参与违规处理的基础，但不同服务商能力不同。产品设计要解决的关键问题不是"服务商会不会参与"，而是"服务商提交前，商家是否明确知情并确认"。这一结论也是给法务的核心依据：在商家知情确认、授权范围清楚、系统有记录、页面有责任提示的前提下，代申诉风险可控。</p>
+
+    <p><strong>调研发现 &rarr; 设计决策映射：</strong></p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>调研发现</th><th>设计决策</th></tr></thead>
+      <tbody>
+        <tr><td>80.3% 已接触违规信息，信息本身不是瓶颈</td><td>专区不做信息拉取，做信息聚合和流程线上化</td></tr>
+        <tr><td>0% 认为商家不能撤回/取消授权</td><td>商家 H5 保留拒绝权，确认后才提交、才消耗次数</td></tr>
+        <tr><td>73.8% 已接触材料，但需商家本次补充</td><td>表单只要求申诉说明和证明材料，不额外拉取商家基础信息</td></tr>
+        <tr><td>警告期前置整改是更核心的需求</td><td>专区同时覆盖警告型和处罚型两条路径，不只做申诉</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="sec-4"><span class="num">4</span> 流程与状态</h2>
+    
+    <h3 id="sec-4-1">4.1 处理路径总览</h3>
+    <p>违规记录按类型分为警告型和处罚型，决定是否进入申诉链路：</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>类型</th><th>触发记录</th><th>是否可申诉</th><th>服务商动作</th></tr></thead>
+      <tbody>
+        <tr><td>警告型</td><td>警告提醒</td><td><span class="no">否</span></td><td>查看原因、跟进整改、关注截止时间</td></tr>
+        <tr><td>处罚型</td><td>功能限制、账号限制、页面封禁、下架</td><td><span class="yes">是</span></td><td>查看处罚原因、完成整改、准备材料、提交/跟进申诉</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <blockquote><strong>边界：</strong>警告升级为处罚后，原警告记录进入已处理，处罚记录作为新记录独立计数和展示。两条记录之间不做自动关联。</blockquote>
+    <div class="svg-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <marker id="ar-fc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#595959"/></marker>
+    <filter id="sh2" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.08"/></filter>
+  </defs>
+  <rect width="900" height="420" fill="#FAFBFC"/>
+
+  <!-- 起点 -->
+  <rect x="350" y="20" width="200" height="40" rx="20" fill="#1890FF" filter="url(#sh2)"/>
+  <text x="450" y="40" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13" font-weight="600">违规记录进入专区</text>
+
+  <!-- 连线到菱形 -->
+  <line x1="450" y1="60" x2="450" y2="85" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <!-- 菱形：记录类型 -->
+  <path d="M370,110 L450,85 L530,110 L450,135 Z" fill="#722ED1" filter="url(#sh2)"/>
+  <text x="450" y="110" text-anchor="middle" dominant-baseline="central" fill="white" font-size="12" font-weight="600">记录类型</text>
+
+  <!-- 左分支：警告型 -->
+  <path d="M370,110 L200,110 L200,165" fill="none" stroke="#52C41A" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+  <text x="280" y="102" fill="#52C41A" font-size="11" font-weight="600">警告型</text>
+
+  <rect x="100" y="170" width="200" height="36" rx="6" fill="white" stroke="#52C41A" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="200" y="188" text-anchor="middle" dominant-baseline="central" fill="#333" font-size="12">查看原因和整改指引</text>
+
+  <line x1="200" y1="206" x2="200" y2="225" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <rect x="100" y="230" width="200" height="36" rx="6" fill="white" stroke="#52C41A" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="200" y="248" text-anchor="middle" dominant-baseline="central" fill="#333" font-size="12">跟进整改截止时间</text>
+
+  <line x1="200" y1="266" x2="200" y2="285" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <!-- 菱形：整改结果 -->
+  <path d="M130,310 L200,285 L270,310 L200,335 Z" fill="#722ED1" filter="url(#sh2)"/>
+  <text x="200" y="310" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11" font-weight="600">整改结果</text>
+
+  <!-- 按期完成 -->
+  <path d="M130,310 L60,310 L60,360" fill="none" stroke="#52C41A" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+  <text x="70" y="302" fill="#52C41A" font-size="10" font-weight="600">按期完成</text>
+  <rect x="10" y="365" width="120" height="36" rx="6" fill="#52C41A" filter="url(#sh2)"/>
+  <text x="70" y="383" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">记录进入已处理</text>
+
+  <!-- 未整改 -->
+  <path d="M270,310 L340,310 L340,360" fill="none" stroke="#F5222D" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+  <text x="300" y="302" fill="#F5222D" font-size="10" font-weight="600">未整改</text>
+  <rect x="240" y="365" width="200" height="36" rx="6" fill="#F5222D" filter="url(#sh2)"/>
+  <text x="340" y="383" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11">升级为处罚，重新进入列表</text>
+
+  <!-- 右分支：处罚型 -->
+  <path d="M530,110 L700,110 L700,165" fill="none" stroke="#1890FF" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+  <text x="620" y="102" fill="#1890FF" font-size="11" font-weight="600">处罚型</text>
+
+  <rect x="600" y="170" width="200" height="36" rx="6" fill="white" stroke="#1890FF" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="700" y="188" text-anchor="middle" dominant-baseline="central" fill="#333" font-size="12">查看处罚原因和整改指引</text>
+
+  <line x1="700" y1="206" x2="700" y2="225" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <rect x="600" y="230" width="200" height="36" rx="6" fill="white" stroke="#1890FF" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="700" y="248" text-anchor="middle" dominant-baseline="central" fill="#333" font-size="12">服务商整理申诉说明和材料</text>
+
+  <line x1="700" y1="266" x2="700" y2="285" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <rect x="600" y="290" width="200" height="36" rx="6" fill="#1890FF" filter="url(#sh2)"/>
+  <text x="700" y="308" text-anchor="middle" dominant-baseline="central" fill="white" font-size="12">发起商家确认（详见第 5 节）</text>
+
+  <line x1="700" y1="326" x2="700" y2="345" stroke="#595959" stroke-width="1.5" marker-end="url(#ar-fc)"/>
+
+  <rect x="600" y="350" width="200" height="36" rx="6" fill="white" stroke="#1890FF" stroke-width="1.5" filter="url(#sh2)"/>
+  <text x="700" y="368" text-anchor="middle" dominant-baseline="central" fill="#333" font-size="12">正式提交申诉 → 同步审核结果</text>
+</svg></div>
+
+    <h3 id="sec-4-2">4.2 代申诉确认流程</h3>
+    <p>处罚型记录中，服务商代填申诉说明和材料后，需经商家 H5 确认才能正式提交。泳道图展示这一核心交互：</p>
+    <div class="svg-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 740" font-family="'PingFang SC','Microsoft YaHei',sans-serif">
+  <defs>
+    <marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2F6FED"/></marker>
+    <marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2BA471"/></marker>
+    <marker id="ar-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E8803C"/></marker>
+    <marker id="ar-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#D4380D"/></marker>
+    <marker id="ar-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#722ED1"/></marker>
+  </defs>
+
+  <!-- 泳道背景 -->
+  <rect x="0" y="44" width="320" height="636" fill="#F0F5FF"/>
+  <rect x="320" y="44" width="320" height="636" fill="#F6FFED"/>
+  <rect x="640" y="44" width="320" height="636" fill="#FFF7E6"/>
+  <rect x="960" y="44" width="320" height="636" fill="#FFF1F0"/>
+
+  <!-- 泳道标题 -->
+  <rect x="0" y="0" width="320" height="44" fill="#2F54EB"/>
+  <rect x="320" y="0" width="320" height="44" fill="#389E0D"/>
+  <rect x="640" y="0" width="320" height="44" fill="#D48806"/>
+  <rect x="960" y="0" width="320" height="44" fill="#CF1322"/>
+  <text x="160" y="22" text-anchor="middle" dominant-baseline="central" fill="white" font-size="16" font-weight="bold">服务商</text>
+  <text x="480" y="22" text-anchor="middle" dominant-baseline="central" fill="white" font-size="16" font-weight="bold">系统</text>
+  <text x="800" y="22" text-anchor="middle" dominant-baseline="central" fill="white" font-size="16" font-weight="bold">商家</text>
+  <text x="1120" y="22" text-anchor="middle" dominant-baseline="central" fill="white" font-size="16" font-weight="bold">审核队列</text>
+
+  <!-- 泳道分隔线 -->
+  <line x1="320" y1="0" x2="320" y2="680" stroke="#D9D9D9" stroke-width="1"/>
+  <line x1="640" y1="0" x2="640" y2="680" stroke="#D9D9D9" stroke-width="1"/>
+  <line x1="960" y1="0" x2="960" y2="680" stroke="#D9D9D9" stroke-width="1"/>
+
+  <!-- ========== 主流程（蓝色） ========== -->
+  <rect x="60" y="63" width="200" height="64" rx="8" fill="#2F6FED"/>
+  <text x="160" y="95" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">
+    <tspan x="160" dy="-9">① 填写申诉说明和证明材料</tspan>
+    <tspan x="160" dy="18">② 发起商家确认</tspan>
+  </text>
+
+  <rect x="380" y="63" width="200" height="64" rx="8" fill="#2F6FED"/>
+  <text x="480" y="95" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">
+    <tspan x="480" dy="-9">③ 状态变为待商家确认</tspan>
+    <tspan x="480" dy="18">④ 冻结自申诉·发送H5链接</tspan>
+  </text>
+
+  <rect x="700" y="63" width="200" height="64" rx="8" fill="#2F6FED"/>
+  <text x="800" y="95" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">
+    <tspan x="800" dy="-9">⑤ 查看申诉内容</tspan>
+    <tspan x="800" dy="18">材料和次数提示</tspan>
+  </text>
+
+  <line x1="260" y1="95" x2="380" y2="95" stroke="#2F6FED" stroke-width="2" marker-end="url(#ar-blue)"/>
+  <line x1="580" y1="95" x2="700" y2="95" stroke="#2F6FED" stroke-width="2" marker-end="url(#ar-blue)"/>
+
+  <!-- 决策菱形 -->
+  <line x1="800" y1="127" x2="800" y2="143" stroke="#722ED1" stroke-width="2" marker-end="url(#ar-purple)"/>
+  <path d="M710,170 L800,143 L890,170 L800,197 Z" fill="#722ED1"/>
+  <text x="800" y="170" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13" font-weight="bold">商家如何操作？</text>
+
+  <!-- ========== 分支A：确认提交（绿色） ========== -->
+  <line x1="800" y1="197" x2="800" y2="226" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+  <text x="820" y="212" fill="#2BA471" font-size="12" font-weight="bold">确认</text>
+
+  <rect x="700" y="226" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="800" y="250" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑥ 确认提交</text>
+
+  <polyline points="800,274 800,320 580,320" fill="none" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+
+  <rect x="380" y="296" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="480" y="320" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑦ 正式提交·消耗1次</text>
+
+  <line x1="580" y1="320" x2="1020" y2="320" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+
+  <rect x="1020" y="296" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="1120" y="320" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑧ 进入审核队列</text>
+
+  <line x1="1120" y1="344" x2="1120" y2="366" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+
+  <rect x="1020" y="366" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="1120" y="390" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑨ 返回审核结果</text>
+
+  <line x1="1020" y1="390" x2="580" y2="390" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+
+  <rect x="380" y="366" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="480" y="390" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑩ 同步审核结果</text>
+
+  <polyline points="380,390 160,390 160,436" fill="none" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+  <polyline points="580,390 800,390 800,436" fill="none" stroke="#2BA471" stroke-width="2" marker-end="url(#ar-green)"/>
+
+  <rect x="60" y="436" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="160" y="460" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑪ 服务商收到结果</text>
+
+  <rect x="700" y="436" width="200" height="48" rx="8" fill="#2BA471"/>
+  <text x="800" y="460" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">⑫ 商家收到结果</text>
+
+  <!-- ========== 分支B：拒绝（橙色） ========== -->
+  <polyline points="710,170 670,170 670,530 700,530" fill="none" stroke="#E8803C" stroke-width="2" marker-end="url(#ar-orange)"/>
+  <text x="678" y="350" fill="#E8803C" font-size="12" font-weight="bold">拒绝</text>
+
+  <rect x="700" y="506" width="200" height="48" rx="8" fill="#E8803C"/>
+  <text x="800" y="530" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">拒绝提交</text>
+
+  <line x1="700" y1="530" x2="580" y2="530" stroke="#E8803C" stroke-width="2" marker-end="url(#ar-orange)"/>
+
+  <rect x="380" y="506" width="200" height="48" rx="8" fill="#E8803C"/>
+  <text x="480" y="530" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">恢复自申诉入口</text>
+
+  <line x1="380" y1="530" x2="260" y2="530" stroke="#E8803C" stroke-width="2" marker-end="url(#ar-orange)"/>
+
+  <rect x="60" y="506" width="200" height="48" rx="8" fill="#E8803C"/>
+  <text x="160" y="530" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">同步：商家已拒绝</text>
+
+  <!-- ========== 分支C：超时（红色） ========== -->
+  <polyline points="710,170 630,170 630,630 580,630" fill="none" stroke="#D4380D" stroke-width="2" marker-end="url(#ar-red)"/>
+  <text x="610" y="450" fill="#D4380D" font-size="12" font-weight="bold">超时</text>
+
+  <rect x="380" y="606" width="200" height="48" rx="8" fill="#D4380D"/>
+  <text x="480" y="630" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">24h自动超时·恢复双方入口</text>
+
+  <line x1="380" y1="630" x2="260" y2="630" stroke="#D4380D" stroke-width="2" marker-end="url(#ar-red)"/>
+
+  <rect x="60" y="606" width="200" height="48" rx="8" fill="#D4380D"/>
+  <text x="160" y="630" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">同步：确认已超时</text>
+
+  <line x1="580" y1="630" x2="700" y2="630" stroke="#D4380D" stroke-width="2" marker-end="url(#ar-red)"/>
+
+  <rect x="700" y="606" width="200" height="48" rx="8" fill="#D4380D"/>
+  <text x="800" y="630" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">通知：确认已失效</text>
+
+  <!-- ========== 图例 ========== -->
+  <rect x="60" y="700" width="16" height="16" rx="3" fill="#2F6FED"/>
+  <text x="84" y="708" dominant-baseline="central" fill="#333" font-size="12">主流程</text>
+
+  <rect x="170" y="700" width="16" height="16" rx="3" fill="#2BA471"/>
+  <text x="194" y="708" dominant-baseline="central" fill="#333" font-size="12">确认提交</text>
+
+  <rect x="290" y="700" width="16" height="16" rx="3" fill="#E8803C"/>
+  <text x="314" y="708" dominant-baseline="central" fill="#333" font-size="12">拒绝提交</text>
+
+  <rect x="410" y="700" width="16" height="16" rx="3" fill="#D4380D"/>
+  <text x="434" y="708" dominant-baseline="central" fill="#333" font-size="12">超时未处理</text>
+
+  <path d="M548,700 L558,708 L548,716 L538,708 Z" fill="#722ED1"/>
+  <text x="566" y="708" dominant-baseline="central" fill="#333" font-size="12">决策点</text>
+</svg></div>
+    <blockquote>蓝色为主流程（服务商代填 &rarr; 系统冻结自申诉并发 H5 &rarr; 商家查看）；绿色为商家确认提交；橙色为商家拒绝；红色为 24h 超时未处理。次数判定见下方规则，全程双向同步。</blockquote>
+
+    <p><strong>核心规则要点：</strong></p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>规则</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>服务商只能代填，不能直接提交</td><td><span class="hl-red">填写后只生成待商家确认任务</span>，不进入审核队列</td></tr>
+        <tr><td>商家确认后才提交</td><td>H5 查看内容和次数提示后点确认，才进入审核队列<span class="hl u">并扣减申诉次数</span></td></tr>
+        <tr><td>确认前不消耗次数</td><td><span class="mark">发起确认、未确认、拒绝或超时均不消耗</span></td></tr>
+        <tr><td>H5 确认 24h 有效</td><td>超时自动失效，超时时间自服务商发起时起算 24 小时</td></tr>
+        <tr><td>同一条违规不能重复提交</td><td>已有审核中申诉时另一方不能提交</td></tr>
+        <tr><td>待确认期间冻结商家自申诉</td><td>后端校验拦截（非前端 UI 冻结）；不冻结商家查看违规或处理其他违规</td></tr>
+        <tr><td>超时后恢复提交入口</td><td>双方提交入口恢复，状态变更且清除冻结</td></tr>
+        <tr><td>全程双向同步</td><td>违规与审核结果走原有微信通知与 API 回调；代申诉确认链路新增 H5 与回调事件；各阶段触达分工见第 6 节</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p><strong>边界：</strong></p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>边界</th><th>设计</th></tr></thead>
+      <tbody>
+        <tr><td>服务商能否撤销已发起的确认</td><td>不支持。发起后只能等商家确认、拒绝或 24h 超时</td></tr>
+        <tr><td>拒绝后重新发起的次数限制</td><td>不限制。服务商可反复整理后重新发起，商家可反复拒绝</td></tr>
+        <tr><td>商家自行提交的申诉内容</td><td>服务商可查看（已有能力），但不能代为操作</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-4-3">4.3 状态体系</h3>
+    <p>状态按「记录类型 &rarr; 主状态 &rarr; 子状态」三层组织，共 2 类、7 个主状态、3 个子状态。<code>x/2</code> 表示剩余申诉次数 / 总申诉次数。</p>
+    <div class="svg-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 540" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker>
+    <marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#378ADD"/></marker>
+    <marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52C41A"/></marker>
+    <marker id="ar-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#E8803C"/></marker>
+    <marker id="ar-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#888780"/></marker>
+    <marker id="ar-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#EF9F27"/></marker>
+  </defs>
+
+  <rect width="1040" height="540" fill="#FAFBFC"/>
+  <text x="520" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#222">状态流转图</text>
+
+  <!-- ===== Warning Lane ===== -->
+  <rect x="15" y="38" width="1010" height="62" rx="8" fill="#FFF7E6" stroke="#EF9F27" stroke-width="0.5"/>
+  <text x="35" y="55" font-size="12" font-weight="600" fill="#EF9F27">警告型（不可申诉）</text>
+
+  <!-- 警告待整改 -->
+  <rect x="45" y="55" width="125" height="34" rx="6" fill="#FFF" stroke="#EF9F27" stroke-width="0.5"/>
+  <text x="107" y="73" text-anchor="middle" font-size="12" font-weight="600" fill="#333">警告待整改</text>
+  <rect x="135" y="59" width="30" height="13" rx="3" fill="#FAEEDA"/>
+  <text x="150" y="66" text-anchor="middle" dominant-baseline="central" font-size="9" fill="#8C6500">待处理</text>
+
+  <line x1="170" y1="72" x2="265" y2="72" stroke="#888" stroke-width="1.2" marker-end="url(#ar)"/>
+  <text x="217" y="66" text-anchor="middle" font-size="10" fill="#666">按期完成 / 到期</text>
+
+  <!-- 警告整改期结束 -->
+  <rect x="265" y="55" width="125" height="34" rx="6" fill="#F9FAF7" stroke="#639922" stroke-width="0.5"/>
+  <text x="327" y="73" text-anchor="middle" font-size="12" font-weight="600" fill="#333">警告整改期结束</text>
+  <rect x="355" y="59" width="30" height="13" rx="3" fill="#EAF3DE"/>
+  <text x="370" y="66" text-anchor="middle" dominant-baseline="central" font-size="9" fill="#528008">已处理</text>
+
+  <!-- dashed arrow: 未整改升级 -->
+  <path d="M107,89 L107,118" fill="none" stroke="#EF9F27" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ar-amber)"/>
+  <text x="240" y="107" font-size="10" fill="#EF9F27">未整改升级（作为新处罚记录进入下方流程）</text>
+
+  <!-- ===== Penalty Lane ===== -->
+  <rect x="15" y="115" width="1010" height="185" rx="8" fill="#F0F5FF" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="35" y="132" font-size="12" font-weight="600" fill="#378ADD">处罚型（可申诉）</text>
+
+  <!-- Row 1: Main flow y=140-178 -->
+  <!-- 待首次提交申诉 -->
+  <rect x="35" y="140" width="115" height="38" rx="6" fill="#FFF" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="92" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#333">待首次提交申诉</text>
+  <rect x="110" y="163" width="30" height="12" rx="3" fill="#FAEEDA"/>
+  <text x="125" y="169" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#8C6500">待处理</text>
+
+  <!-- arrow: 发起确认 -->
+  <path d="M150,159 L210,159" fill="none" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar-blue)"/>
+  <text x="180" y="153" text-anchor="middle" font-size="10" fill="#378ADD">发起确认</text>
+
+  <!-- 待商家确认 (sub-state, dashed) -->
+  <rect x="210" y="140" width="95" height="38" rx="6" fill="#F6F5F0" stroke="#888780" stroke-width="0.8" stroke-dasharray="5,3"/>
+  <text x="257" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#333">待商家确认</text>
+  <text x="257" y="172" text-anchor="middle" font-size="9" fill="#888780">（子状态）</text>
+
+  <!-- arrow: 商家确认 -->
+  <path d="M305,159 L365,159" fill="none" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar-blue)"/>
+  <text x="335" y="153" text-anchor="middle" font-size="10" fill="#378ADD">商家确认</text>
+
+  <!-- 申诉审核中 -->
+  <rect x="365" y="140" width="95" height="38" rx="6" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="412" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#333">申诉审核中</text>
+  <rect x="385" y="163" width="30" height="12" rx="3" fill="#E6F1FB"/>
+  <text x="400" y="169" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#1C5BAA">申诉中</text>
+
+  <!-- arrow: 审核通过 -->
+  <path d="M460,159 L525,159" fill="none" stroke="#52C41A" stroke-width="1.5" marker-end="url(#ar-green)"/>
+  <text x="492" y="153" text-anchor="middle" font-size="10" fill="#52C41A">审核通过</text>
+
+  <!-- 申诉成功已恢复 -->
+  <rect x="525" y="140" width="115" height="38" rx="6" fill="#F9FAF7" stroke="#639922" stroke-width="0.5"/>
+  <text x="582" y="158" text-anchor="middle" font-size="12" font-weight="600" fill="#333">申诉成功已恢复</text>
+  <rect x="600" y="163" width="30" height="12" rx="3" fill="#EAF3DE"/>
+  <text x="615" y="169" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#528008">已处理</text>
+
+  <!-- Row 2: 驳回后可再提交 + 申诉次数耗尽 -->
+  <!-- 驳回后可再提交 -->
+  <rect x="35" y="210" width="115" height="38" rx="6" fill="#FFF" stroke="#378ADD" stroke-width="0.5"/>
+  <text x="92" y="228" text-anchor="middle" font-size="12" font-weight="600" fill="#333">驳回后可再提交</text>
+  <rect x="70" y="233" width="30" height="12" rx="3" fill="#FAEEDA"/>
+  <text x="85" y="239" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#8C6500">待处理</text>
+
+  <!-- arrow: 驳回后可再提交 → 待商家确认 (发起确认, loop) -->
+  <path d="M150,224 C185,224 185,159 210,159" fill="none" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar-blue)"/>
+  <text x="190" y="195" text-anchor="middle" font-size="10" fill="#378ADD">发起确认</text>
+
+  <!-- 申诉次数耗尽 -->
+  <rect x="525" y="210" width="115" height="38" rx="6" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+  <text x="582" y="228" text-anchor="middle" font-size="12" font-weight="600" fill="#333">申诉次数耗尽</text>
+  <rect x="560" y="233" width="30" height="12" rx="3" fill="#FAEEDA"/>
+  <text x="575" y="239" text-anchor="middle" dominant-baseline="central" font-size="8" fill="#8C6500">待处理</text>
+
+  <!-- arrow: 申诉审核中 → 驳回后可再提交 (驳回·有次数) -->
+  <path d="M412,178 L412,265 L92,265 L92,248" fill="none" stroke="#E8803C" stroke-width="1.5" marker-end="url(#ar-orange)"/>
+  <text x="250" y="260" font-size="10" fill="#E8803C">审核驳回（有剩余次数）</text>
+
+  <!-- arrow: 申诉审核中 → 申诉次数耗尽 (驳回·无次数) -->
+  <path d="M460,170 C490,170 490,224 525,224" fill="none" stroke="#E8803C" stroke-width="1.5" marker-end="url(#ar-orange)"/>
+  <text x="497" y="200" text-anchor="middle" font-size="10" fill="#E8803C">驳回（次数用完）</text>
+
+  <!-- ===== Sub-state Lane ===== -->
+  <rect x="15" y="315" width="1010" height="145" rx="8" fill="#F6F5F0" stroke="#888780" stroke-width="0.5" stroke-dasharray="6,4"/>
+  <text x="35" y="332" font-size="12" font-weight="600" fill="#888780">代申诉确认子状态（不改变处理状态归属）</text>
+
+  <!-- Row 1: 拒绝 -->
+  <rect x="45" y="345" width="95" height="34" rx="6" fill="#F6F5F0" stroke="#888780" stroke-width="0.5" stroke-dasharray="5,3"/>
+  <text x="92" y="363" text-anchor="middle" font-size="11" font-weight="600" fill="#333">待商家确认</text>
+
+  <path d="M140,362 L225,362" fill="none" stroke="#888780" stroke-width="1.2" marker-end="url(#ar-gray)"/>
+  <text x="182" y="356" text-anchor="middle" font-size="10" fill="#888780">商家拒绝</text>
+
+  <rect x="225" y="345" width="95" height="34" rx="6" fill="#FAECE7" stroke="#D85A30" stroke-width="0.5"/>
+  <text x="272" y="363" text-anchor="middle" font-size="11" font-weight="600" fill="#333">商家已拒绝</text>
+
+  <path d="M320,362 L410,362" fill="none" stroke="#888780" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ar-gray)"/>
+  <text x="365" y="356" text-anchor="middle" font-size="10" fill="#888780">回原主状态</text>
+
+  <rect x="410" y="345" width="170" height="34" rx="6" fill="none" stroke="none"/>
+  <text x="495" y="363" text-anchor="middle" font-size="10" fill="#888">不消耗次数 · 服务商可重新发起</text>
+
+  <!-- Row 2: 超时 -->
+  <rect x="45" y="395" width="95" height="34" rx="6" fill="#F6F5F0" stroke="#888780" stroke-width="0.5" stroke-dasharray="5,3"/>
+  <text x="92" y="413" text-anchor="middle" font-size="11" font-weight="600" fill="#333">待商家确认</text>
+
+  <path d="M140,412 L225,412" fill="none" stroke="#888780" stroke-width="1.2" marker-end="url(#ar-gray)"/>
+  <text x="182" y="406" text-anchor="middle" font-size="10" fill="#888780">24h 超时</text>
+
+  <rect x="225" y="395" width="95" height="34" rx="6" fill="#EDEDEB" stroke="#888780" stroke-width="0.5"/>
+  <text x="272" y="413" text-anchor="middle" font-size="11" font-weight="600" fill="#333">确认超时</text>
+
+  <path d="M320,412 L410,412" fill="none" stroke="#888780" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#ar-gray)"/>
+  <text x="365" y="406" text-anchor="middle" font-size="10" fill="#888780">回原主状态</text>
+
+  <rect x="410" y="395" width="170" height="34" rx="6" fill="none" stroke="none"/>
+  <text x="495" y="413" text-anchor="middle" font-size="10" fill="#888">不消耗次数 · 双方提交入口恢复</text>
+
+  <!-- ===== Legend ===== -->
+  <rect x="15" y="475" width="1010" height="48" rx="6" fill="#FFF" stroke="#E8E8E8"/>
+  <text x="35" y="493" dominant-baseline="central" font-size="11" font-weight="600" fill="#8C8C8C">图例</text>
+
+  <rect x="85" y="487" width="30" height="13" rx="3" fill="#FAEEDA"/>
+  <text x="100" y="494" text-anchor="middle" dominant-baseline="central" font-size="9" fill="#8C6500">待处理</text>
+  <rect x="135" y="487" width="30" height="13" rx="3" fill="#E6F1FB"/>
+  <text x="150" y="494" text-anchor="middle" dominant-baseline="central" font-size="9" fill="#1C5BAA">申诉中</text>
+  <rect x="185" y="487" width="30" height="13" rx="3" fill="#EAF3DE"/>
+  <text x="200" y="494" text-anchor="middle" dominant-baseline="central" font-size="9" fill="#528008">已处理</text>
+
+  <rect x="245" y="487" width="14" height="13" rx="3" fill="none" stroke="#888780" stroke-width="0.8" stroke-dasharray="3,2"/>
+  <text x="266" y="494" dominant-baseline="central" font-size="10" fill="#595959">子状态</text>
+
+  <line x1="320" y1="494" x2="345" y2="494" stroke="#378ADD" stroke-width="1.5"/>
+  <text x="352" y="494" dominant-baseline="central" font-size="10" fill="#595959">主流程</text>
+
+  <line x1="405" y1="494" x2="430" y2="494" stroke="#52C41A" stroke-width="1.5"/>
+  <text x="437" y="494" dominant-baseline="central" font-size="10" fill="#595959">通过</text>
+
+  <line x1="470" y1="494" x2="495" y2="494" stroke="#E8803C" stroke-width="1.5"/>
+  <text x="502" y="494" dominant-baseline="central" font-size="10" fill="#595959">驳回</text>
+
+  <line x1="545" y1="494" x2="570" y2="494" stroke="#888780" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="577" y="494" dominant-baseline="central" font-size="10" fill="#595959">回退/循环</text>
+
+  <text x="660" y="494" dominant-baseline="central" font-size="10" fill="#8C8C8C">x/2 = 剩余申诉次数 / 总次数；仅商家确认提交时消耗 1 次</text>
+</svg></div>
+
+    <h4>4.3.1 警告型（不可申诉，2 个主状态）</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>主状态</th><th>处理状态</th><th>状态文案</th><th>操作入口</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>警告待整改</td><td>待处理</td><td><code>剩余 x 天整改</code>，下方展示 <code>整改截止时间：YYYY-MM-DD HH:mm</code></td><td>有指引：<code>查看指引</code>；无指引：<code>暂无指引链接</code>（不可点）</td><td>有链接打开整改指引；无链接展示灰色文案</td></tr>
+        <tr><td>警告整改期结束</td><td>已处理</td><td><code>整改期已结束</code></td><td>-</td><td>归档只读</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>4.3.2 处罚型（可申诉，5 个主状态）</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>主状态</th><th>处理状态</th><th>状态文案</th><th>操作入口</th><th>弹窗/说明</th></tr></thead>
+      <tbody>
+        <tr><td>待首次提交申诉</td><td>待处理</td><td><code>待提交申诉（2/2）</code></td><td><code>处理</code></td><td>处理弹窗（可提交）；可进入子状态</td></tr>
+        <tr><td>驳回后可再提交</td><td>待处理</td><td><code>被驳回（1/2）</code></td><td><code>处理</code></td><td>处理弹窗（展示驳回原因，可再次提交）；可进入子状态</td></tr>
+        <tr><td>申诉审核中</td><td>申诉中</td><td><code>审核中</code></td><td><code>查看</code></td><td>查看弹窗；状态标 <code>审核中</code></td></tr>
+        <tr><td>申诉成功已恢复</td><td>已处理</td><td><code>已恢复，06-05 18:00</code></td><td><code>查看</code></td><td>查看弹窗；状态标 <code>申诉通过</code></td></tr>
+        <tr><td>申诉次数耗尽</td><td>待处理</td><td><code>申诉次数已用完</code></td><td><code>查看</code></td><td>查看弹窗；状态标 <code>申诉驳回</code>；展示 <code>0/2</code> 和 <code>不可再提交</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <blockquote><strong>注意：</strong>审核驳回后的状态流转：剩余次数 &gt; 0 &rarr; 进入「驳回后可再提交」；剩余次数 = 0 &rarr; 进入「申诉次数耗尽」。</blockquote>
+
+    <h4>4.3.3 代申诉确认子状态</h4>
+    <p>「待首次提交申诉」和「驳回后可再提交」在服务商发起确认后进入子状态；子状态<span class="hl">不改变处理状态归属</span>（仍在待处理），只改变列表行文案。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>子状态</th><th>触发</th><th>状态文案</th><th>操作入口</th><th>期间行为</th><th>结束后</th></tr></thead>
+      <tbody>
+        <tr><td>待商家确认</td><td>服务商发起确认</td><td><code>待商家确认</code>（替换主状态文案）</td><td><code>查看</code>（只读）</td><td>后端冻结商家自申诉；处理弹窗转为只读态，展示已发起的确认信息，不可编辑</td><td>商家确认 &rarr; 进入「申诉审核中」</td></tr>
+        <tr><td>商家已拒绝</td><td>商家 H5 点击拒绝</td><td>主状态文案保持 + 附加标签 <code>商家已拒绝</code></td><td><code>处理</code></td><td>双方入口恢复，不消耗次数</td><td>服务商点击 <code>处理</code> 后清除标签、打开处理弹窗</td></tr>
+        <tr><td>确认超时</td><td>24h 未操作</td><td>主状态文案保持 + 附加标签 <code>确认超时</code></td><td><code>处理</code></td><td>双方入口恢复，不消耗次数</td><td>服务商点击 <code>处理</code> 后清除标签、打开处理弹窗</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <blockquote>待商家确认替换主状态文案。商家已拒绝 / 确认超时不替换主状态文案，在旁边额外展示子状态标签，保留申诉次数。状态需通过事件推送或查询回补及时更新。</blockquote>
+
+    <h3 id="sec-4-4">4.4 处理状态归属规则</h3>
+    <p>列表不分页签，用「处理状态」筛选项组织记录。待处理、申诉中、已处理是记录的归属分类，可与搜索、限制类型、时间筛选在同一列表内联合生效。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>处理状态</th><th>定义</th><th>包含记录</th><th>数量展示</th></tr></thead>
+      <tbody>
+        <tr><td>待处理</td><td>当前仍未恢复或仍需服务商关注</td><td>警告待整改、待首次提交申诉、驳回后可再提交、申诉次数耗尽</td><td>展示数量角标</td></tr>
+        <tr><td>申诉中</td><td>已提交申诉，等待平台审核结果</td><td>申诉审核中的处罚记录</td><td>展示数量角标</td></tr>
+        <tr><td>已处理</td><td>当前无需继续处理</td><td>申诉成功已恢复、警告整改期结束</td><td>不展示数量</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>进入页面和处理状态筛重置后，默认选中「待处理」。筛选另提供「全部」，便于跨状态检索。数量角标具体展示位置以设计稿为准。</p>
+    <p>警告类记录在整改截止前属于待处理；到整改截止时间后自动进入已处理。若后续处罚落地，处罚作为新的违规记录进入队列。<code>申诉次数耗尽</code> 虽然没有可再提交的动作，但限制尚未恢复，仍留在待处理，入口只允许查看原因、最近一次申诉和指引，不再展示提交按钮。</p>
+
+    <h2 id="sec-5"><span class="num">5</span> 页面设计</h2>
+    <p>专区由 <code>主列表 + 聚合弹窗 + 链接</code> 承载，列表每行只保留 1 个操作入口，点击后打开对应弹窗或跳转链接。</p>
+    <div class="svg-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 460" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="ar-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52C41A"/></marker>
+    <marker id="ar-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#FA8C16"/></marker>
+    <marker id="ar-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8C8C8C"/></marker>
+    <marker id="ar-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1890FF"/></marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.08"/></filter>
+  </defs>
+
+  <rect width="1040" height="460" fill="#FAFBFC"/>
+
+  <!-- ========== 主列表 ========== -->
+  <rect x="40" y="140" width="220" height="180" rx="12" fill="#1890FF" filter="url(#shadow)"/>
+  <text x="150" y="170" text-anchor="middle" fill="white" font-size="17" font-weight="600">主列表</text>
+  <line x1="60" y1="186" x2="240" y2="186" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="150" y="212" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="13">状态筛：待处理 / 申诉中 / 已处理</text>
+  <text x="150" y="236" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="13">筛选：小程序 · 类型 · 时间</text>
+  <text x="150" y="260" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="13">每行一条违规记录</text>
+  <text x="150" y="284" text-anchor="middle" fill="rgba(255,255,255,0.95)" font-size="13">单一操作入口</text>
+
+  <!-- 连线：主列表 → 三个目标 -->
+  <path d="M260,195 C320,195 340,90 400,90" fill="none" stroke="#52C41A" stroke-width="2" marker-end="url(#ar-g)"/>
+  <path d="M260,230 C320,230 340,280 400,280" fill="none" stroke="#FA8C16" stroke-width="2" marker-end="url(#ar-o)"/>
+  <path d="M260,280 C320,280 340,362 400,362" fill="none" stroke="#8C8C8C" stroke-width="2" marker-end="url(#ar-gray)"/>
+
+  <!-- 操作标签 -->
+  <rect x="298" y="183" width="36" height="20" rx="4" fill="#52C41A"/>
+  <text x="316" y="193" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11" font-weight="600">处理</text>
+  <rect x="298" y="218" width="36" height="20" rx="4" fill="#FA8C16"/>
+  <text x="316" y="228" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11" font-weight="600">查看</text>
+  <rect x="288" y="268" width="56" height="20" rx="4" fill="#8C8C8C"/>
+  <text x="316" y="278" text-anchor="middle" dominant-baseline="central" fill="white" font-size="11" font-weight="600">查看指引</text>
+
+  <!-- ========== 处理弹窗 ========== -->
+  <rect x="400" y="50" width="240" height="80" rx="10" fill="white" stroke="#52C41A" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="400" y="50" width="240" height="28" rx="10" fill="#52C41A"/>
+  <rect x="400" y="64" width="240" height="14" fill="#52C41A"/>
+  <text x="520" y="64" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">处理弹窗</text>
+  <text x="420" y="96" fill="#595959" font-size="12">整改指引 · 驳回原因 · 申诉说明</text>
+  <text x="420" y="116" fill="#595959" font-size="12">申诉说明 · 材料 · 提交按钮</text>
+
+  <!-- 连线：处理弹窗 → 提交确认弹窗 -->
+  <line x1="520" y1="130" x2="520" y2="153" stroke="#1890FF" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#ar-b)"/>
+  <rect x="535" y="134" width="64" height="18" rx="4" fill="#1890FF"/>
+  <text x="567" y="143" text-anchor="middle" dominant-baseline="central" fill="white" font-size="10" font-weight="600">点击提交</text>
+
+  <!-- ========== 提交确认弹窗 ========== -->
+  <rect x="400" y="155" width="240" height="70" rx="10" fill="white" stroke="#1890FF" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="400" y="155" width="240" height="28" rx="10" fill="#1890FF"/>
+  <rect x="400" y="169" width="240" height="14" fill="#1890FF"/>
+  <text x="520" y="169" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">提交确认弹窗</text>
+  <text x="420" y="200" fill="#595959" font-size="12">次数提示 · 取消 / 确认提交</text>
+
+  <!-- 连线：提交确认 → 商家H5 -->
+  <path d="M640,190 C700,190 720,165 780,165" fill="none" stroke="#1890FF" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#ar-b)"/>
+  <rect x="675" y="156" width="60" height="18" rx="4" fill="#1890FF"/>
+  <text x="705" y="165" text-anchor="middle" dominant-baseline="central" fill="white" font-size="10" font-weight="600">发起确认</text>
+
+  <!-- ========== 查看弹窗 ========== -->
+  <rect x="400" y="250" width="240" height="60" rx="10" fill="white" stroke="#FA8C16" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="400" y="250" width="240" height="28" rx="10" fill="#FA8C16"/>
+  <rect x="400" y="264" width="240" height="14" fill="#FA8C16"/>
+  <text x="520" y="264" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">查看弹窗</text>
+  <text x="420" y="296" fill="#595959" font-size="12">状态标 · 来源 · 说明 · 材料摘要（只读）</text>
+
+  <!-- ========== 外部链接 ========== -->
+  <rect x="400" y="335" width="240" height="55" rx="10" fill="white" stroke="#8C8C8C" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="400" y="335" width="240" height="28" rx="10" fill="#8C8C8C"/>
+  <rect x="400" y="349" width="240" height="14" fill="#8C8C8C"/>
+  <text x="520" y="349" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">外部链接</text>
+  <text x="420" y="380" fill="#595959" font-size="12">打开整改指引 / 暂无指引链接</text>
+
+  <!-- ========== 商家 H5 确认页 ========== -->
+  <rect x="780" y="115" width="220" height="100" rx="10" fill="white" stroke="#722ED1" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="780" y="115" width="220" height="28" rx="10" fill="#722ED1"/>
+  <rect x="780" y="129" width="220" height="14" fill="#722ED1"/>
+  <text x="890" y="129" text-anchor="middle" dominant-baseline="central" fill="white" font-size="14" font-weight="600">商家 H5 确认页</text>
+  <text x="800" y="161" fill="#595959" font-size="12">查看代填内容 · 材料预览</text>
+  <text x="800" y="181" fill="#595959" font-size="12">次数提示 · 拒绝 / 确认提交</text>
+
+  <!-- ========== 适用状态标注 ========== -->
+  <text x="665" y="66" fill="#52C41A" font-size="12" font-weight="600">适用状态</text>
+  <text x="665" y="86" fill="#595959" font-size="11">待首次提交申诉</text>
+  <text x="665" y="102" fill="#595959" font-size="11">驳回后可再提交</text>
+
+  <text x="665" y="260" fill="#FA8C16" font-size="12" font-weight="600">适用状态</text>
+  <text x="665" y="280" fill="#595959" font-size="11">申诉审核中 · 已恢复</text>
+  <text x="665" y="296" fill="#595959" font-size="11">申诉次数耗尽</text>
+
+  <text x="665" y="345" fill="#8C8C8C" font-size="12" font-weight="600">适用状态</text>
+  <text x="665" y="365" fill="#595959" font-size="11">警告待整改</text>
+
+  <!-- 图例 -->
+  <rect x="40" y="405" width="960" height="36" rx="6" fill="white" stroke="#E8E8E8"/>
+  <text x="60" y="423" dominant-baseline="central" fill="#8C8C8C" font-size="11" font-weight="600">图例</text>
+  <rect x="100" y="417" width="12" height="12" rx="2" fill="#1890FF"/>
+  <text x="118" y="423" dominant-baseline="central" fill="#595959" font-size="11">主列表</text>
+  <rect x="180" y="417" width="12" height="12" rx="2" fill="#52C41A"/>
+  <text x="198" y="423" dominant-baseline="central" fill="#595959" font-size="11">处理弹窗</text>
+  <rect x="270" y="417" width="12" height="12" rx="2" fill="#1890FF"/>
+  <text x="288" y="423" dominant-baseline="central" fill="#595959" font-size="11">提交确认弹窗</text>
+  <rect x="380" y="417" width="12" height="12" rx="2" fill="#FA8C16"/>
+  <text x="398" y="423" dominant-baseline="central" fill="#595959" font-size="11">查看弹窗</text>
+  <rect x="460" y="417" width="12" height="12" rx="2" fill="#8C8C8C"/>
+  <text x="478" y="423" dominant-baseline="central" fill="#595959" font-size="11">外部链接</text>
+  <rect x="550" y="417" width="12" height="12" rx="2" fill="#722ED1"/>
+  <text x="568" y="423" dominant-baseline="central" fill="#595959" font-size="11">商家H5确认页</text>
+  <line x1="680" y1="423" x2="710" y2="423" stroke="#1890FF" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="718" y="423" dominant-baseline="central" fill="#595959" font-size="11">弹窗内触发</text>
+</svg></div>
+
+    <h3 id="sec-5-1">5.1 列表设计</h3>
+    
+    <h4>5.1.1 搜索、筛选、分页</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>能力</th><th>产品口径</th></tr></thead>
+      <tbody>
+        <tr><td>处理状态筛选</td><td>支持待处理 / 申诉中 / 已处理 / 全部；进入页面默认待处理；可与搜索、限制类型、时间联合筛选</td></tr>
+        <tr><td>小程序搜索</td><td>placeholder：<code>搜索小程序名称或 AppID</code>；与处理状态及其他筛选联合生效</td></tr>
+        <tr><td>限制类型筛选</td><td>支持全部 / 警告提醒 / 功能限制 / 账号限制 / 页面封禁 / 下架</td></tr>
+        <tr><td>时间筛选</td><td>支持全部 / 近 7 天 / 近 30 天 / 自定义日期范围</td></tr>
+        <tr><td>默认排序</td><td>默认按违规发生时间倒序，最新记录在前</td></tr>
+        <tr><td>筛选结果</td><td>列表总数展示当前筛选条件下的记录数</td></tr>
+        <tr><td>分页</td><td>默认 10 条 / 页，支持 5 / 10 / 20 / 50 条 / 页和跳页</td></tr>
+        <tr><td>重置</td><td>清空筛选后回到默认视图（处理状态=待处理）</td></tr>
+        <tr><td>空状态-无记录</td><td>账号下无任何违规记录：<code>暂无违规记录</code></td></tr>
+        <tr><td>空状态-筛选无果</td><td>当前筛选组合无结果：<code>没有符合条件的记录</code> + <code>重置筛选</code> 按钮</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>5.1.2 列表粒度与去重</h4>
+    <p>每行一条违规记录；同一小程序多条违规全部展示，不做小程序级聚合。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>场景</th><th>一期处理方式</th></tr></thead>
+      <tbody>
+        <tr><td>同一小程序多条不同违规</td><td>多行展示，分别处理</td></tr>
+        <tr><td>同一小程序同时有警告和处罚</td><td>分别按各自处理状态展示，不合并</td></tr>
+        <tr><td>同一小程序多条待处理记录</td><td>全部展示；不提示另有其他记录</td></tr>
+        <tr><td>同一违规由事件推送和查询回补都返回</td><td>后端合并为同一条记录，避免重复展示</td></tr>
+        <tr><td>一条记录包含多个违规内容项 / 证据项</td><td>仍是一条记录，违规内容通过截图或证据链接查看</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>5.1.3 主列表字段</h4>
+    <p>本表只描述 UI 展示，不描述接口字段名。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>列标题</th><th>列内展示</th></tr></thead>
+      <tbody>
+        <tr><td>记录 ID</td><td><code>记录 ID：xxx</code></td></tr>
+        <tr><td>小程序</td><td>小程序名称在上，AppID 在下</td></tr>
+        <tr><td>限制与处理内容</td><td><code>功能限制 - 封禁分享能力</code> / <code>警告提醒 - 限期3天整改</code> / <code>页面封禁 - 封禁违规页面</code></td></tr>
+        <tr><td>违规原因</td><td>原因标题；有链接时蓝色可点，打开规则 / 帖子 / 文档</td></tr>
+        <tr><td>违规内容</td><td><code>查看违规截图</code>，打开原证据图片 / 原证据链接</td></tr>
+        <tr><td>当前状态</td><td><code>剩余 x 天整改</code>、<code>审核中</code>、<code>已恢复</code> 等；警告待整改时下方展示整改截止时间</td></tr>
+        <tr><td>发生时间</td><td><code>2026-06-03 10:30</code></td></tr>
+        <tr><td>操作</td><td><code>查看指引</code> / <code>处理</code> / <code>查看</code> / <code>暂无指引链接</code>（不可点）/ 空；触发链接跳转或聚合弹窗</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <blockquote>除「违规原因」「违规内容」可点击链接和「操作」可触发弹窗 / 跳转外，其余列均不可点击。<b>限制类型</b>枚举见附录（5 种）。<b>处理内容</b>枚举见附录（约 20 种）。<b>违规原因</b>为微信侧返回的原因标题，服务商平台不做枚举维护，直接展示即可。</blockquote>
+
+    <h4>5.1.4 列表外显内容规则</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>设计卡点</th><th>列表展示规则</th></tr></thead>
+      <tbody>
+        <tr><td>只知道有违规，但不知道违规了什么</td><td><code>限制与处理内容</code> 必须展示限制类型 + 短处理对象；<code>违规原因</code> 展示原因标题</td></tr>
+        <tr><td>原因标题很短</td><td>直接外显，如 <code>滥用订阅消息</code>、<code>诱导关注公众号</code></td></tr>
+        <tr><td>原因或证据很长</td><td>列表只放短标题；详情通过 <code>违规内容</code> 的截图 / 证据链接承接</td></tr>
+        <tr><td>有明确限制对象</td><td>放进 <code>限制与处理内容</code>，如 <code>功能限制 - 封禁分享能力</code></td></tr>
+        <tr><td>有整改指引</td><td>入口放在操作列或弹窗内；没有指引时不展示可点击入口，只展示 <code>暂无指引链接</code></td></tr>
+        <tr><td>已有申诉记录</td><td>列表只展示业务状态；申诉说明、材料、驳回原因放入弹窗</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-5-2">5.2 处理弹窗</h3>
+    <p>触发入口：<code>处理</code>。弹窗标题：<code>处理申诉</code>。适用状态：待首次提交申诉、驳回后可再提交、待商家确认（只读态）。</p>
+    <blockquote>待商家确认子状态点击操作列 <code>查看</code> 时，打开的是处理弹窗只读态（非查看弹窗），展示已发起的确认信息，表单不可编辑。商家已拒绝 / 确认超时为主状态文案旁的附加标签，服务商点击 <code>处理</code> 后清除标签、打开处理弹窗，展示待确认结果提示。</blockquote>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>字段 / 区域</th><th>展示形式</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>整改指引</td><td>链接 / 提示</td><td>有链接展示「整改指引：点击查看指引」，点击查看指引为蓝色链接可点击；无链接展示 <code>暂无指引链接</code></td></tr>
+        <tr><td>剩余申诉次数</td><td>只读文本</td><td>「2」「1」</td></tr>
+        <tr><td>驳回原因</td><td>只读文本</td><td><code>驳回后可再提交</code> 展示</td></tr>
+        <tr><td>最近一次申诉信息</td><td>只读摘要</td><td>仅有已提交申诉内容时展示；优先展示最近一次申诉来源、提交时间、申诉说明、材料摘要</td></tr>
+        <tr><td>申诉说明</td><td>多行文本框</td><td>必填；placeholder：<code>请输入申诉说明，包括整改情况和申诉理由</code>；上限暂按 <code>1000</code> 字；展示字数计数</td></tr>
+        <tr><td>证明材料</td><td>文件上传</td><td>选填；按钮文案 <code>上传文件</code>；提示文案 <code>支持 JPG/JPEG/BMP/GIF/PNG，单文件不超过 10M，最多 10 个</code>；最多 <code>10</code> 个；单文件不超过 <code>10M</code>；支持 <code>.jpg</code>, <code>.jpeg</code>, <code>.bmp</code>, <code>.gif</code>, <code>.png</code></td></tr>
+        <tr><td>责任提示</td><td>文案</td><td><code>以服务商身份代小程序提交申诉，会消耗一次该小程序申诉机会（x/2）</code></td></tr>
+        <tr><td>提交申诉按钮</td><td>按钮</td><td>按钮文案 <code>提交申诉</code>；申诉说明填写后可点；点击后进入提交确认弹窗</td></tr>
+        <tr><td>待确认结果提示</td><td>轻提示</td><td>商家拒绝：<code>商家已拒绝本次申诉，可修改后重新提交</code>；确认超时：<code>商家未在 24 小时内确认，已自动失效，可重新提交</code></td></tr>
+        <tr><td>API 不可用提示</td><td>提示文案</td><td><code>代申诉提交功能即将上线，当前可先填写申诉内容备用</code>；代申诉 API 不可用时，处理弹窗保留，申诉说明和证明材料可填写，仅提交申诉按钮置灰</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-5-3">5.3 查看弹窗</h3>
+    <p>触发入口：<code>查看</code>。弹窗标题：<code>申诉信息</code>。适用状态：申诉审核中、申诉成功已恢复、申诉次数耗尽。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>字段</th><th>展示形式</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>申诉状态</td><td>状态标</td><td><code>审核中</code> / <code>申诉通过</code> / <code>申诉驳回</code>（仅在申诉次数耗尽时展示）</td></tr>
+        <tr><td>驳回原因</td><td>只读文本</td><td><code>申诉次数耗尽</code> 展示</td></tr>
+        <tr><td>剩余申诉次数</td><td>只读文本</td><td>「1」「0」</td></tr>
+        <tr><td>不可再提交提示</td><td>提示文案</td><td>申诉次数耗尽时展示「申诉机会已耗尽，无法提交」</td></tr>
+        <tr><td>整改指引</td><td>链接 / 提示</td><td>有链接展示「整改指引：点击查看指引」，无链接展示 <code>暂无指引链接</code></td></tr>
+        <tr><td>申诉来源</td><td>只读文本</td><td><code>服务商提交</code> / <code>小程序侧提交</code></td></tr>
+        <tr><td>申诉提交时间</td><td>只读时间</td><td>展示最近一次提交时间</td></tr>
+        <tr><td>申诉说明</td><td>只读文本</td><td>展示已提交的申诉理由 / 整改说明</td></tr>
+        <tr><td>证明材料</td><td>只读摘要</td><td>V1 先展示材料 ID / 文件数量；无材料时展示 <code>暂无证明材料</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-5-4">5.4 提交确认弹窗</h3>
+    <p>触发入口：处理弹窗内点击 <code>提交申诉</code>。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>字段 / 区域</th><th>展示形式</th><th>规则</th></tr></thead>
+      <tbody>
+        <tr><td>消耗申诉机会提示</td><td>文案</td><td><code>本次提交会消耗小程序 1 次申诉机会（当前剩余 x 次）</code></td></tr>
+        <tr><td>提交对象提示</td><td>文案</td><td><code>提交对象：{小程序名称}</code></td></tr>
+        <tr><td>取消</td><td>按钮</td><td>按钮文案 <code>取消</code>；关闭确认弹窗，保留处理弹窗表单内容</td></tr>
+        <tr><td>确认提交</td><td>按钮</td><td>按钮文案 <code>确认提交</code>；发起商家 H5 确认，不直接提交审核（次数消耗规则见 4.2）</td></tr>
+        <tr><td>发起成功</td><td>状态</td><td>Toast：<code>已发起商家确认，等待商家确认后正式提交</code>；关闭提交确认弹窗和处理弹窗；记录进入 <code>待商家确认</code> 子状态，状态展示 <code>待商家确认</code>；刷新列表、数量角标和行状态</td></tr>
+        <tr><td>提交失败</td><td>提示 / 状态</td><td>Toast：<code>发起失败：{失败原因}，请稍后重试</code>；关闭确认弹窗，停留原业务状态，保留处理弹窗表单内容，可重新提交</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-5-5">5.5 商家 H5 确认页</h3>
+    <p>H5 页复用 MP 后台"小程序提交申诉"页面结构，但从"填写页"改成"确认页"：商家只查看服务商代填内容，并决定是否同意正式提交。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>改造类型</th><th>页面内容</th><th>处理方式</th></tr></thead>
+      <tbody>
+        <tr><td>原样保留</td><td>被处理原因、违反规则、违规内容、处理内容</td><td>沿用 MP 后台展示结构和样式、内容</td></tr>
+        <tr><td>改为只读</td><td>申诉原因</td><td>展示服务商已填写内容，不允许商家在 H5 修改</td></tr>
+        <tr><td>改为只读预览</td><td>证明材料</td><td>展示服务商上传的文件，支持文件名、缩略图或预览；不允许新增、删除或替换</td></tr>
+        <tr><td>新增</td><td>身份校验</td><td>微信 <span class="hl-blue u">OAuth</span>；仅<span class="mark">管理员、运营者及其他单独开通违规处理权限的人员</span>可查看并操作，与 MP 后台申诉权限对齐</td></tr>
+        <tr><td>新增</td><td>页面标题</td><td><code>服务商 XXX 为小程序 XXX 提交的申诉</code></td></tr>
+        <tr><td>新增</td><td>确认文案</td><td><code>点击【确认提交】后，申诉会正式提交平台审核，并扣减 1 次机会；如点击【拒绝】，此记录将退回，不扣减任何申诉机会。请于 24h 内确认，超时自动退回。</code></td></tr>
+        <tr><td>新增</td><td>底部按钮</td><td><code>拒绝</code> / <code>确认提交</code></td></tr>
+        <tr><td>确认结果</td><td>确认提交</td><td>申诉正式进入审核队列，双方同步审核中</td></tr>
+        <tr><td>确认结果</td><td>拒绝</td><td>商家自申诉入口恢复，商家可自行提交，服务商也可重新整理后再次发起</td></tr>
+        <tr><td>确认结果</td><td>超时</td><td>24 小时未处理后自动失效，状态为"确认超时"，双方提交入口恢复</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="sec-6"><span class="num">6</span> 通知流程</h2>
+    <p>商家侧在原有微信通知链路基础上，<span class="mark">仅代申诉确认环节新增 H5</span>；服务商侧通过<span class="hl-blue">微信 API 回调、模板消息和监管专区控制台</span>三轨触达。不自建通知推送系统。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>侧</th><th>通知对象</th></tr></thead>
+      <tbody>
+        <tr><td>小程序商家</td><td>管理员、运营者、其他单独开通违规处理权限的人员</td></tr>
+        <tr><td>服务商</td><td>V1：运营者；权限模块上线后：具备违规申诉待办专区写入权限的人员</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>通知对象与可操作身份一致：仅向具备相应权限的人员触达，H5 OAuth 亦仅允许同一范围身份操作。</p>
+
+    <h3 id="sec-6-1">6.1 通知全景</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>阶段</th><th>商家</th><th>服务商</th></tr></thead>
+      <tbody>
+        <tr><td>产生违规</td><td>安全助手推送 + MP 后台通知（原有，不变）</td><td>原有微信 API 回调 <code>wxa_punish_event</code> + 模板消息 + 控制台列表更新</td></tr>
+        <tr><td>发起代申诉</td><td>安全助手强提醒 → H5 确认链接；<span class="hl-blue u">OAuth 校验身份</span></td><td>无需通知（操作人自行发起）；列表进入「待商家确认」</td></tr>
+        <tr><td>商家拒绝</td><td>不额外推送（刚在 H5 完成操作）</td><td><span class="tag tag-info">新增</span> 微信 API 回调 + 模板消息 + 控制台更新</td></tr>
+        <tr><td>商家超时</td><td>MP 站内信留痕（<em>弱触达</em>，不另发强提醒）</td><td><span class="tag tag-info">新增</span> 微信 API 回调 + 模板消息 + 控制台更新</td></tr>
+        <tr><td>审核终局（通过 / 驳回）</td><td>官方标准结果推送（原有，不变）</td><td>原有微信 API 回调 <code>wxa_appeal_record</code> + 模板消息 + 控制台更新</td></tr>
+        <tr><td>旁路：商家自行申诉</td><td>MP 原有申诉提交流程</td><td>原有微信 API 回调 <code>wxa_appeal_record</code> + 模板消息 + 控制台更新；列表标「小程序侧提交」</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-6-2">6.2 商家侧</h3>
+    <p>代申诉确认是商家侧唯一新增体验；其余阶段沿用微信原有通知，仅微调文案以区分「待确认」与「已提交」。</p>
+    <p><strong>H5 身份校验</strong>：打开链接后走微信 OAuth，身份范围与上表商家通知对象一致；非授权身份拦截。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>阶段</th><th>触达方式</th><th>文案</th></tr></thead>
+      <tbody>
+        <tr><td>发起代申诉确认</td><td>安全助手 + MP 站内信</td><td>服务商「{服务商名称}」<span class="hl">代你准备了</span>小程序「{小程序名称}」的违规申诉，请在 24 小时内<span class="u">查看并确认是否提交</span></td></tr>
+        <tr><td>商家确认提交</td><td>MP 站内信留痕</td><td><code>小程序「{小程序名称}」的申诉已按你的确认提交，等待平台审核</code></td></tr>
+        <tr><td>商家拒绝</td><td>不推送</td><td>—</td></tr>
+        <tr><td>商家超时</td><td>MP 站内信留痕</td><td><code>服务商为小程序「{小程序名称}」提交的申诉确认已超时，本次未提交、未消耗申诉次数</code></td></tr>
+        <tr><td>审核通过 / 驳回</td><td>官方标准结果推送</td><td>与 MP 后台原有一致，本方案不另定义文案</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-6-3">6.3 服务商侧</h3>
+    <p>通知对象见上表。相关人员通过以下三轨跟进全链路：</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>通道</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><strong>微信 API 回调</strong></td><td>推送到第三方平台消息接收 URL；供自建系统消费，含原有与新增两类事件（见 6.4）</td></tr>
+        <tr><td><strong>模板消息</strong></td><td>主动触达平台操作者，提醒需跟进的事项</td></tr>
+        <tr><td><strong>监管专区控制台</strong></td><td>列表状态权威留痕；所有事件最终可回查</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p>无论服务商通过监管专区页面还是代申诉 API 发起确认，回调与模板消息口径一致。</p>
+
+    <h3 id="sec-6-4">6.4 微信 API 回调</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>类型</th><th>覆盖事件</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>原有</strong></td><td>新违规</td><td><code>wxa_punish_event</code></td></tr>
+        <tr><td><strong>原有</strong></td><td>申诉状态变化（含商家自行提交、审核终局）</td><td><code>wxa_appeal_record</code></td></tr>
+        <tr><td><strong>新增</strong></td><td>商家 H5 确认提交、拒绝、24h 超时</td><td><span class="hl">代申诉确认链路产生</span>，需微信侧扩展事件定义；具体事件名与字段<em>待接口方案确认</em></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="sec-7"><span class="num">7</span> 风险与控制</h2>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>风险</th><th>方案控制</th></tr></thead>
+      <tbody>
+        <tr><td>商家不知情</td><td><span class="hl-green">商家 H5 确认后才正式提交</span></td></tr>
+        <tr><td>申诉次数被浪费</td><td>H5 <span class="u">明示次数消耗</span>，商家可拒绝</td></tr>
+        <tr><td>授权范围不清</td><td>仅面向具备 <code>18 + 76</code> 授权的小程序开放，且每次提交需要商家确认</td></tr>
+        <tr><td>材料真实性风险</td><td>商家可在 H5 确认内容和材料</td></tr>
+        <tr><td>隐私扩大风险</td><td>本能力不新增隐私拉取</td></tr>
+        <tr><td>服务商代填虚假材料</td><td>商家在 H5 确认页可查看完整申诉内容和材料后再决定，保留最终确认权</td></tr>
+        <tr><td>H5 确认链接被转发</td><td>微信 OAuth 校验商家通知对象范围内身份；非授权身份无法操作；24h 自动失效</td></tr>
+        <tr><td>服务商反复发起骚扰</td><td>当前不做发起次数限制；商家可拒绝，拒绝后需服务商重新整理才能再次发起</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="sec-9"><span class="num">附录</span></h2>
+
+    <h3 id="sec-9-api">官方已存在的微信开放平台接口能力</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>微信开放平台能力</th><th>后台可支撑什么</th><th>对应内部能力</th><th>文档链接</th></tr></thead>
+      <tbody>
+        <tr><td><code>getAuthorizerList</code></td><td>获取第三方平台已授权小程序范围</td><td>授权账号聚合、数据权限判断</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/openApi/authorization-management/api_getauthorizerlist.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>api_get_authorizer_info</code></td><td>获取小程序名称、头像、权限集</td><td>基础信息缓存、18 + 76 授权校验</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/api/ThirdParty/token/api_get_authorizer_info.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>wxa_punish_event</code></td><td>实时接收警告、处罚、下架、封禁事件</td><td>事件接收、记录入库、详情数据来源</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/Third-party_Platforms/2.0/product/illegalEvent.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>getIllegalRecords</code></td><td>获取历史违规记录和官方记录 ID</td><td>查询回补、对账、记录去重</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/record-management/api_getillegalrecords.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>getAppealRecords</code></td><td>获取申诉历史、审核结果、材料信息</td><td>申诉状态派生、只读展示、状态回补</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/record-management/api_getappealrecords.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>wxa_appeal_record</code></td><td>接收申诉提交或审核状态变化</td><td>外部处理回流、状态更新</td><td><a href="https://developers.weixin.qq.com/doc/oplatform/openApi/miniprogram-management/record-management/api_getappealrecords.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>uploadTempMedia</code></td><td>上传图片类证明材料</td><td>材料上传能力的官方底座</td><td><a href="https://developers.weixin.qq.com/doc/service/api/material/temporary/api_uploadtempmedia.html" target="_blank" rel="noopener">文档</a></td></tr>
+        <tr><td><code>getMedia</code></td><td>下载或查看已提交材料</td><td>材料查看能力</td><td><a href="https://developers.weixin.qq.com/miniprogram/dev/server/API/kf-mgnt/kf-message/api_getmedia.html" target="_blank" rel="noopener">文档</a></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-9-glossary">术语</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>术语</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td>违规申诉代办专区</td><td>监管专区内围绕违规查看、整改指引、申诉组织和结果跟进的处理工作区</td></tr>
+        <tr><td>代申诉</td><td>服务商填写申诉说明和材料，商家确认后正式提交</td></tr>
+        <tr><td>MP 后台</td><td>小程序管理后台，商家自行处理违规和申诉的入口</td></tr>
+        <tr><td>18 权限集</td><td>商家授权服务商管理小程序的权限项</td></tr>
+        <tr><td>76 权限集</td><td>商家授权服务商协助违规申诉相关事项的权限项</td></tr>
+        <tr><td>H5 确认</td><td>商家在移动端经 OAuth 身份校验后，查看服务商代填内容、材料和次数提示，点击确认或拒绝</td></tr>
+        <tr><td>待商家确认</td><td>服务商已代填并发起确认，但申诉尚未进入审核队列、尚未消耗次数</td></tr>
+        <tr><td>已绑定消费</td><td>服务商在服务商平台与第三方平台账号建立消费关系（与授权 <code>18+76</code> 为两个独立条件），决定哪些小程序归属到该服务商</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-9-1">权责问题 · 申诉次数扣减与责任归属</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>核心维度</th><th>代申诉产品规则</th><th>风险与权责边界（不背书、不加重）</th></tr></thead>
+      <tbody>
+        <tr><td>提交机制</td><td>服务商代填内容 &rarr; 商家 H5 校验；商家看完内容与次数提示后，自行点击「确认提交」。</td><td>仅改变「谁点提交」的操作流（自填 &rarr; 确认），未改变申诉次数既有规则。</td></tr>
+        <tr><td>次数扣减</td><td>商家确认后才正式扣次；<span class="hl-green">未确认、拒绝、超时均不扣次</span>。</td><td>与商家自申诉机制一致。写不好、被驳回、次数用尽等属于既有风险，非代申诉新造。</td></tr>
+        <tr><td>商家确认含义</td><td><span class="mark">知情同意权</span>：代表商家知情并同意本次代填内容，接受按规则扣次。</td><td><span class="hl-red">&ne;</span> 平台认定材料真实充分；<span class="hl-red">&ne;</span> 商家放弃向服务商追责。</td></tr>
+        <tr><td>纠纷与留痕</td><td>全链路留痕：系统记录确认时间、身份、来源标签（服务商提交）。</td><td>属于商家与服务商的委托争议，按服务合同处理。代申诉能力本身不替服务商材料质量背书。</td></tr>
+        <tr><td>与自申诉对比</td><td>路径对齐：调研显示代申诉成功率通常更高；次数用完后处理路径与自申诉完全相同。</td><td>不因「代」而单独加重商家对平台的责任。</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-9-enum">字段枚举</h3>
+
+    <h4>限制类型（5 种，可控枚举）</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>枚举值</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td>警告提醒</td><td>最轻处罚，限期整改</td></tr>
+        <tr><td>功能限制</td><td>封禁特定接口/能力</td></tr>
+        <tr><td>账号限制</td><td>账号维度能力封禁</td></tr>
+        <tr><td>页面封禁</td><td>封禁特定页面</td></tr>
+        <tr><td>下架</td><td>小程序整体下架</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h4>处理内容（约 20 种，微信返回 / 后台透传）</h4>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>限制类型</th><th>处理内容参考值</th></tr></thead>
+      <tbody>
+        <tr><td>警告提醒</td><td>警告提醒，限期3天整改、警告提醒，已整改完成</td></tr>
+        <tr><td>功能限制</td><td>封禁分享能力、封禁被搜索能力、封禁支付接口能力、封禁客服消息能力、封禁跳转能力、封禁订阅消息接口能力、封禁操作剪切板能力、封禁广告投放能力、限制新增订阅消息模板N天、限制新增分享页面访问、封禁朋友圈二维码打开能力、封禁通过二维码打开小程序能力、限制活动页面、封禁虚拟支付能力</td></tr>
+        <tr><td>账号限制</td><td>封禁跳转外链能力、封禁被搜索能力、限制新增分享页面访问</td></tr>
+        <tr><td>页面封禁</td><td>封禁违规页面，限制访问</td></tr>
+        <tr><td>下架</td><td>强制下架，用户不可访问、永久下架</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <blockquote>处理内容由微信侧下发具体动作描述，服务商平台不做二次加工。<b>限制类型是分类（5 种），处理内容是动作（约 20 种）。</b></blockquote>
+
+    <h4>违规原因（微信侧返回，不做枚举维护）</h4>
+    <p><code>违规原因</code> 展示的是微信侧返回的原因标题，由 MP 后台原始记录透传，<b>服务商平台不维护枚举</b>。标题通常 2-8 字，对应微信平台运营规范中约 40+ 种违规类型，如「滥用分享」「类目不符」「滥用订阅消息」「欺诈」「收集用户隐私」「诱导下载」「过度营销」「色情低俗」「虚假宣传」等。</p>
+    <blockquote>列表列展示原因标题即可；有规则链接时<span class="hl-blue u">蓝色可点</span>，无链接时纯文本。</blockquote>
+
+    <hr>
+
+    <h3 id="sec-9-2">权限口径</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>条件</th><th>决定什么</th><th>产品含义</th></tr></thead>
+      <tbody>
+        <tr><td>已绑定消费的第三方平台账号</td><td>哪些小程序归属到服务商侧</td><td>只展示该服务商名下可管理的小程序</td></tr>
+        <tr><td><code>18</code> 权限集</td><td>是否可读取小程序基础管理信息</td><td>不满足则<span class="hl-red">不进入</span>本版监管专区列表</td></tr>
+        <tr><td><code>76</code> 权限集</td><td>是否可读取违规 / 申诉相关信息并承接代申诉</td><td>不满足则<span class="hl-red">不进入</span>本版正式能力范围</td></tr>
+        <tr><td><code>18 + 76</code> 同时满足</td><td>是否纳入 V1 正式展示与处理范围</td><td><span class="mark">本版正式队列只看同时满足的小程序</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-9-3">上线边界</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>能力</th><th>上线口径</th></tr></thead>
+      <tbody>
+        <tr><td>违规查看、指引查看、状态跟进</td><td><span class="tag tag-ok">V1 先开放</span></td></tr>
+        <tr><td>服务商填写申诉说明和材料</td><td>页面可先灰度；API 上线前提交按钮<span class="tag tag-warn">置灰</span> + 提示「即将上线」</td></tr>
+        <tr><td>发起商家 H5 确认并正式提交</td><td><span class="tag tag-warn">依赖代提交申诉 API</span>（预计 7 月可用）</td></tr>
+        <tr><td>商家绕过确认直接由服务商提交</td><td><span class="tag tag-no">不开放</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3 id="sec-9-4">决策清单</h3>
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>决策项</th>
+          <th>当前结论</th>
+          <th>理由 / 后续动作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>是否新增小程序维度聚合前置页</td>
+          <td><span class="pending">考虑二期做</span></td>
+          <td>会增加一跳和维护成本；一期主任务是跑通单条违规闭环。</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>是否做同一违规问题聚合</td>
+          <td><span class="pending">待讨论二期做</span></td>
+          <td>关联规则不稳定时聚合容易误导；一期保持一行一条记录。</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>是否新增统计看板</td>
+          <td><span class="decided">已决策：放到二期</span></td>
+          <td>一期先跑通违规查看、整改 / 申诉处理和商家确认闭环。</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>商家拒绝时是否附带修改建议</td>
+          <td><span class="pending">考虑二期做</span></td>
+          <td>拒绝 &rarr; 重新编辑 &rarr; 重新发起链路已完整。</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>商家 H5 确认触达渠道</td>
+          <td><span class="decided">已决策：通知中心自动触发</span></td>
+          <td>安全助手 + MP 站内信双通道；H5 外链作模板跳转。</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>列表状态组织方式</td>
+          <td><span class="decided">已决策：单列表 + 处理状态筛选项</span></td>
+          <td>取消三页签；默认待处理；状态可与搜索、类型、时间联合筛选。</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>通知全景与触达分工</td>
+          <td><span class="decided">已决策：商家原有链路 + H5 确认</span></td>
+          <td>服务商侧：回调 + 模板消息 + 控制台；详见第 6 节。</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="doc-footer">服务商违规申诉代办专区 · 代申诉能力开放方案 · 2026-07-01</div>
+    </div>
+  </main>
+</div>
+
+<div class="hl-toolbar" id="hl-toolbar">
+  <div class="hl-toolbar-head">
+    <span class="hl-tip" id="hl-tip">选中文字 → 点「标黄」；已标黄文字再选中可「取消」</span>
+    <button type="button" class="hl-ghost" id="hl-hide" title="隐藏工具栏">隐藏</button>
+  </div>
+  <button type="button" class="hl-primary" id="hl-apply">标黄</button>
+  <button type="button" id="hl-remove">取消标黄</button>
+  <button type="button" class="hl-danger" id="hl-clear-all">全部清除</button>
+</div>
+<button type="button" class="hl-fab" id="hl-fab" title="显示标黄工具">标黄</button>
+
+<script>
+  // Collapsible TOC sub-groups
+  document.querySelectorAll('.toc-group > .toc-parent').forEach(function(parent) {
+    parent.addEventListener('click', function(e) {
+      e.preventDefault();
+      var group = parent.closest('.toc-group');
+      group.classList.toggle('collapsed');
+    });
+  });
+
+  // Scroll spy
+  var sections = document.querySelectorAll('h2[id], h3[id], h4[id]');
+  var navLinks = document.querySelectorAll('#toc a');
+  var tocParents = document.querySelectorAll('.toc-group > .toc-parent');
+  window.addEventListener('scroll', function() {
+    var current = '';
+    sections.forEach(function(sec) {
+      if (window.scrollY >= sec.offsetTop - 100) current = sec.id;
+    });
+    navLinks.forEach(function(a) {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+    tocParents.forEach(function(p) {
+      var parentId = p.closest('.toc-group').getAttribute('data-parent');
+      p.classList.toggle('active', parentId === current);
+    });
+  });
+
+  // Lightbox：事件委托，标黄恢复 innerHTML 后仍可点击放大
+  var contentRoot = document.querySelector('.content-inner');
+  var lightbox = document.createElement('div');
+  lightbox.className = 'lightbox';
+  var lightboxImg = document.createElement('img');
+  lightbox.appendChild(lightboxImg);
+  document.body.appendChild(lightbox);
+  var lightboxBlobUrl = null;
+
+  function closeLightbox() {
+    lightbox.classList.remove('show');
+    if (lightboxBlobUrl) {
+      URL.revokeObjectURL(lightboxBlobUrl);
+      lightboxBlobUrl = null;
+    }
+  }
+
+  if (contentRoot) {
+    contentRoot.addEventListener('click', function(e) {
+      var container = e.target.closest('.svg-container');
+      if (!container || !contentRoot.contains(container)) return;
+      var svg = e.target.closest('svg');
+      if (svg && container.contains(svg)) {
+        closeLightbox();
+        var svgString = new XMLSerializer().serializeToString(svg);
+        lightboxBlobUrl = URL.createObjectURL(new Blob([svgString], { type: 'image/svg+xml' }));
+        lightboxImg.src = lightboxBlobUrl;
+        lightboxImg.alt = '';
+        lightbox.classList.add('show');
+        return;
+      }
+      var img = e.target.closest('img');
+      if (img && container.contains(img)) {
+        closeLightbox();
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt || '';
+        lightbox.classList.add('show');
+      }
+    });
+  }
+
+  lightbox.addEventListener('click', function(e) {
+    if (e.target !== lightboxImg) closeLightbox();
+  });
+
+  lightboxImg.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (lightbox.classList.contains('show')) closeLightbox();
+    }
+  });
+
+  // —— 黄色高亮小工具（选中 → 标黄，自动存本地）——
+  (function() {
+    var STORAGE_KEY = 'sv-appeal-doc-user-hl';
+    var TOOLBAR_KEY = 'sv-appeal-hl-toolbar-hidden';
+    var root = document.querySelector('.content-inner');
+    if (!root) return;
+
+    var toolbar = document.getElementById('hl-toolbar');
+    var fab = document.getElementById('hl-fab');
+    var tip = document.getElementById('hl-tip');
+
+    function setToolbarHidden(hidden) {
+      if (!toolbar || !fab) return;
+      toolbar.classList.toggle('is-hidden', hidden);
+      fab.classList.toggle('is-visible', hidden);
+      try { localStorage.setItem(TOOLBAR_KEY, hidden ? '1' : '0'); } catch (e) {}
+    }
+
+    document.getElementById('hl-hide').addEventListener('click', function() {
+      setToolbarHidden(true);
+    });
+
+    fab.addEventListener('click', function() {
+      setToolbarHidden(false);
+    });
+
+    try {
+      if (localStorage.getItem(TOOLBAR_KEY) === '1') setToolbarHidden(true);
+    } catch (e) {}
+
+    function inRoot(node) {
+      return node && root.contains(node);
+    }
+
+    function getRange() {
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount || sel.isCollapsed) return null;
+      var range = sel.getRangeAt(0);
+      if (!inRoot(range.commonAncestorContainer)) return null;
+      return range;
+    }
+
+    function unwrapMark(mark) {
+      var parent = mark.parentNode;
+      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+      parent.removeChild(mark);
+    }
+
+    function wrapRange(range) {
+      var mark = document.createElement('mark');
+      mark.className = 'user-hl';
+      try {
+        range.surroundContents(mark);
+      } catch (e) {
+        var frag = range.extractContents();
+        mark.appendChild(frag);
+        range.insertNode(mark);
+      }
+      window.getSelection().removeAllRanges();
+      return mark;
+    }
+
+    function findMark(node) {
+      if (!node) return null;
+      if (node.nodeType === 3) node = node.parentNode;
+      return node && node.closest ? node.closest('mark.user-hl') : null;
+    }
+
+    function saveHighlights() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          v: root.getAttribute('data-doc-version') || '',
+          html: root.innerHTML
+        }));
+        if (tip) {
+          tip.textContent = '已保存标黄（仅本机浏览器）';
+          tip.classList.add('on');
+          setTimeout(function() {
+            tip.textContent = '选中文字 → 点「标黄」；已标黄文字再选中可「取消」';
+            tip.classList.remove('on');
+          }, 1200);
+        }
+      } catch (err) { /* 忽略存储失败 */ }
+    }
+
+    function restoreHighlights() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        if (data.v !== (root.getAttribute('data-doc-version') || '')) return;
+        if (data.html) root.innerHTML = data.html;
+      } catch (err) { /* 忽略 */ }
+    }
+
+    document.getElementById('hl-apply').addEventListener('click', function() {
+      var range = getRange();
+      if (!range) {
+        if (tip) tip.textContent = '请先在正文中选中要高亮的文字';
+        return;
+      }
+      if (findMark(range.commonAncestorContainer)) {
+        if (tip) tip.textContent = '选中区域已在标黄内，请用「取消标黄」';
+        return;
+      }
+      wrapRange(range);
+      saveHighlights();
+    });
+
+    document.getElementById('hl-remove').addEventListener('click', function() {
+      var range = getRange();
+      var mark = range ? findMark(range.commonAncestorContainer) : null;
+      if (!mark) {
+        var sel = window.getSelection();
+        if (sel && sel.anchorNode) mark = findMark(sel.anchorNode);
+      }
+      if (!mark) {
+        if (tip) tip.textContent = '请选中已标黄的文字';
+        return;
+      }
+      unwrapMark(mark);
+      window.getSelection().removeAllRanges();
+      saveHighlights();
+    });
+
+    document.getElementById('hl-clear-all').addEventListener('click', function() {
+      if (!confirm('清除本文全部黄色标黄？（不可恢复）')) return;
+      root.querySelectorAll('mark.user-hl').forEach(unwrapMark);
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      if (tip) tip.textContent = '已全部清除';
+    });
+
+    restoreHighlights();
+  })();
+</script>
+</body>
+</html>
