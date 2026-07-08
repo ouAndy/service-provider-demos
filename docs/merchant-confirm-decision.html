@@ -265,12 +265,12 @@ code {
 <h1 class="doc-title">商家确认入口 · 深链页 vs MP 后台内嵌</h1>
 
 <div class="callout meta">
-  <p>决策日期：<strong>待定</strong>　｜　状态：<span class="status-pill">选择方案 A</span>　｜　关联：<strong>01_项目方案</strong> §5.5、§6</p>
+  <p>决策日期：<strong>2026-07-07</strong>　｜　状态：<span class="status-pill">深链移动确认页作主路径；MP 待确认 Tab 作补入口</span>　｜　关联主方案：<strong>商家 H5 确认页、通知流程</strong></p>
 </div>
 
 <section class="section" id="conclusion">
   <h2>一句话结论</h2>
-  <div class="callout callout-key">实质只有两条路：<strong>① 通知深链打开独立移动确认页</strong>（当前开平 H5）；<strong>② 在 MP 后台违规区新增「待确认」Tab</strong>，登录后台后在 Tab 内查看并确认。二者体验差异在<span class="hl">「手机点通知能否直达」</span>，不在域名或按钮形态。</div>
+  <div class="callout callout-key"><strong>已决策</strong>：主路径采用<strong>通知深链 → 独立移动确认页</strong>（开平 H5；模板消息、服务商复制链接、MP 站内信均跳转同一确认页）；补入口为 <strong>MP 后台违规区「待确认」Tab</strong>（商家登录后台后查看并确认）。<br><br>背景：实质只有两条可选路径，差异在<span class="hl">「手机点通知能否直达」</span>，不在域名或按钮形态。</div>
 </section>
 
 <section class="section" id="problem">
@@ -308,7 +308,7 @@ flowchart LR
   </div>
 
   <div class="plan-block-a">
-  <h3 class="plan-a" id="plan-a">A · 深链移动确认页（当前主方案）</h3>
+  <h3 class="plan-a" id="plan-a">A · 深链移动确认页（已选定主路径）</h3>
   <div class="flow-box">触达（三选一或并行）→ 点链接 → 独立确认页 → 查看只读内容 → 确认 / 拒绝</div>
   <div class="table-wrap">
     <table>
@@ -431,11 +431,11 @@ flowchart LR
   <h2>与主方案关系</h2>
   <div class="table-wrap">
     <table>
-      <thead><tr><th>主方案章节</th><th>本决策影响</th></tr></thead>
+      <thead><tr><th>主方案部分</th><th>本决策影响</th></tr></thead>
       <tbody>
-        <tr><td>§5.5 商家 H5 确认页</td><td>A 的页面规格；B 共用同一套信息与确认规则，入口不同</td></tr>
-        <tr><td>§6 通知流程</td><td>A：模板消息 + MP 站内信 + 服务商复制链接，均跳转确认页；B：站内信引到 MP 后台</td></tr>
-        <tr><td>§8 决策清单</td><td>落地后建议新增「商家确认入口：深链页 / MP 内嵌」条目</td></tr>
+        <tr><td>商家 H5 确认页</td><td>深链确认页的页面规格；MP Tab 共用同一套信息与确认规则，入口不同</td></tr>
+        <tr><td>通知流程</td><td>主路径：模板消息 + MP 站内信 + 服务商复制链接，均跳转确认页；补入口：站内信可引到 MP 后台</td></tr>
+        <tr><td>决策清单</td><td>已落地为本文决策记录</td></tr>
       </tbody>
     </table>
   </div>
