@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微信服务商平台总览页 — 页面方案</title>
+<style>
+/* B端文档阅读页 — 暖色纸感设计系统。改此处即可全站生效，禁止单篇 inline 覆盖 token。 */
+:root {
+  --bg: #F5F0E8;
+  --bg-sidebar: #EBE4D9;
+  --surface: #FAF7F2;
+  --accent: #A85A3A;
+  --accent-deep: #8B4A30;
+  --text: #3A342E;
+  --text-muted: #6B635B;
+  --text-faint: #9A9288;
+  --border: #DDD5C8;
+  --callout-bg: #EDE6DC;
+  --sidebar-w: 210px;
+  --content-max: 900px;
+  --prose-max: 72ch;
+  --lh-body: 1.7;
+  --lh-tight: 1.55;
+  --lh-heading: 1.35;
+  --space-para: 0.75em;
+  --space-section: 2.25em;
+  --space-figure: 1.25em;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: var(--lh-body);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.layout { min-height: 100vh; }
+
+.sidebar-toggle {
+  position: fixed; top: 12px; left: calc(var(--sidebar-w) - 14px); z-index: 200;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 13px; color: var(--text-muted);
+  transition: left 0.25s, background 0.15s;
+}
+.sidebar-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.sidebar-collapsed .sidebar-toggle { left: 12px; }
+body.sidebar-collapsed .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+body.sidebar-collapsed .main { margin-left: 0; }
+
+.sidebar {
+  width: var(--sidebar-w); position: fixed; top: 0; left: 0; bottom: 0;
+  padding: 16px 0; overflow-y: auto; z-index: 100;
+  background: var(--bg-sidebar); border-right: 1px solid var(--border);
+  transition: transform 0.25s ease;
+}
+.sidebar-label { font-size: 13px; font-weight: 600; color: var(--text-faint); padding: 0 16px 10px; }
+.sidebar nav a {
+  display: block; padding: 6px 16px; font-size: 16px;
+  color: var(--text-muted); text-decoration: none;
+  border-left: 3px solid transparent; transition: all 0.15s; line-height: var(--lh-heading);
+}
+.sidebar nav a.sub { padding-left: 28px; font-size: 14px; }
+.sidebar nav a.sub.nav-chosen { color: var(--accent-deep); font-weight: 600; }
+.sidebar nav a:hover { color: var(--accent-deep); background: rgba(168, 90, 58, 0.08); }
+.sidebar nav a.active {
+  color: var(--accent-deep); font-weight: 600;
+  border-left-color: var(--accent); background: rgba(168, 90, 58, 0.12);
+}
+.toc-group { margin-bottom: 2px; }
+.toc-group > .toc-parent {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px; font-size: 16px; color: var(--text-muted);
+  cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s;
+}
+.toc-group > .toc-parent:hover { background: rgba(168, 90, 58, 0.08); color: var(--accent-deep); }
+.toc-group > .toc-parent.active {
+  color: var(--accent-deep); font-weight: 600;
+  border-left-color: var(--accent); background: rgba(168, 90, 58, 0.12);
+}
+.toc-group > .toc-parent .arrow { font-size: 10px; transition: transform 0.2s; color: var(--text-faint); margin-left: 8px; }
+.toc-group.collapsed > .toc-parent .arrow { transform: rotate(-90deg); }
+.toc-children { overflow: hidden; transition: max-height 0.25s ease; }
+.toc-group.collapsed .toc-children { max-height: 0 !important; }
+
+.main {
+  margin-left: var(--sidebar-w); min-width: 0; min-height: 100vh;
+  padding: 28px 32px 48px; background: var(--surface);
+  transition: margin-left 0.25s ease;
+}
+.content { width: 100%; max-width: var(--content-max); margin: 0 auto; }
+
+.breadcrumb { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+
+.doc-title {
+  font-size: 2em; font-weight: 700; line-height: var(--lh-heading);
+  color: var(--accent-deep); margin-bottom: 16px; letter-spacing: -0.02em;
+}
+
+.callout {
+  padding: 12px 16px 12px 14px; background: var(--callout-bg);
+  border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+  color: var(--text); font-size: 14px; line-height: var(--lh-tight); max-width: var(--prose-max);
+}
+.callout strong { color: var(--accent-deep); font-weight: 600; }
+.callout.meta { margin-bottom: 8px; max-width: none; }
+.callout.meta p { margin: 0; color: var(--text-muted); font-size: 14px; }
+.callout-key {
+  border-left-width: 4px; background: rgba(168, 90, 58, 0.14);
+  font-size: 15px; max-width: none;
+}
+.status-pill {
+  display: inline-block; padding: 2px 10px;
+  background: var(--accent); color: #fff;
+  border-radius: 4px; font-size: 13px; font-weight: 600;
+}
+.hl {
+  background: linear-gradient(180deg, transparent 58%, rgba(168, 90, 58, 0.28) 58%);
+  font-weight: 600; color: var(--accent-deep);
+}
+.block-chosen {
+  margin: 0.25em 0 1.75em; padding: 4px 16px 14px;
+  border: 1px solid rgba(168, 90, 58, 0.22); border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0; background: rgba(168, 90, 58, 0.07);
+}
+
+.section { margin-top: var(--space-section); }
+.section:first-of-type { margin-top: 1.75em; }
+h2 {
+  font-size: 1.35em; font-weight: 700; color: var(--accent-deep);
+  margin-bottom: 0.75em; line-height: var(--lh-heading);
+}
+h3 { font-size: 1.05em; font-weight: 600; margin: 1.5em 0 0.5em; color: var(--text); max-width: var(--prose-max); }
+h3:first-of-type { margin-top: 0.75em; }
+.section > p { color: var(--text); margin-bottom: var(--space-para); max-width: var(--prose-max); }
+.section > ul, .section > ol { margin: 0 0 var(--space-para); padding-left: 1.4em; max-width: var(--prose-max); }
+.section > ul li, .section > ol li { margin-bottom: 0.35em; }
+
+.flow-box {
+  font-family: "SF Mono", Menlo, monospace; font-size: 13px; padding: 10px 14px;
+  background: var(--callout-bg); border-left: 3px solid var(--border);
+  border-radius: 0 6px 6px 0; color: var(--text-muted);
+  margin: 0.5em 0 1em; line-height: var(--lh-tight); max-width: var(--prose-max);
+}
+
+.mermaid-wrap, .echarts-wrap {
+  margin: var(--space-figure) 0; padding: 16px 12px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  overflow-x: auto; cursor: zoom-in; position: relative;
+}
+.mermaid-wrap::after, .echarts-wrap::after, figure.zoomable::after {
+  content: "点击放大"; position: absolute; right: 8px; bottom: 8px;
+  font-size: 11px; color: var(--text-faint); background: rgba(250, 247, 242, 0.9);
+  padding: 2px 6px; border-radius: 4px; pointer-events: none;
+}
+.mermaid-wrap .mermaid { display: flex; justify-content: center; }
+
+figure.zoomable {
+  margin: var(--space-figure) 0; text-align: center; position: relative;
+  cursor: zoom-in;
+}
+figure.zoomable img {
+  max-width: 100%; height: auto; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--bg);
+}
+figcaption {
+  margin-top: 0.5em; font-size: 13px; color: var(--text-muted);
+  line-height: var(--lh-tight);
+}
+
+.table-wrap {
+  overflow-x: auto; margin: 0.75em 0 1em;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--bg);
+}
+table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: var(--lh-body); }
+thead th {
+  background: var(--callout-bg); color: var(--text); font-weight: 600;
+  text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+.col-focus { background: rgba(168, 90, 58, 0.07); }
+th.col-focus { color: var(--accent-deep); background: rgba(168, 90, 58, 0.16); font-weight: 700; }
+tr.focus td { background: rgba(168, 90, 58, 0.09); }
+tr.focus td:first-child { font-weight: 600; color: var(--accent-deep); }
+td.em { font-weight: 600; color: var(--accent-deep); }
+
+code {
+  font-family: "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: rgba(168, 90, 58, 0.1); padding: 1px 5px;
+  border-radius: 3px; color: var(--accent-deep);
+}
+
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(58, 52, 46, 0.88); align-items: center; justify-content: center;
+  padding: 24px; cursor: zoom-out;
+}
+.lightbox.is-open { display: flex; }
+.lightbox-inner {
+  max-width: 95vw; max-height: 90vh; overflow: auto;
+  background: var(--surface); border-radius: 8px; padding: 16px;
+  cursor: default; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.lightbox-inner img { max-width: 100%; height: auto; display: block; }
+.lightbox-inner .mermaid, .lightbox-inner svg { max-width: 100%; height: auto; }
+.lightbox-close {
+  position: fixed; top: 16px; right: 20px; z-index: 1001;
+  width: 36px; height: 36px; border: none; border-radius: 50%;
+  background: var(--surface); color: var(--text); font-size: 20px;
+  cursor: pointer; line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle { display: none; }
+  .sidebar { position: relative; width: 100%; transform: none !important; height: auto; }
+  .sidebar nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 0 10px; }
+  .sidebar nav a, .toc-group > .toc-parent { border-left: none; border-radius: 6px; }
+  .sidebar-label { display: none; }
+  .main { margin-left: 0; padding: 16px 16px 32px; }
+  .mermaid-wrap::after, .echarts-wrap::after, figure.zoomable::after { display: none; }
+}
+</style>
+</head>
+<body>
+<button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收起或展开目录">‹</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-label">目录</div>
+  <nav>
+    <a href="#bg">背景与价值</a>
+    <div class="toc-group">
+      <div class="toc-parent" data-href="#rules">全页共用规则 <span class="arrow">▼</span></div>
+      <div class="toc-children">
+        <a href="#rules-filter" class="sub">行业 / 平台过滤器</a>
+        <a href="#rules-empty" class="sub">空状态与展示</a>
+        <a href="#rules-compare" class="sub">环比与对标展示</a>
+      </div>
+    </div>
+    <div class="toc-group">
+      <div class="toc-parent" data-href="#modules">页面模块 <span class="arrow">▼</span></div>
+      <div class="toc-children">
+        <a href="#mod-announce" class="sub">平台公告</a>
+        <a href="#mod-risk" class="sub">风险概览</a>
+        <a href="#mod-health" class="sub">经营健康度</a>
+        <a href="#mod-launch" class="sub">小程序上线时效</a>
+      </div>
+    </div>
+    <a href="#metrics">指标字典</a>
+    <div class="toc-group">
+      <div class="toc-parent" data-href="#appendix">附录 <span class="arrow">▼</span></div>
+      <div class="toc-children">
+        <a href="#appendix-scope" class="sub">本期边界</a>
+        <a href="#appendix-open" class="sub">风险、依赖与待决</a>
+      </div>
+    </div>
+  </nav>
+</aside>
+<main class="main">
+<div class="content">
+<nav class="breadcrumb"><a href="https://ouandy.github.io/service-provider-demos/">微信服务商平台</a> / 产品方案 / 总览页</nav>
+<h1 class="doc-title">微信服务商平台总览页 — 页面方案</h1>
+<div class="callout meta">
+  <p>类型：<strong>产品方案</strong>　｜　日期：<strong>2026-07-08</strong>　｜　状态：<span class="status-pill">评审中</span>　｜　关联：<strong>经营控制台 Demo、行业对标与标签筛选决策</strong></p>
+</div>
+
+<section class="section" id="bg">
+  <h2>1. 背景与价值</h2>
+  <div class="callout callout-key"><strong>定位</strong>：将总览页从「功能入口目录」升级为<span class="hl">小程序服务商经营控制台</span>，通过生态对标帮服务商看清合规风险与交付效率。</div>
+  <p><strong>价值</strong>：</p>
+  <ul>
+    <li>平台掌握全生态开发、合规数据，可提供服务商自建不了的<strong>行业参照系</strong></li>
+    <li>告知服务商在合规处置、上线速度、经营健康度上处于大盘什么位置（本行业 / 全平台标杆与中位数）</li>
+  </ul>
+</section>
+
+<section class="section" id="rules">
+  <h2>2. 全页共用规则</h2>
+
+  <h3 id="rules-filter">2.1 行业 / 平台过滤器</h3>
+  <p>页顶公告下方提供全局筛选：<strong>全平台（默认）</strong> / 已登记的一级行业。</p>
+  <p>与平台公告同卡：公告为第一行，筛选为第二行（浅分割线）。第二行左侧标签「查看范围」，弱样式下拉。</p>
+  <ul>
+    <li>对<strong>整页所有模块、所有指标</strong>生效</li>
+    <li><strong>全平台</strong>：自身数据 = 该服务商名下全部绑定小程序；对标 = 微信全平台服务商大盘</li>
+    <li><strong>特定行业</strong>：下拉仅展示该服务商在微信后台已登记的一级行业；自身数据与对标均切换为该行业垂直大盘</li>
+    <li>无登记行业或冷启动无数据：下拉置灰，提示「暂无已登记行业」</li>
+    <li>所选行业在全平台有效活跃小程序合计 <strong>&lt; 500</strong>：下拉旁弱提示「数据较少，指标可能失真」</li>
+  </ul>
+
+  <h3 id="rules-empty">2.2 空状态与展示</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>类型</th><th>何时</th><th>怎么显示</th></tr></thead>
+      <tbody>
+        <tr><td>数值型</td><td>统计结果为 0</td><td>显示 0</td></tr>
+        <tr class="focus"><td>比率 / 均值型</td><td>分母为 0、无法计算</td><td>显示 <code>--</code>（不显示 0% 或 0 天）</td></tr>
+        <tr><td>图表</td><td>周期内无样本</td><td>图表区替换占位图；上线时效用「暂无审核数据」；「暂无处置数据」预留给违规处置类图表（本期无）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>统计边界</strong>：所有指标仅统计当前服务商已绑定消费关系的第三方平台账号下辖小程序。</p>
+
+  <h3 id="rules-compare">2.3 环比与对标展示</h3>
+  <p>对标行统一：<span class="hl">中位数 | 标杆</span>。</p>
+  <p>环比位置在主值下、对标上，弱样式展示。</p>
+  <ul>
+    <li><strong>较上一日</strong>：和前一天比变化多少。
+      <ul>
+        <li>经营健康度：基准日当天 vs 基准日的前一天（发布转化率、支付转化率、单小程序日平均访问人数、单小程序日平均支付笔数）。</li>
+        <li>当前违规小程序数：当前快照 vs 昨天日终。灰色不着色。</li>
+        <li>待处理违规记录数：当前快照 vs 昨天日终。灰色不着色。</li>
+      </ul>
+    </li>
+    <li><strong>较上周期</strong>：
+      <ul>
+        <li>经营健康度中活跃转化率（上一等长 7 日窗口）；</li>
+        <li>随近 30 / 180 天筛选的指标（风险时效、交付底表本服务商耗时），均为上一等长窗口。</li>
+      </ul>
+    </li>
+    <li>变化量为 0 显示「持平」。</li>
+    <li>无法计算显示 <code>--</code>；比率差用百分点（pct）。</li>
+    <li><strong>展示效果</strong>：
+      <ul>
+        <li>标签本身灰色即可</li>
+        <li>变化量按指标好坏着色：耗时类、处罚率类变低为绿，转化率与日平均类变高为绿；持平与无法计算不着色。</li>
+      </ul>
+    </li>
+    <li><strong>不展示环比</strong>：活跃增长小程序占比、审核通过率。</li>
+  </ul>
+</section>
+
+<section class="section" id="modules">
+  <h2>3. 页面模块</h2>
+  <p>页面上到下：平台公告（含查看范围）→ 风险概览 → 经营健康度 → 小程序上线时效。</p>
+
+  <h3 id="mod-announce">3.1 平台公告</h3>
+  <ul>
+    <li>展示最新 1 条公告；「查看更多」跳转公告列表</li>
+    <li>当前成员未读：标题后红色 new 标签；点击进入详情后消失（粒度：成员 × 公告）</li>
+  </ul>
+
+  <h3 id="mod-risk">3.2 风险概览</h3>
+  <p>含「违规情况」「违规处理时效」两个子区块。</p>
+  <p><strong>违规情况</strong>（实时快照，无时间筛选）</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>展示项</th><th>交互</th></tr></thead>
+      <tbody>
+        <tr class="focus"><td>当前违规小程序数</td><td>气泡：「统计范围：已授权权限集 18 的小程序」；主值下展示较上一日 ±N</td></tr>
+        <tr class="focus"><td>待处理违规记录数</td><td>「立即处理 →」跳转专区待办；气泡：「统计范围：已授权权限集 76 的小程序，未申诉成功、在有效期内的违规条数与警告条数」；主值下展示较上一日 ±N</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>违规处理时效</strong></p>
+  <ul>
+    <li>右上角局部筛选：<strong>近 30 天 / 近 180 天</strong>（默认 30 天），仅对本子区块生效</li>
+    <li>展示：平均违规处理耗时、警告超时升级处罚率；主值下展示较上周期；与当前全局行业视角下的大盘中位数、标杆对比</li>
+    <li>平均耗时旁气泡：「指收到违规通知起，至官方整改审核通过或处罚解除止的平均自然日天数」</li>
+  </ul>
+
+  <h3 id="mod-health">3.3 经营健康度</h3>
+  <ul>
+    <li>模块头右侧：<strong>统计基准日</strong>选择器；默认<strong>昨日</strong>（最新可用日）；不可晚于最新可用日。</li>
+    <li>资产摘要与 6 张卡均按所选日计算；大盘中位数、标杆与所选日为同一日口径。</li>
+    <li>所选日无数据时，本模块主值、环比、对标统一显示 <code>--</code>（优先于数值型显示 0 的通用规则）。</li>
+    <li><strong>资产摘要</strong>（一行弱展示，不对标）：授权商户数 · 已授权小程序数 · 已发布小程序数 · 开通支付小程序数</li>
+    <li>6 张卡对标本行业 / 全平台；对标行展示中位数、标杆。</li>
+    <li>下列指标展示环比：发布转化率、支付转化率、单小程序日平均访问人数、单小程序日平均支付笔数（较上一日）；活跃转化率（较上周期）。活跃增长小程序占比不展示环比。</li>
+    <li>活跃转化率、活跃增长小程序占比：指标名旁气泡说明统计窗口（不在卡片上展示「近 7 日」等副标题）。</li>
+  </ul>
+
+  <h3 id="mod-launch">3.4 小程序上线时效</h3>
+  <ul>
+    <li>右上角局部筛选：<strong>近 30 天 / 近 180 天</strong>（默认 30 天），对本模块内所有指标生效</li>
+    <li><strong>审核通过率</strong>：与同期全平台中位数、标杆对比；保留极简波动走势图；图表无样本时占位文案「暂无审核数据」</li>
+    <li><strong>交付耗时</strong>：折线图 + 底表展示注册到备案、注册到首次发布两阶段耗时；图表无样本时占位文案「暂无审核数据」</li>
+    <li>交付耗时旁感叹号：「仅统计已走完该环节的小程序，不含进行中」</li>
+    <li>底表列：本服务商耗时（主值下展示较上周期）、大盘中位数、大盘标杆（与当前筛选一致）</li>
+  </ul>
+</section>
+
+<section class="section" id="metrics">
+  <h2>4. 指标字典</h2>
+  <p><strong>标杆</strong>：指标值排名前 10% 的服务商的<strong>平均值</strong>（非单个极值）。经营健康度算中位数、标杆时，与服务商所选统计基准日为同一日。</p>
+  <p><strong>大盘对标池</strong>（算标杆、中位数时，先算每家服务商的一个指标值，再在这些服务商之间取中位数和标杆）：</p>
+  <ol>
+    <li>名下绑定小程序 &gt; 10 个</li>
+    <li>近 30 日内至少有 1 个活跃小程序</li>
+  </ol>
+  <p>经营健康度模块：上述「近 30 日」以服务商所选统计基准日为末日往前计算；自身数据与对标池、标杆、中位数均为同一日口径。</p>
+  <p>风险概览、小程序上线时效：上述「近 30 日」以该模块当前所选统计窗口的末日往前计算；自身数据与对标池、标杆、中位数均为同一窗口口径。</p>
+  <p><strong>交付时效样本</strong>：仅纳入所选周期内<strong>首次发布成功</strong>的小程序；各阶段耗时只统计已完结环节。</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>名称</th><th>更新频次</th><th>统计窗口</th><th>计算公式</th><th>对标</th><th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>授权商户数等资产摘要</td><td>T+1</td><td>截至统计基准日累计</td><td>名下授权商户 / 已授权 / 已发布 / 开通支付小程序数</td><td>不对标</td><td>数值</td></tr>
+        <tr><td>发布转化率</td><td>T+1</td><td>截至统计基准日</td><td>已发布小程序数 / 已授权小程序数</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr><td>活跃转化率</td><td>T+1</td><td>统计基准日往前 7 日</td><td>满足持续活跃的已发布小程序数 / 已发布小程序总数</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr><td>支付转化率</td><td>T+1</td><td>统计基准日当日</td><td>统计基准日当天支付笔数 ≥ 1 的小程序数 / 截至统计基准日已开通支付的小程序数</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr><td>活跃增长小程序占比</td><td>T+1</td><td>统计基准日往前 30 日 vs 再往前 30 日</td><td>以统计基准日为末日：往前 30 日 DAU 日均 &gt; 再往前 30 日的小程序数 / 全部已发布小程序数（再往前 30 日均值为 0 且往前 30 日 &gt; 0 计为增长）</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr class="focus"><td>单小程序日平均访问人数</td><td>T+1</td><td>统计基准日当日</td><td>统计基准日各小程序 DAU 之和 / 统计基准日有访问的小程序数</td><td>全平台 / 本行业</td><td>均值</td></tr>
+        <tr class="focus"><td>单小程序日平均支付笔数</td><td>T+1</td><td>统计基准日当日</td><td>统计基准日支付总笔数 / 统计基准日有支付的小程序数</td><td>全平台 / 本行业</td><td>均值</td></tr>
+        <tr><td>当前违规小程序数</td><td>实时</td><td>实时快照</td><td>存在未整改违规或警告未过期的去重小程序数（权限集 18）</td><td>不对标</td><td>数值</td></tr>
+        <tr><td>待处理违规记录数</td><td>实时</td><td>实时快照</td><td>未申诉成功的违规条数 + 未过期的警告条数（权限集 76）</td><td>不对标</td><td>数值</td></tr>
+        <tr><td>平均违规处理耗时</td><td>T+1</td><td>随筛选 30/180 天</td><td>收到违规通知至整改通过或处罚解除的平均自然日</td><td>全平台 / 本行业</td><td>均值</td></tr>
+        <tr class="focus"><td>警告超时升级处罚率</td><td>T+1</td><td>随筛选 30/180 天</td><td>超期未处理导致处罚升级的警告数 / 警告通知总数</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr><td>审核通过率</td><td>T+1</td><td>随筛选 30/180 天</td><td>审核通过提审单数 / 提交审核总单数</td><td>全平台 / 本行业</td><td>比率</td></tr>
+        <tr><td>注册到备案耗时</td><td>T+1</td><td>随筛选 30/180 天</td><td>样本池内已备案小程序的平均（备案成功时间 − 注册时间）</td><td>全平台 / 本行业</td><td>均值</td></tr>
+        <tr><td>注册到首次发布耗时</td><td>T+1</td><td>随筛选 30/180 天</td><td>样本池内小程序的平均（首次发布成功时间 − 注册时间）</td><td>全平台 / 本行业</td><td>均值</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="appendix">
+  <h2>附录</h2>
+
+  <h3 id="appendix-scope">A. 本期边界</h3>
+  <p><strong>下线</strong></p>
+  <ul>
+    <li>主体信息 Banner（企业名、AppID、扫码头像等）</li>
+    <li>快捷操作卡片（服务市场管理、付费资源采购、流量主代运营、小游戏 CPS）</li>
+    <li>右侧资讯栏（文档更新列表、流量主推广 Banner）</li>
+  </ul>
+  <p><strong>迁移</strong></p>
+  <ul>
+    <li>账号名与头像 → 页面左下角账号区</li>
+    <li>个人登录微信（扫码操作者）→ 左下角账号区展开菜单，纯文字</li>
+    <li>企业主体 / AppID → 账号设置 → 企业资料 → 服务商信息</li>
+    <li>开发文档外链 → 主内容区底部灰色链「文档中心」</li>
+  </ul>
+
+  <h3 id="appendix-open">C. 风险、依赖与待决</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>项</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>持续活跃判定阈值</td><td>活跃转化率依赖此定义；优先复用现网已有字段，待数据侧确认</td></tr>
+        <tr class="focus"><td>经营健康度统计基准日可回溯范围</td><td>待与数据同学确认（历史快照与对标是否按日落库）</td></tr>
+        <tr class="focus"><td>审核通过率右侧趋势图</td><td>是否保留极简波动走势图（待定）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="放大查看">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭">×</button>
+  <div class="lightbox-inner"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+/* B端文档阅读页交互：目录、折叠、滚动定位、lightbox、mermaid。发布时内联进 HTML。 */
+(function () {
+  const toggle = document.getElementById('sidebarToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const collapsed = document.body.classList.toggle('sidebar-collapsed');
+      toggle.textContent = collapsed ? '›' : '‹';
+    });
+  }
+
+  document.querySelectorAll('.toc-group').forEach((group) => {
+    const children = group.querySelector('.toc-children');
+    const parent = group.querySelector('.toc-parent');
+    if (!children || !parent) return;
+    children.style.maxHeight = children.scrollHeight + 'px';
+    parent.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      group.classList.toggle('collapsed');
+    });
+  });
+
+  const navLinks = [...document.querySelectorAll('.sidebar nav a[href^="#"]')];
+  const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll() {
+    let current = sections[0];
+    sections.forEach((sec) => {
+      if (sec.getBoundingClientRect().top <= 120) current = sec;
+    });
+    if (!current) return;
+    const id = '#' + current.id;
+    navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === id));
+    document.querySelectorAll('.toc-parent').forEach((p) => {
+      const href = p.dataset.href;
+      p.classList.toggle('active', href === id);
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const lb = document.getElementById('lightbox');
+  const lbInner = lb && lb.querySelector('.lightbox-inner');
+  const lbClose = document.getElementById('lightboxClose');
+  function openLightbox(node) {
+    if (!lb || !lbInner) return;
+    lbInner.innerHTML = '';
+    if (node.tagName === 'IMG') {
+      const img = node.cloneNode(true);
+      img.style.cursor = 'default';
+      lbInner.appendChild(img);
+    } else if (node.classList.contains('mermaid-wrap')) {
+      const svg = node.querySelector('svg');
+      if (svg) lbInner.appendChild(svg.cloneNode(true));
+      else lbInner.appendChild(node.cloneNode(true));
+    } else if (node.classList.contains('echarts-wrap')) {
+      const clone = node.cloneNode(true);
+      clone.style.cursor = 'default';
+      clone.style.minHeight = '60vh';
+      lbInner.appendChild(clone);
+    }
+    lb.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    if (!lb) return;
+    lb.classList.remove('is-open');
+    lbInner.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+  if (lbClose) lbClose.addEventListener('click', closeLightbox);
+  if (lb) lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+  document.querySelectorAll('figure.zoomable img').forEach((img) => {
+    img.closest('figure').addEventListener('click', () => openLightbox(img));
+  });
+  document.querySelectorAll('.mermaid-wrap, .echarts-wrap').forEach((el) => {
+    el.addEventListener('click', () => openLightbox(el));
+  });
+
+  if (typeof mermaid !== 'undefined') {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#EDE6DC',
+        primaryTextColor: '#3A342E',
+        primaryBorderColor: '#A85A3A',
+        lineColor: '#8B7355',
+        secondaryColor: '#F5F0E8',
+        tertiaryColor: '#FAF7F2',
+        fontFamily: '-apple-system, PingFang SC, sans-serif'
+      },
+      flowchart: { curve: 'basis', padding: 12 }
+    });
+  }
+})();
+</script>
+</body>
+</html>
