@@ -138,8 +138,21 @@ h2 {
 h3 { font-size: 1.05em; font-weight: 600; margin: 1.5em 0 0.5em; color: var(--text); max-width: var(--prose-max); }
 h3:first-of-type { margin-top: 0.75em; }
 .section > p { color: var(--text); margin-bottom: var(--space-para); max-width: var(--prose-max); }
-.section > ul, .section > ol { margin: 0 0 var(--space-para); padding-left: 1.4em; max-width: var(--prose-max); }
-.section > ul li, .section > ol li { margin-bottom: 0.35em; }
+.section ul, .section ol {
+  margin: 0 0 var(--space-para);
+  padding-left: 1.5em;
+  max-width: var(--prose-max);
+  list-style-position: outside;
+}
+.section ul li, .section ol li { margin-bottom: 0.35em; }
+.section li > ul,
+.section li > ol {
+  margin-top: 0.35em;
+  margin-bottom: 0.1em;
+}
+.section ul { list-style-type: disc; }
+.section ul ul { list-style-type: circle; }
+.section ul ul ul { list-style-type: square; }
 
 .flow-box {
   font-family: "SF Mono", Menlo, monospace; font-size: 13px; padding: 10px 14px;
