@@ -161,345 +161,237 @@
     <main class="flex-1 overflow-y-auto no-scrollbar bg-[#F7F7F7] h-screen">
         <div class="max-w-[1360px] w-full mx-auto p-6 md:p-10 space-y-8">
 
-            <!-- ========================================== -->
-            <!-- 模块零：平台公告栏 -->
-            <!-- ========================================== -->
-            <div class="bg-white rounded border border-[#EDEDED] px-6 py-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex items-center justify-between">
-                <div class="flex items-center gap-3 truncate">
-                    <svg class="w-4 h-4 text-[#888888] shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
-                    </svg>
-                    <span class="text-xs text-[#353535] font-medium truncate">
-                        关于服务商平台小程序 API 接口升级维护的通知
-                    </span>
-                    <span class="bg-[#FA5151] text-white text-[9px] px-1 py-0.5 rounded-sm font-semibold tracking-wide leading-none shrink-0 scale-90">
-                        NEW
-                    </span>
+            <!-- §3.1 平台公告 + §2.1 行业/平台切换过滤器（同一区块第二行） -->
+            <div class="bg-white rounded border border-[#EDEDED] shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex items-center justify-between px-6 py-3.5">
+                    <div class="flex items-center gap-3 truncate min-w-0">
+                        <a href="#" id="announcement-link" class="text-xs text-[#353535] font-medium truncate hover:underline">
+                            关于服务商平台小程序 API 接口升级维护的通知
+                        </a>
+                        <span id="announcement-new" class="bg-[#FA5151] text-white text-[9px] px-1 py-0.5 rounded-sm font-semibold tracking-wide leading-none shrink-0">new</span>
+                    </div>
+                    <a href="#" class="text-xs text-[#576B95] hover:underline font-medium shrink-0 ml-4">查看更多</a>
                 </div>
-                <div class="flex items-center gap-4 text-xs text-[#888888] shrink-0 ml-4">
-                    <span>2026-06-30</span>
-                    <span class="text-[#D8D8D8]">|</span>
-                    <a href="#" class="text-[#576B95] hover:underline font-medium flex items-center gap-0.5">
-                        更多
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- 模块一：风险概览 (7天 | 30天 筛选) -->
-            <!-- ========================================== -->
-            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                <div class="flex items-center justify-between border-b border-[#F0F0F0] pb-4 mb-6">
-                    <div>
-                        <h2 class="text-[15px] font-semibold text-[#353535]">风险概览</h2>
-                        <div class="flex items-center gap-1.5 mt-1 text-[11px] text-[#888888]">
-                            <span class="flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#07C160]"></span>
-                                当前未整改违规 (分钟级更新)
-                            </span>
-                            <span class="text-[#E0E0E0]">|</span>
-                            <span>数据更新于 14:32</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 实时指标行 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 mb-6">
-                    <!-- 违规小程序 -->
-                    <div class="pr-6 md:border-r border-[#EDEDED] flex flex-col justify-between h-[120px]">
-                        <div>
-                            <span class="text-xs text-[#888888] font-medium">当前违规小程序数</span>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535] tracking-tight">42</div>
-                        </div>
-                        <div class="space-y-0.5 text-[11px] text-[#888888] mt-2">
-                            <div class="flex items-center gap-3"><span>日</span><span class="text-[#888888]">持平</span></div>
-                            <div class="flex items-center gap-3"><span>周</span><span class="text-[#888888]">持平</span></div>
-                        </div>
-                        <div class="text-[11px] text-[#888888] mt-3 flex items-center gap-1">
-                            <span>* 另有 5 个需商家授权 76 权限集后方可代办</span>
-                        </div>
-                    </div>
-                    <!-- 待处理违规记录数 -->
-                    <div class="pl-0 md:pl-8 flex flex-col justify-between h-[120px] mt-6 md:mt-0">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-[#888888] font-medium">待处理违规记录数</span>
-                                <a href="#" class="text-xs text-[#07C160] hover:underline font-medium">立即处理 →</a>
-                            </div>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535] tracking-tight">8 <span class="text-xs text-[#888888] font-normal">条</span></div>
-                        </div>
-                        <div class="space-y-0.5 text-[11px] text-[#888888] mt-2">
-                            <div class="flex items-center gap-3"><span>日</span><span class="text-[#07C160]">+2.10%</span></div>
-                            <div class="flex items-center gap-3"><span>周</span><span class="text-[#07C160]">+5.30%</span></div>
-                        </div>
-                        <div class="text-[11px] text-[#888888] mt-3">
-                            <span>* 列表按违规记录展示，一条记录算一次</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="h-px bg-[#F0F0F0] my-6"></div>
-
-                <!-- 违规处理实效分析 -->
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-semibold text-[#353535]">违规处理实效分析</h3>
-                    <div class="flex items-center gap-3 text-xs font-medium shrink-0">
-                        <button class="text-[#07C160] font-semibold">7天</button>
-                        <span class="text-[#E0E0E0]">|</span>
-                        <button class="text-[#888888] hover:text-[#07C160] transition-colors">30天</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-                    <!-- 平均违规处理耗时 -->
-                    <div class="pr-6 md:border-r border-[#EDEDED] flex flex-col justify-between h-[110px]">
-                        <div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs text-[#888888] font-medium">平均违规处理耗时</span>
-                                <div class="relative group inline-block leading-none">
-                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-52 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-center font-normal">
-                                        指收到违规通知起，至官方整改审核通过或处罚解除止的平均自然日天数
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">6.2 <span class="text-xs text-[#888888] font-normal">天</span></div>
-                        </div>
-                        <div class="space-y-0.5 text-[11px] text-[#888888]">
-                            <div class="flex items-center gap-3"><span>日变动</span><span class="text-[#FA5151]">+0.3天</span></div>
-                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
-                                行业标杆 (Top 10%): <strong class="text-[#353535] font-semibold">3.1天</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">5.2天</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="text-[#FA5151] font-semibold">慢 3.1天</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 警告超时升级处罚率 -->
-                    <div class="pl-0 md:pl-8 flex flex-col justify-between h-[110px] mt-6 md:mt-0">
-                        <div>
-                            <span class="text-xs text-[#888888] font-medium">警告超时升级处罚率</span>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">18.5 <span class="text-xs text-[#888888] font-normal">%</span></div>
-                        </div>
-                        <div class="space-y-0.5 text-[11px] text-[#888888]">
-                            <div class="flex items-center gap-3"><span>日变动</span><span class="text-[#FA5151]">+1.5%</span></div>
-                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
-                                行业标杆 (Top 10%): <strong class="text-[#353535] font-semibold">6.5%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">12.0%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="text-[#FA5151] font-semibold">高 12.0%</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ========================================== -->
-            <!-- 模块二：核心数据 -->
-            <!-- ========================================== -->
-            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-                <div class="flex flex-wrap items-start justify-between gap-4 border-b border-[#F0F0F0] pb-4 mb-4">
-                    <div>
-                        <h2 class="text-[15px] font-semibold text-[#353535]">核心数据</h2>
-                        <p class="text-[11px] text-[#888888] mt-1">数据更新至 2026-07-02 · 有赞（thirduin 3078907516）</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3 text-xs shrink-0">
-                        <select id="industry-select" class="border border-[#EDEDED] rounded px-2 py-1.5 text-[#353535] bg-white min-w-[120px]">
-                            <option value="食品/饮料" selected>食品/饮料</option>
+                <div class="border-t border-[#F0F0F0] mx-6"></div>
+                <div class="flex items-center justify-between px-6 py-2.5 gap-4">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-[11px] text-[#888888] shrink-0">查看范围</span>
+                        <select id="data-scope-select" class="border-0 bg-transparent text-xs font-medium text-[#07C160] cursor-pointer appearance-none pr-4 pl-0.5 py-0 focus:outline-none truncate max-w-[200px] bg-[length:10px] bg-[right_center] bg-no-repeat" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%2307C160%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E')" aria-label="行业/平台切换过滤器">
+                            <option value="全平台" selected>全平台</option>
+                            <option value="食品/饮料">食品/饮料</option>
                             <option value="餐饮">餐饮</option>
                             <option value="鞋服/运动">鞋服/运动</option>
                             <option value="未知">未知</option>
                         </select>
-                        <div class="flex items-center gap-2 font-medium">
-                            <button type="button" id="bench-industry" class="text-[#07C160] font-semibold">本行业</button>
-                            <span class="text-[#E0E0E0]">|</span>
-                            <button type="button" id="bench-platform" class="text-[#888888] hover:text-[#07C160]">全平台</button>
-                        </div>
                     </div>
+                    <p id="industry-hint" class="hidden text-[10px] text-[#FA9D3B] shrink-0">数据较少，指标可能失真</p>
                 </div>
-
-                <!-- 资产摘要 -->
-                <p class="text-[11px] text-[#888888] mb-6">
-                    授权商户 <span class="text-[#353535] font-medium">144,628</span>
-                    <span class="mx-2 text-[#E0E0E0]">·</span>
-                    已授权 <span class="text-[#353535] font-medium">152,929</span>
-                    <span class="mx-2 text-[#E0E0E0]">·</span>
-                    已发布 <span class="text-[#353535] font-medium">152,929</span>
-                    <span class="mx-2 text-[#E0E0E0]">·</span>
-                    开通支付 <span class="text-[#353535] font-medium">131,506</span>
-                </p>
-
-                <!-- 转化漏斗 -->
-                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
-                    <span>转化漏斗</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-0 mb-6">
-                    <div class="md:border-r border-[#EDEDED] pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="publish">
-                        <div>
-                            <span class="text-xs text-[#888888]">发布转化率</span>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">截至昨日</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">100.0<span class="text-xs font-normal text-[#888888]">%</span></div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
-                    </div>
-                    <div class="md:border-r border-[#EDEDED] md:pl-6 pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="active">
-                        <div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs text-[#888888]">活跃转化率</span>
-                                <div class="relative group inline-block leading-none">
-                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-52 p-2 bg-gray-900 text-white text-[10px] rounded shadow-lg z-30">Demo 取数暂用月有效活跃/已发布；持续活跃阈值待定</div>
-                                </div>
-                            </div>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">近 7 日（代理口径）</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">11.0<span class="text-xs font-normal text-[#888888]">%</span></div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
-                    </div>
-                    <div class="md:pl-6 flex flex-col justify-between min-h-[120px]" data-metric="pay">
-                        <div>
-                            <span class="text-xs text-[#888888]">支付转化率</span>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">10.0<span class="text-xs font-normal text-[#888888]">%</span></div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
-                    </div>
-                </div>
-
-                <!-- 强度与趋势 -->
-                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
-                    <span>强度与趋势</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-0">
-                    <div class="md:border-r border-[#EDEDED] pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="growth">
-                        <div>
-                            <span class="text-xs text-[#888888]">活跃增长小程序占比</span>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">近 30 日 vs 上 30 日</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">22.3<span class="text-xs font-normal text-[#888888]">%</span></div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2">对标：待补跑</div>
-                    </div>
-                    <div class="md:border-r border-[#EDEDED] md:pl-6 pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[120px]" data-metric="avgUv">
-                        <div>
-                            <span class="text-xs text-[#888888]">单小程序日均访问用户</span>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">152</div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
-                    </div>
-                    <div class="md:pl-6 flex flex-col justify-between min-h-[120px]" data-metric="avgPay">
-                        <div>
-                            <span class="text-xs text-[#888888]">单小程序日均支付笔数</span>
-                            <p class="text-[10px] text-[#B2B2B2] mt-0.5">昨日</p>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">32.2</div>
-                        </div>
-                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
-                    </div>
-                </div>
-                <p id="industry-hint" class="hidden text-[10px] text-[#FA9D3B] mt-4">该行业的服务商有效活跃小程序数目较少，可能失真。</p>
             </div>
 
-            <!-- ========================================== -->
-            <!-- 模块三：小程序上线时效分析 (7天 | 30天 筛选) -->
-            <!-- ========================================== -->
+            <div id="dashboard-content" class="space-y-8">
+
+            <!-- 3.2 经营健康度 -->
+            <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-[#F0F0F0] pb-4 mb-4">
+                    <h2 class="text-[15px] font-semibold text-[#353535]">经营健康度</h2>
+                    <div id="health-period" class="flex items-center gap-3 text-xs font-medium shrink-0">
+                        <button type="button" data-days="30" class="health-period-btn text-[#07C160] font-semibold">近 30 天</button>
+                        <span class="text-[#E0E0E0]">|</span>
+                        <button type="button" data-days="180" class="health-period-btn text-[#888888] hover:text-[#07C160] transition-colors">近 180 天</button>
+                    </div>
+                </div>
+
+                <p id="asset-summary" class="text-[11px] text-[#888888] mb-6">
+                    <span class="text-[#B2B2B2]">截至昨日 · </span>
+                    授权商户数 <span id="asset-merchant" class="text-[#353535] font-medium">144,628</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    已授权小程序数 <span id="asset-auth" class="text-[#353535] font-medium">152,929</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    已发布小程序数 <span id="asset-publish" class="text-[#353535] font-medium">152,929</span>
+                    <span class="mx-2 text-[#E0E0E0]">·</span>
+                    开通支付小程序数 <span id="asset-pay" class="text-[#353535] font-medium">131,506</span>
+                </p>
+
+                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
+                    <span>新小程序转化</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-0 mb-6">
+                    <div class="md:border-r border-[#EDEDED] pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[110px]" data-metric="publish">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888]">发布转化率</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-left font-normal">
+                                        统计授权后 30 天内完成首次发布的小程序占比；样本为观察已满 30 天的授权批次。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">86.4<span class="text-xs font-normal text-[#888888]">%</span></div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="md:border-r border-[#EDEDED] md:pl-6 pr-4 pb-4 md:pb-0 flex flex-col justify-between min-h-[110px]" data-metric="activeReach">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888]">有效活跃达成率</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-left font-normal">
+                                        统计首次发布后 30 天内达有效活跃的小程序占比；有效活跃 = 有访问天的日均访问用户不低于 10。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">24.6<span class="text-xs font-normal text-[#888888]">%</span></div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="md:pl-6 flex flex-col justify-between min-h-[110px]" data-metric="payReach">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888]">支付达成率</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-left font-normal">
+                                        统计首次发布后 30 天内开通支付且产生首笔支付的小程序占比。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">18.2<span class="text-xs font-normal text-[#888888]">%</span></div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                </div>
+
+                <div class="text-xs font-semibold text-[#888888] mb-3 flex items-center gap-2">
+                    <span>经营表现</span><span class="h-px bg-[#F5F5F5] flex-1"></span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0">
+                    <div class="lg:border-r border-[#EDEDED] pr-4 pb-4 lg:pb-0 flex flex-col justify-between min-h-[110px]" data-metric="activeShare">
+                        <div>
+                            <span class="text-xs text-[#888888]">有效活跃小程序占比</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">31.5<span class="text-xs font-normal text-[#888888]">%</span></div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="lg:border-r border-[#EDEDED] lg:pl-6 pr-4 pb-4 lg:pb-0 flex flex-col justify-between min-h-[110px]" data-metric="activeRetain">
+                        <div>
+                            <div class="flex items-center gap-1">
+                                <span class="text-xs text-[#888888]">有效活跃留存率</span>
+                                <div class="relative group inline-block leading-none">
+                                    <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-left font-normal">
+                                        上一周期已达有效活跃的小程序中，本周期仍达有效活跃的比例。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">72.8<span class="text-xs font-normal text-[#888888]">%</span></div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="lg:border-r border-[#EDEDED] lg:pl-6 pr-4 pb-4 lg:pb-0 flex flex-col justify-between min-h-[110px]" data-metric="avgActiveUv">
+                        <div>
+                            <span class="text-xs text-[#888888]">单有效活跃小程序日均访问用户</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">428.6</div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                    <div class="lg:pl-6 flex flex-col justify-between min-h-[110px]" data-metric="avgPayOrders">
+                        <div>
+                            <span class="text-xs text-[#888888]">单有支付小程序日均支付笔数</span>
+                            <div class="mt-2 text-2xl font-semibold text-[#353535] self-val">86.3</div>
+                            <div class="health-dod mt-1"></div>
+                        </div>
+                        <div class="bench-line text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3.3 小程序交付效率 -->
             <div class="bg-white rounded border border-[#EDEDED] p-7 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
                 <div class="flex items-center justify-between border-b border-[#F0F0F0] pb-4 mb-6">
-                    <div>
-                        <h2 class="text-[15px] font-semibold text-[#353535]">小程序上线时效分析</h2>
-                        <p class="text-[11px] text-[#888888] mt-1">Top 10% = 平台头部服务商均值</p>
-                    </div>
-                    <!-- 30天和180天平铺选择器 -->
-                    <div class="flex items-center gap-3 text-xs font-medium shrink-0">
-                        <button class="text-[#07C160] font-semibold">7天</button>
-                        <span class="text-[#E0E0E0]">|</span>
-                        <button class="text-[#888888] hover:text-[#07C160] transition-colors">30天</button>
-                    </div>
-                </div>
-
-                <!-- 审核通过率双列对齐：左列为数字，右列为专属波动小趋势图 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 items-center">
-                    <!-- 左列：审核通过率主数值 -->
-                    <div class="flex flex-col justify-between h-[110px]">
-                        <div>
-                            <span class="text-xs text-[#888888] font-medium">审核通过率</span>
-                            <div class="mt-2 text-2xl font-semibold text-[#353535]">99.7 <span class="text-xs text-[#888888] font-normal">%</span></div>
-                        </div>
-                        <div class="space-y-0.5 text-[11px] text-[#888888]">
-                            <div class="flex items-center gap-3"><span>上周期对比</span><span class="text-[#FA5151]">-1.8%</span></div>
-                            <div class="text-[11px] text-[#888888] border-t border-[#F5F5F5] pt-1 mt-1">
-                                头部 (Top 10%): <strong class="text-[#353535] font-semibold">96.0%</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">92.5%</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 右列：审核通过率近周期波动走势微幅图 -->
-                    <div class="h-[100px] relative">
-                        <div class="absolute top-0 left-0 text-[10px] text-[#888888]">审核通过率近周期波动趋势</div>
-                        <canvas id="passRateChart" class="pt-4"></canvas>
-                    </div>
-                </div>
-
-                <!-- 分割线 -->
-                <div class="h-px bg-[#F0F0F0] my-6"></div>
-
-                <!-- 趋势分析图表区 (已移除多余图例，完全靠下方底表的色彩与文字直观对齐) -->
-                <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-1.5">
-                        <h3 class="text-xs font-semibold text-[#353535]">近周期三阶段耗时趋势</h3>
+                        <h2 class="text-[15px] font-semibold text-[#353535]">小程序交付效率</h2>
                         <div class="relative group inline-block leading-none">
                             <svg class="w-3.5 h-3.5 text-[#B2B2B2] hover:text-[#888888] cursor-pointer" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-72 p-3 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30">
-                                统计口径：X 轴为自然日；当日 point = 已发布在架小程序的注册→认证/备案/发布平均耗时。
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-56 p-2.5 bg-gray-900 text-white text-[11px] rounded shadow-lg leading-relaxed z-30 text-center font-normal">
+                                仅统计已走完该环节的小程序，不含进行中
                             </div>
                         </div>
                     </div>
+                    <div id="timeline-period" class="flex items-center gap-3 text-xs font-medium shrink-0">
+                        <button type="button" data-days="30" class="timeline-period-btn text-[#07C160] font-semibold">近 30 天</button>
+                        <span class="text-[#E0E0E0]">|</span>
+                        <button type="button" data-days="180" class="timeline-period-btn text-[#888888] hover:text-[#07C160] transition-colors">近 180 天</button>
+                    </div>
                 </div>
 
-                <!-- 折线图区域 -->
                 <div class="relative w-full h-[220px] mb-6">
                     <canvas id="trendChart"></canvas>
+                    <div id="trend-chart-empty" class="hidden absolute inset-0 flex items-center justify-center text-xs text-[#B2B2B2] bg-[#FAFAFA] rounded border border-dashed border-[#EDEDED]">暂无审核数据</div>
                 </div>
 
-                <!-- 数据明细表格 (包含直观的色彩和文字标注，作为唯一图例载体) -->
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto" id="timeline-table-wrap">
                     <table class="w-full text-left text-xs text-[#888888]">
                         <thead class="text-[11px] text-[#888888] bg-[#F7F7F7]/80">
                             <tr>
-                                <th scope="col" class="py-2.5 px-4 font-normal">流程节点 (自注册起累计耗时)</th>
-                                <th scope="col" class="py-2.5 px-4 font-normal">你的</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">指标</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">本服务商</th>
                                 <th scope="col" class="py-2.5 px-4 font-normal">大盘中位数</th>
-                                <th scope="col" class="py-2.5 px-4 font-normal">大盘 Top 10% 均值</th>
+                                <th scope="col" class="py-2.5 px-4 font-normal">大盘标杆</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#F0F0F0]">
-                            <tr class="hover:bg-[#F9F9F9] transition-colors">
-                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-[#57B2F7] rounded-sm"></span>注册到认证
+                            <tr>
+                                <td class="py-3 px-4 font-medium text-[#353535]">注册到备案</td>
+                                <td class="py-3 px-4">
+                                    <div id="icp-you" class="text-[#353535] font-semibold">13.0天</div>
+                                    <div id="icp-you-dod" class="text-[10px] mt-0.5"></div>
                                 </td>
-                                <td class="py-3 px-4 text-[#353535] font-semibold">239天</td>
-                                <td class="py-3 px-4">358天</td>
-                                <td class="py-3 px-4">3.64天</td>
+                                <td id="icp-p50" class="py-3 px-4">11.0天</td>
+                                <td id="icp-bench" class="py-3 px-4">4.7天</td>
                             </tr>
-                            <tr class="hover:bg-[#F9F9F9] transition-colors">
-                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-[#07C160] rounded-sm"></span>注册到备案
+                            <tr>
+                                <td class="py-3 px-4 font-medium text-[#353535]">注册到首次发布</td>
+                                <td class="py-3 px-4">
+                                    <div id="pub-you" class="text-[#353535] font-semibold">16.0天</div>
+                                    <div id="pub-you-dod" class="text-[10px] mt-0.5"></div>
                                 </td>
-                                <td class="py-3 px-4 text-[#353535] font-semibold">432天</td>
-                                <td class="py-3 px-4">229天</td>
-                                <td class="py-3 px-4">5.41天</td>
+                                <td id="pub-p50" class="py-3 px-4">14.0天</td>
+                                <td id="pub-bench" class="py-3 px-4">3.3天</td>
                             </tr>
-                            <tr class="hover:bg-[#F9F9F9] transition-colors">
-                                <td class="py-3 px-4 font-medium text-[#353535] flex items-center gap-2">
-                                    <span class="w-2 h-2 bg-[#F5D130] rounded-sm"></span>注册到首次发布
+                            <tr>
+                                <td class="py-3 px-4 font-medium text-[#353535]">审核通过率</td>
+                                <td class="py-3 px-4">
+                                    <div id="pass-you" class="text-[#353535] font-semibold">99.7%</div>
+                                    <div id="pass-you-dod" class="text-[10px] mt-0.5"></div>
                                 </td>
-                                <td class="py-3 px-4 text-[#353535] font-semibold">27天</td>
-                                <td class="py-3 px-4">16.8天</td>
-                                <td class="py-3 px-4">1.20天</td>
+                                <td id="pass-p50" class="py-3 px-4">99.3%</td>
+                                <td id="pass-bench" class="py-3 px-4">100.0%</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <div id="timeline-table-empty" class="hidden py-12 text-center text-xs text-[#B2B2B2] bg-[#FAFAFA] rounded border border-dashed border-[#EDEDED]">暂无审核数据</div>
+            </div>
+
+            </div><!-- /dashboard-content -->
+
+            <div class="text-center pb-4">
+                <a href="#" class="text-xs text-[#B2B2B2] hover:text-[#888888] hover:underline">文档中心</a>
             </div>
 
         </div>
     </main>
 
     <!-- ========================================== -->
-    <!-- JavaScript: 侧边栏折叠交互 & 双图表初始化 -->
+    <!-- JavaScript: 侧边栏折叠交互 & 交付效率折线图 -->
     <!-- ========================================== -->
     <script>
         // --- 1. 左侧菜单折叠与状态定位交互逻辑 ---
@@ -561,207 +453,489 @@
         });
 
 
-        // --- 核心数据：有赞真实对标（ds=20260702，见 内部过程/Demo取数-有赞_20260703.md）---
-        const YOUZAN_SELF = {
-            publish: 100.0, active: 11.0, pay: 10.0, growth: 22.3, avgUv: 152, avgPay: 32.2
-        };
-        const BENCHMARKS = {
-            platform: {
-                publish: { p50: 100, top10: 100 },
-                active: { p50: 0, top10: 47.0 },
-                pay: { p50: 0, top10: 38.9 },
-                avgUv: { p50: 9.5, top10: 2310.2 },
-                avgPay: { p50: 8.8, top10: 617.9 }
+        const TIMELINE_BENCH = {
+            '全平台': {
+                30: { icp: { you: 13, p50: 11, bench: 4.7, youDod: -1 }, publish: { you: 16, p50: 14, bench: 3.3, youDod: 0 }, pass: { you: 99.7, bench: 100.0, p50: 99.3, youDod: 0.1 } },
+                180: { icp: { you: 14, p50: 12, bench: 5.1, youDod: 1 }, publish: { you: 17, p50: 15, bench: 3.8, youDod: -2 }, pass: { you: 99.5, bench: 99.8, p50: 99.1, youDod: -0.2 } }
             },
             '食品/饮料': {
-                publish: { p50: 100, top10: 100 },
-                active: { p50: 0, top10: 33.0 },
-                pay: { p50: 0, top10: 23.4 },
-                avgUv: { p50: 6.0, top10: 958.1 },
-                avgPay: { p50: 5.0, top10: 82.6 }
+                30: { icp: { you: 12, p50: 10, bench: 4.2, youDod: -2 }, publish: { you: 15, p50: 13, bench: 3.0, youDod: 1 }, pass: { you: 99.6, bench: 99.9, p50: 99.2, youDod: 0.2 } },
+                180: { icp: { you: 13, p50: 11, bench: 4.6, youDod: 0 }, publish: { you: 16, p50: 14, bench: 3.5, youDod: -1 }, pass: { you: 99.4, bench: 99.7, p50: 99.0, youDod: 0.0 } }
             },
             '餐饮': {
-                publish: { p50: 100, top10: 100 },
-                active: { p50: 0, top10: 34.2 },
-                pay: { p50: 0, top10: 34.9 },
-                avgUv: { p50: 9.4, top10: 267.1 },
-                avgPay: { p50: 12.0, top10: 174.5 }
+                30: { icp: { you: 14, p50: 12, bench: 5.0, youDod: 2 }, publish: { you: 17, p50: 15, bench: 3.6, youDod: -1 }, pass: { you: 99.5, bench: 99.8, p50: 99.1, youDod: -0.1 } },
+                180: { icp: { you: 15, p50: 13, bench: 5.4, youDod: 1 }, publish: { you: 18, p50: 16, bench: 4.0, youDod: 0 }, pass: { you: 99.3, bench: 99.6, p50: 98.9, youDod: 0.1 } }
             },
             '鞋服/运动': {
-                publish: { p50: 100, top10: 100 },
-                active: { p50: 0, top10: 33.7 },
-                pay: { p50: 0, top10: 19.2 },
-                avgUv: { p50: 5.0, top10: 336.0 },
-                avgPay: { p50: 3.6, top10: 29.0 }
+                30: { icp: { you: 15, p50: 13, bench: 5.2, youDod: 1 }, publish: { you: 18, p50: 16, bench: 3.8, youDod: 2 }, pass: { you: 99.2, bench: 99.6, p50: 98.8, youDod: -0.3 } },
+                180: { icp: { you: 16, p50: 14, bench: 5.6, youDod: -1 }, publish: { you: 19, p50: 17, bench: 4.2, youDod: 1 }, pass: { you: 99.0, bench: 99.4, p50: 98.6, youDod: 0.2 } }
             },
             '未知': {
-                publish: { p50: 100, top10: 100 },
-                active: { p50: 76.1, top10: 100.0 },
-                pay: { p50: 77.8, top10: 103.1 },
-                avgUv: { p50: 78.1, top10: 3390.3 },
-                avgPay: { p50: 27.1, top10: 1327.3 }
+                30: { icp: { you: 18, p50: 16, bench: 6.1, youDod: 3 }, publish: { you: 21, p50: 19, bench: 4.5, youDod: 2 }, pass: { you: 98.9, bench: 99.2, p50: 98.5, youDod: 0.1 } },
+                180: { icp: { you: 19, p50: 17, bench: 6.5, youDod: 2 }, publish: { you: 22, p50: 20, bench: 4.9, youDod: -3 }, pass: { you: 98.6, bench: 99.0, p50: 98.2, youDod: -0.2 } }
             }
         };
 
-        let benchScope = 'industry';
+        const REGISTERED_INDUSTRIES = [
+            { value: '食品/饮料', label: '食品/饮料' },
+            { value: '餐饮', label: '餐饮' },
+            { value: '鞋服/运动', label: '鞋服/运动' },
+            { value: '未知', label: '未知' }
+        ];
 
-        function fmtPct(v) { return (Math.round(v * 10) / 10).toFixed(1) + '%'; }
+        const INDUSTRY_SAMPLE_WARN = new Set(['未知']);
+
+        const ASSET_PLATFORM = { merchant: 144628, auth: 152929, publish: 152929, pay: 131506 };
+        const ASSET_BY_INDUSTRY = {
+            '食品/饮料': { merchant: 58200, auth: 61500, publish: 61500, pay: 52800 },
+            '餐饮': { merchant: 42100, auth: 44800, publish: 44800, pay: 38600 },
+            '鞋服/运动': { merchant: 28900, auth: 30200, publish: 30200, pay: 25100 },
+            '未知': { merchant: 15428, auth: 16429, publish: 16429, pay: 15006 }
+        };
+
+        const HEALTH_BENCH = {
+            '全平台': {
+                30: {
+                    publish: { you: 86.4, youDod: 1.2, p50: 82.1, top10: 94.5 },
+                    activeReach: { you: 24.6, youDod: -0.8, p50: 21.3, top10: 38.2 },
+                    payReach: { you: 18.2, youDod: 0.5, p50: 15.6, top10: 28.4 },
+                    activeShare: { you: 31.5, youDod: 0.9, p50: 28.0, top10: 42.1 },
+                    activeRetain: { you: 72.8, youDod: -1.1, p50: 68.5, top10: 81.2 },
+                    avgActiveUv: { you: 428.6, youDod: 12.4, p50: 312.0, top10: 890.5 },
+                    avgPayOrders: { you: 86.3, youDod: -2.1, p50: 64.2, top10: 152.8 }
+                },
+                180: {
+                    publish: { you: 88.1, youDod: 0.6, p50: 84.0, top10: 95.2 },
+                    activeReach: { you: 26.2, youDod: 1.0, p50: 22.8, top10: 39.5 },
+                    payReach: { you: 19.5, youDod: -0.3, p50: 16.8, top10: 29.1 },
+                    activeShare: { you: 32.8, youDod: 0.4, p50: 29.2, top10: 43.0 },
+                    activeRetain: { you: 74.1, youDod: 0.7, p50: 69.8, top10: 82.5 },
+                    avgActiveUv: { you: 415.2, youDod: 8.6, p50: 305.5, top10: 875.0 },
+                    avgPayOrders: { you: 84.0, youDod: 1.5, p50: 62.8, top10: 148.3 }
+                }
+            },
+            '食品/饮料': {
+                30: {
+                    publish: { you: 89.2, youDod: 0.8, p50: 85.0, top10: 96.0 },
+                    activeReach: { you: 28.1, youDod: 1.2, p50: 24.5, top10: 40.0 },
+                    payReach: { you: 21.0, youDod: 0.2, p50: 18.2, top10: 30.5 },
+                    activeShare: { you: 34.2, youDod: 0.5, p50: 30.1, top10: 44.8 },
+                    activeRetain: { you: 75.5, youDod: -0.5, p50: 71.0, top10: 83.0 },
+                    avgActiveUv: { you: 462.0, youDod: 15.0, p50: 340.0, top10: 920.0 },
+                    avgPayOrders: { you: 92.5, youDod: -1.0, p50: 70.0, top10: 160.0 }
+                },
+                180: {
+                    publish: { you: 90.0, youDod: 0.4, p50: 86.2, top10: 96.5 },
+                    activeReach: { you: 29.0, youDod: 0.6, p50: 25.0, top10: 41.0 },
+                    payReach: { you: 22.1, youDod: 0.1, p50: 19.0, top10: 31.2 },
+                    activeShare: { you: 35.0, youDod: 0.3, p50: 31.0, top10: 45.5 },
+                    activeRetain: { you: 76.2, youDod: 0.4, p50: 72.0, top10: 84.0 },
+                    avgActiveUv: { you: 450.0, youDod: 10.0, p50: 330.0, top10: 910.0 },
+                    avgPayOrders: { you: 90.0, youDod: 0.8, p50: 68.0, top10: 155.0 }
+                }
+            },
+            '餐饮': {
+                30: {
+                    publish: { you: 84.5, youDod: -0.5, p50: 80.0, top10: 93.0 },
+                    activeReach: { you: 22.0, youDod: -1.0, p50: 19.5, top10: 35.0 },
+                    payReach: { you: 16.8, youDod: 0.3, p50: 14.2, top10: 26.0 },
+                    activeShare: { you: 29.8, youDod: 0.2, p50: 26.5, top10: 40.0 },
+                    activeRetain: { you: 70.5, youDod: -1.5, p50: 66.0, top10: 79.0 },
+                    avgActiveUv: { you: 380.0, youDod: 5.0, p50: 280.0, top10: 820.0 },
+                    avgPayOrders: { you: 78.0, youDod: -3.0, p50: 58.0, top10: 140.0 }
+                },
+                180: {
+                    publish: { you: 85.2, youDod: 0.2, p50: 81.0, top10: 93.5 },
+                    activeReach: { you: 23.5, youDod: 0.5, p50: 20.0, top10: 36.0 },
+                    payReach: { you: 17.5, youDod: -0.2, p50: 15.0, top10: 27.0 },
+                    activeShare: { you: 30.5, youDod: 0.1, p50: 27.0, top10: 41.0 },
+                    activeRetain: { you: 71.8, youDod: 0.3, p50: 67.0, top10: 80.0 },
+                    avgActiveUv: { you: 375.0, youDod: 4.0, p50: 275.0, top10: 810.0 },
+                    avgPayOrders: { you: 76.5, youDod: 1.0, p50: 56.0, top10: 138.0 }
+                }
+            },
+            '鞋服/运动': {
+                30: {
+                    publish: { you: 82.0, youDod: 0.3, p50: 78.5, top10: 91.0 },
+                    activeReach: { you: 20.5, youDod: -0.6, p50: 18.0, top10: 32.0 },
+                    payReach: { you: 15.2, youDod: 0.1, p50: 13.0, top10: 24.0 },
+                    activeShare: { you: 27.5, youDod: 0.4, p50: 24.0, top10: 38.0 },
+                    activeRetain: { you: 68.2, youDod: -0.8, p50: 64.0, top10: 77.0 },
+                    avgActiveUv: { you: 350.0, youDod: 8.0, p50: 260.0, top10: 780.0 },
+                    avgPayOrders: { you: 72.0, youDod: -1.5, p50: 54.0, top10: 130.0 }
+                },
+                180: {
+                    publish: { you: 83.0, youDod: 0.1, p50: 79.0, top10: 92.0 },
+                    activeReach: { you: 21.2, youDod: 0.2, p50: 18.5, top10: 33.0 },
+                    payReach: { you: 16.0, youDod: -0.1, p50: 13.5, top10: 25.0 },
+                    activeShare: { you: 28.2, youDod: 0.2, p50: 25.0, top10: 39.0 },
+                    activeRetain: { you: 69.5, youDod: 0.5, p50: 65.0, top10: 78.0 },
+                    avgActiveUv: { you: 345.0, youDod: 6.0, p50: 255.0, top10: 770.0 },
+                    avgPayOrders: { you: 70.5, youDod: 0.5, p50: 52.0, top10: 128.0 }
+                }
+            },
+            '未知': {
+                30: {
+                    publish: { you: 75.0, youDod: 2.0, p50: 70.0, top10: 88.0 },
+                    activeReach: { you: 15.0, youDod: 1.5, p50: 12.0, top10: 28.0 },
+                    payReach: { you: 10.5, youDod: 0.8, p50: 8.0, top10: 20.0 },
+                    activeShare: { you: 22.0, youDod: 1.2, p50: 18.0, top10: 35.0 },
+                    activeRetain: { you: 62.0, youDod: -2.0, p50: 58.0, top10: 72.0 },
+                    avgActiveUv: { you: 280.0, youDod: 20.0, p50: 200.0, top10: 650.0 },
+                    avgPayOrders: { you: 55.0, youDod: -4.0, p50: 40.0, top10: 110.0 }
+                },
+                180: {
+                    publish: { you: 76.5, youDod: 1.0, p50: 71.0, top10: 89.0 },
+                    activeReach: { you: 16.2, youDod: 0.8, p50: 13.0, top10: 29.0 },
+                    payReach: { you: 11.2, youDod: 0.3, p50: 8.5, top10: 21.0 },
+                    activeShare: { you: 23.0, youDod: 0.6, p50: 19.0, top10: 36.0 },
+                    activeRetain: { you: 63.5, youDod: 0.5, p50: 59.0, top10: 73.0 },
+                    avgActiveUv: { you: 275.0, youDod: 15.0, p50: 195.0, top10: 640.0 },
+                    avgPayOrders: { you: 53.0, youDod: 2.0, p50: 38.0, top10: 108.0 }
+                }
+            }
+        };
+
+        let dataScope = '全平台';
+        let timelineDays = 30;
+        let healthDays = 30;
+        const noRegisteredIndustry = new URLSearchParams(window.location.search).get('noIndustry') === '1';
+
+        function buildDataScopeSelect() {
+            const select = document.getElementById('data-scope-select');
+            select.innerHTML = '';
+
+            if (noRegisteredIndustry) {
+                const opt = document.createElement('option');
+                opt.value = '全平台';
+                opt.textContent = '暂无已登记行业';
+                select.appendChild(opt);
+                select.disabled = true;
+                select.classList.add('opacity-60', 'cursor-not-allowed', 'text-[#B2B2B2]');
+                select.classList.remove('text-[#07C160]');
+            } else {
+                select.disabled = false;
+                select.classList.remove('opacity-60', 'cursor-not-allowed', 'text-[#B2B2B2]');
+                select.classList.add('text-[#07C160]');
+                const platformOpt = document.createElement('option');
+                platformOpt.value = '全平台';
+                platformOpt.textContent = '全平台';
+                select.appendChild(platformOpt);
+                REGISTERED_INDUSTRIES.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.value;
+                    opt.textContent = item.label;
+                    select.appendChild(opt);
+                });
+            }
+
+            dataScope = '全平台';
+            select.value = '全平台';
+        }
+
+        function getBenchmarkKey() {
+            return dataScope === '全平台' ? 'platform' : dataScope;
+        }
+
         function fmtNum(v) {
             if (v >= 100) return Math.round(v).toLocaleString('zh-CN');
             return (Math.round(v * 10) / 10).toString();
         }
 
-        function gapText(self, bench, isPct) {
-            const diff = self - bench;
-            if (Math.abs(diff) < (isPct ? 0.05 : 0.5)) return '持平';
-            const label = diff > 0 ? '高' : '低';
-            return label + ' ' + (isPct ? Math.abs(diff).toFixed(1) + ' pct' : Math.abs(diff).toFixed(isPct ? 1 : 0));
+        function fmtPct(v) { return (Math.round(v * 10) / 10).toFixed(1) + '%'; }
+
+        function renderDeltaLine(label, delta, options = {}) {
+            const { mode = 'count', neutral = false, lowerIsBetter = true, sizeClass = 'text-[11px]' } = options;
+            if (delta === null || delta === undefined) {
+                return `<span class="${sizeClass} text-[#B2B2B2]">${label} --</span>`;
+            }
+            if (delta === 0) {
+                return `<span class="${sizeClass} text-[#888888]">${label} 持平</span>`;
+            }
+            let valueText;
+            if (mode === 'count') {
+                valueText = (delta > 0 ? '+' : '') + delta.toLocaleString('zh-CN');
+            } else if (mode === 'days') {
+                const n = Math.round(delta * 10) / 10;
+                valueText = (n > 0 ? '+' : '') + n + ' 天';
+            } else if (mode === 'pct') {
+                const n = Math.round(delta * 10) / 10;
+                valueText = (n > 0 ? '+' : '') + n + ' pct';
+            }
+            if (neutral) {
+                return `<span class="${sizeClass} text-[#888888]">${label} ${valueText}</span>`;
+            }
+            const good = lowerIsBetter ? delta < 0 : delta > 0;
+            const color = good ? 'text-[#07C160]' : 'text-[#FA5151]';
+            return `<span class="${sizeClass} text-[#888888]">${label} <span class="${color}">${valueText}</span></span>`;
         }
 
-        function renderBenchLine(metric, selfVal, bench) {
-            const isPct = ['publish', 'active', 'pay', 'growth'].includes(metric);
-            const p50 = isPct ? fmtPct(bench.p50) : fmtNum(bench.p50);
-            const top = isPct ? fmtPct(bench.top10) : fmtNum(bench.top10);
-            const gap = gapText(selfVal, bench.top10, isPct);
-            const gapColor = (selfVal >= bench.top10) ? 'text-[#07C160]' : 'text-[#FA5151]';
-            return `Top 10%: <strong class="text-[#353535] font-semibold">${top}</strong> <span class="text-[#D8D8D8] mx-1">|</span> 中位数: <strong class="text-[#353535] font-semibold">${p50}</strong> <span class="text-[#D8D8D8] mx-1">|</span> 差距: <strong class="${gapColor} font-semibold">${gap}</strong>`;
+        const HEALTH_PCT_METRICS = new Set(['publish', 'activeReach', 'payReach', 'activeShare', 'activeRetain']);
+
+        function renderBenchLine(metric, bench) {
+            const isPct = HEALTH_PCT_METRICS.has(metric);
+            const p50 = isPct ? fmtPct(bench.p50) : fmtNum(bench.p50)
+            const top = isPct ? fmtPct(bench.top10) : fmtNum(bench.top10)
+            return `中位数: <strong class="text-[#353535] font-semibold">${p50}</strong> <span class="text-[#D8D8D8] mx-1">|</span> 标杆: <strong class="text-[#353535] font-semibold">${top}</strong>`;
         }
 
-        function refreshCoreBenchmarks() {
-            const industry = document.getElementById('industry-select').value;
-            const bench = benchScope === 'platform' ? BENCHMARKS.platform : (BENCHMARKS[industry] || BENCHMARKS.platform);
+        function renderAssetsFrom(assets) {
+            document.getElementById('asset-merchant').textContent = assets.merchant.toLocaleString('zh-CN');
+            document.getElementById('asset-auth').textContent = assets.auth.toLocaleString('zh-CN');
+            document.getElementById('asset-publish').textContent = assets.publish.toLocaleString('zh-CN');
+            document.getElementById('asset-pay').textContent = assets.pay.toLocaleString('zh-CN');
+        }
+
+        function renderIndustryHint() {
+            const hint = document.getElementById('industry-hint');
+            const show = dataScope !== '全平台' && INDUSTRY_SAMPLE_WARN.has(dataScope);
+            hint.classList.toggle('hidden', !show);
+        }
+
+        function renderAssetsFromScope(scope) {
+            const assets = scope === '全平台' ? ASSET_PLATFORM : (ASSET_BY_INDUSTRY[scope] || ASSET_PLATFORM);
+            renderAssetsFrom(assets);
+        }
+
+        function refreshHealthMetrics() {
+            const scopeData = HEALTH_BENCH[dataScope] || HEALTH_BENCH['全平台'];
+            const d = scopeData[healthDays];
+            renderAssetsFromScope(dataScope);
+
             document.querySelectorAll('[data-metric]').forEach(el => {
                 const key = el.getAttribute('data-metric');
-                if (key === 'growth') return;
+                const m = d[key];
+                if (!m) return;
+                const valEl = el.querySelector('.self-val');
                 const line = el.querySelector('.bench-line');
-                if (!line || !YOUZAN_SELF[key] || !bench[key]) return;
-                line.innerHTML = renderBenchLine(key, YOUZAN_SELF[key], bench[key]);
-            });
-            const hint = document.getElementById('industry-hint');
-            if (benchScope === 'platform') {
-                hint.classList.add('hidden');
-            } else {
-                hint.classList.toggle('hidden', industry !== '未知');
-            }
-        }
-
-        document.getElementById('industry-select').addEventListener('change', refreshCoreBenchmarks);
-        document.getElementById('bench-industry').addEventListener('click', () => {
-            benchScope = 'industry';
-            document.getElementById('bench-industry').className = 'text-[#07C160] font-semibold';
-            document.getElementById('bench-platform').className = 'text-[#888888] hover:text-[#07C160]';
-            refreshCoreBenchmarks();
-        });
-        document.getElementById('bench-platform').addEventListener('click', () => {
-            benchScope = 'platform';
-            document.getElementById('bench-platform').className = 'text-[#07C160] font-semibold';
-            document.getElementById('bench-industry').className = 'text-[#888888] hover:text-[#07C160]';
-            refreshCoreBenchmarks();
-        });
-        refreshCoreBenchmarks();
-
-
-        // --- 2. Chart 1: 审核通过率近周期趋势微幅图 ---
-        const passRateCtx = document.getElementById('passRateChart').getContext('2d');
-        const passRateGradient = passRateCtx.createLinearGradient(0, 0, 0, 100);
-        passRateGradient.addColorStop(0, 'rgba(7, 193, 96, 0.08)');
-        passRateGradient.addColorStop(1, 'rgba(7, 193, 96, 0.00)');
-
-        new Chart(passRateCtx, {
-            type: 'line',
-            data: {
-                labels: ['05-30', '06-04', '06-09', '06-14', '06-19', '06-24', '06-30'],
-                datasets: [{
-                    data: [99.1, 99.3, 99.5, 99.6, 99.4, 99.6, 99.7],
-                    borderColor: '#07C160',
-                    backgroundColor: passRateGradient,
-                    borderWidth: 2,
-                    tension: 0.35,
-                    pointRadius: 2,
-                    pointHoverRadius: 4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        padding: 8,
-                        backgroundColor: 'rgba(53, 53, 53, 0.95)',
-                        callbacks: {
-                            label: function(context) { return '通过率: ' + context.raw + '%'; }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        min: 95,
-                        max: 100,
-                        grid: { display: false },
-                        border: { display: false },
-                        ticks: { display: false }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#B2B2B2', font: { size: 9 } }
+                const dodEl = el.querySelector('.health-dod');
+                if (valEl) {
+                    if (HEALTH_PCT_METRICS.has(key)) {
+                        valEl.innerHTML = Number(m.you).toFixed(1) + '<span class="text-xs font-normal text-[#888888]">%</span>';
+                    } else {
+                        valEl.textContent = fmtNum(m.you);
                     }
                 }
+                if (line) {
+                    line.innerHTML = renderBenchLine(key, { p50: m.p50, top10: m.top10 });
+                }
+                if (dodEl) {
+                    const mode = HEALTH_PCT_METRICS.has(key) ? 'pct' : 'count';
+                    dodEl.innerHTML = renderDeltaLine('较上周期', m.youDod, { mode, lowerIsBetter: false, sizeClass: 'text-[11px]' });
+                }
+            });
+        }
+
+        function fmtDay1(v) {
+            return (Math.round(Number(v) * 10) / 10).toFixed(1) + '天';
+        }
+
+        function refreshTimelineBench() {
+            const scopeData = TIMELINE_BENCH[dataScope] || TIMELINE_BENCH['全平台'];
+            const d = scopeData[timelineDays];
+            document.getElementById('icp-you').textContent = fmtDay1(d.icp.you);
+            document.getElementById('icp-p50').textContent = fmtDay1(d.icp.p50);
+            document.getElementById('icp-bench').textContent = fmtDay1(d.icp.bench);
+            document.getElementById('pub-you').textContent = fmtDay1(d.publish.you);
+            document.getElementById('pub-p50').textContent = fmtDay1(d.publish.p50);
+            document.getElementById('pub-bench').textContent = fmtDay1(d.publish.bench);
+            document.getElementById('icp-you-dod').innerHTML = renderDeltaLine('较上周期', d.icp.youDod, { mode: 'days', lowerIsBetter: true, sizeClass: 'text-[10px]' });
+            document.getElementById('pub-you-dod').innerHTML = renderDeltaLine('较上周期', d.publish.youDod, { mode: 'days', lowerIsBetter: true, sizeClass: 'text-[10px]' });
+            document.getElementById('pass-you').textContent = Number(d.pass.you).toFixed(1) + '%';
+            document.getElementById('pass-you-dod').innerHTML = renderDeltaLine('较上周期', d.pass.youDod, { mode: 'pct', lowerIsBetter: false, sizeClass: 'text-[10px]' });
+            document.getElementById('pass-bench').textContent = Number(d.pass.bench).toFixed(1) + '%';
+            document.getElementById('pass-p50').textContent = Number(d.pass.p50).toFixed(1) + '%';
+            refreshTrendChart();
+        }
+
+        function refreshDashboard() {
+            renderIndustryHint();
+            refreshHealthMetrics();
+            refreshTimelineBench();
+        }
+
+        function fmtMd(date) {
+            return String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+        }
+
+        function roundTrend(v) {
+            return Math.round(v * 10) / 10;
+        }
+
+        /** 30 天按自然日、180 天按自然周；示意数据锚定底表期末值 */
+        function buildTrendSeries(days, endIcp, endPublish) {
+            const statEnd = new Date(2026, 5, 30);
+            if (days === 30) {
+                const labels = [];
+                const icp = [];
+                const publish = [];
+                for (let i = 29; i >= 0; i--) {
+                    const d = new Date(statEnd);
+                    d.setDate(d.getDate() - i);
+                    labels.push(fmtMd(d));
+                    const progress = (29 - i) / 29;
+                    const wobble = Math.sin(i * 0.65) * 0.35;
+                    icp.push(roundTrend(endIcp + (2.2 - progress * 2.2) + wobble));
+                    publish.push(roundTrend(endPublish + (2.6 - progress * 2.6) + wobble * 0.8));
+                }
+                return { labels, icp, publish, pointRadius: 0, maxTicksLimit: 7 };
             }
+
+            const weekCount = 26;
+            const labels = [];
+            const icp = [];
+            const publish = [];
+            const msWeek = 7 * 24 * 60 * 60 * 1000;
+            const rangeEnd = statEnd.getTime();
+            const rangeStart = rangeEnd - (180 - 1) * 24 * 60 * 60 * 1000;
+            let weekStart = rangeStart;
+            for (let w = 0; w < weekCount; w++) {
+                const weekEnd = Math.min(weekStart + msWeek - 24 * 60 * 60 * 1000, rangeEnd);
+                const startDate = new Date(weekStart);
+                const endDate = new Date(weekEnd);
+                labels.push(fmtMd(startDate) + '–' + fmtMd(endDate));
+                const progress = w / (weekCount - 1);
+                const wobble = Math.sin(w * 0.55) * 0.25;
+                icp.push(roundTrend(endIcp + (3.0 - progress * 3.0) + wobble));
+                publish.push(roundTrend(endPublish + (3.5 - progress * 3.5) + wobble * 0.7));
+                weekStart += msWeek;
+            }
+            return { labels, icp, publish, pointRadius: 3, maxTicksLimit: 8 };
+        }
+
+        const crosshairPlugin = {
+            id: 'trendCrosshair',
+            afterDraw(chart) {
+                const tooltip = chart.tooltip;
+                if (!tooltip || tooltip.opacity === 0) return;
+                const { ctx, chartArea } = chart;
+                const x = tooltip.caretX;
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = '#E0E0E0';
+                ctx.lineWidth = 1;
+                ctx.moveTo(x, chartArea.top);
+                ctx.lineTo(x, chartArea.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
+        };
+
+        let trendChart = null;
+        let trendGradient = null;
+
+        function refreshTrendChart() {
+            if (!trendChart) return;
+            const scopeData = TIMELINE_BENCH[dataScope] || TIMELINE_BENCH['全平台'];
+            const d = scopeData[timelineDays];
+            const series = buildTrendSeries(timelineDays, d.icp.you, d.publish.you);
+            const allVals = series.icp.concat(series.publish);
+            const yMax = Math.ceil((Math.max(...allVals) + 2) / 5) * 5;
+
+            trendChart.data.labels = series.labels;
+            trendChart.data.datasets[0].data = series.publish;
+            trendChart.data.datasets[0].pointRadius = series.pointRadius;
+            trendChart.data.datasets[1].data = series.icp;
+            trendChart.data.datasets[1].pointRadius = series.pointRadius;
+            trendChart.data.datasets[1].backgroundColor = trendGradient;
+            trendChart.options.scales.y.max = yMax;
+            trendChart.options.scales.x.ticks.maxTicksLimit = series.maxTicksLimit;
+            trendChart.update();
+        }
+
+        function switchDataScope(nextScope) {
+            if (noRegisteredIndustry) {
+                dataScope = '全平台';
+                document.getElementById('data-scope-select').value = '全平台';
+                return;
+            }
+            if (nextScope === dataScope) return;
+            dataScope = nextScope;
+            refreshDashboard();
+        }
+
+        document.getElementById('data-scope-select').addEventListener('change', (e) => {
+            switchDataScope(e.target.value);
+        });
+
+        document.getElementById('announcement-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            const tag = document.getElementById('announcement-new');
+            if (tag) tag.classList.add('hidden');
+        });
+
+        buildDataScopeSelect();
+        refreshDashboard();
+
+        document.querySelectorAll('.timeline-period-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                timelineDays = Number(btn.getAttribute('data-days'));
+                document.querySelectorAll('.timeline-period-btn').forEach(b => {
+                    b.className = 'timeline-period-btn text-[#888888] hover:text-[#07C160] transition-colors';
+                });
+                btn.className = 'timeline-period-btn text-[#07C160] font-semibold';
+                refreshTimelineBench();
+            });
+        });
+
+        document.querySelectorAll('.health-period-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                healthDays = Number(btn.getAttribute('data-days'));
+                document.querySelectorAll('.health-period-btn').forEach(b => {
+                    b.className = 'health-period-btn text-[#888888] hover:text-[#07C160] transition-colors';
+                });
+                btn.className = 'health-period-btn text-[#07C160] font-semibold';
+                refreshHealthMetrics();
+            });
         });
 
 
-        // --- 3. Chart 2: 小程序三阶段耗时趋势图 (已彻底移除多余图例) ---
+        // --- Chart: 注册到备案 / 注册到首次发布 耗时趋势（有赞示意，ds=20260702）---
         const trendCtx = document.getElementById('trendChart').getContext('2d');
-        const blueGradient = trendCtx.createLinearGradient(0, 0, 0, 220);
-        blueGradient.addColorStop(0, 'rgba(7, 193, 96, 0.04)');
-        blueGradient.addColorStop(1, 'rgba(7, 193, 96, 0.00)');
+        trendGradient = trendCtx.createLinearGradient(0, 0, 0, 220);
+        trendGradient.addColorStop(0, 'rgba(7, 193, 96, 0.04)');
+        trendGradient.addColorStop(1, 'rgba(7, 193, 96, 0.00)');
 
-        new Chart(trendCtx, {
+        const initialScope = TIMELINE_BENCH[dataScope] || TIMELINE_BENCH['全平台'];
+        const initialD = initialScope[timelineDays];
+        const initialSeries = buildTrendSeries(timelineDays, initialD.icp.you, initialD.publish.you);
+        const initialYMax = Math.ceil((Math.max(...initialSeries.icp, ...initialSeries.publish) + 2) / 5) * 5;
+
+        trendChart = new Chart(trendCtx, {
             type: 'line',
             data: {
-                labels: ['05-30', '06-04', '06-09', '06-14', '06-19', '06-24', '06-30'],
+                labels: initialSeries.labels,
                 datasets: [
                     {
                         label: '注册到首次发布',
-                        data: [28, 27, 27, 26, 27, 27, 27],
+                        data: initialSeries.publish,
                         borderColor: '#F5D130',
                         borderWidth: 2,
                         tension: 0.35,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: initialSeries.pointRadius,
+                        pointHoverRadius: 5,
                         pointBackgroundColor: '#F5D130',
                         fill: false
                     },
                     {
                         label: '注册到备案',
-                        data: [435, 433, 432, 431, 432, 432, 432],
+                        data: initialSeries.icp,
                         borderColor: '#07C160',
-                        backgroundColor: blueGradient,
+                        backgroundColor: trendGradient,
                         borderWidth: 2,
                         tension: 0.35,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: initialSeries.pointRadius,
+                        pointHoverRadius: 5,
                         pointBackgroundColor: '#07C160',
                         fill: true
-                    },
-                    {
-                        label: '注册到认证',
-                        data: [242, 241, 240, 239, 239, 239, 239],
-                        borderColor: '#57B2F7',
-                        borderWidth: 2,
-                        tension: 0.35,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#57B2F7',
-                        fill: false
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false, axis: 'x' },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -773,7 +947,7 @@
                         bodyFont: { size: 11 },
                         callbacks: {
                             label: function(context) {
-                                return context.dataset.label + ': ' + context.raw + '天';
+                                return context.dataset.label + ': ' + Number(context.raw).toFixed(1) + '天';
                             }
                         }
                     }
@@ -781,21 +955,22 @@
                 scales: {
                     y: {
                         min: 0,
-                        max: 500,
+                        max: initialYMax,
                         grid: { color: '#F0F0F0', drawTicks: false },
                         border: { dash: [4, 4], display: false },
                         ticks: {
                             color: '#B2B2B2',
-                            stepSize: 100,
+                            stepSize: 5,
                             callback: function(value) { return value + '天'; }
                         }
                     },
                     x: {
                         grid: { display: false },
-                        ticks: { color: '#B2B2B2' }
+                        ticks: { color: '#B2B2B2', maxTicksLimit: initialSeries.maxTicksLimit }
                     }
                 }
-            }
+            },
+            plugins: [crosshairPlugin]
         });
     </script>
 </body>
