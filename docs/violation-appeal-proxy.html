@@ -637,7 +637,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
   <rect x="380" y="63" width="200" height="64" rx="8" fill="#2F6FED"/>
   <text x="480" y="95" text-anchor="middle" dominant-baseline="central" fill="white" font-size="13">
     <tspan x="480" dy="-9">③ 状态变为待商家确认</tspan>
-    <tspan x="480" dy="18">④ 冻结自申诉·发送H5链接</tspan>
+    <tspan x="480" dy="18">④ 冻结自申诉·生成确认链接</tspan>
   </text>
 
   <rect x="700" y="63" width="200" height="64" rx="8" fill="#2F6FED"/>
@@ -740,7 +740,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
   <path d="M548,700 L558,708 L548,716 L538,708 Z" fill="#722ED1"/>
   <text x="566" y="708" dominant-baseline="central" fill="#333" font-size="12">决策点</text>
 </svg></div>
-    <blockquote>蓝色为主流程（服务商代填 &rarr; 系统冻结自申诉并发 H5 &rarr; 商家查看）；绿色为商家确认提交；橙色为商家拒绝；红色为 24h 超时未处理。次数判定见下方规则，全程双向同步。</blockquote>
+    <blockquote>蓝色为主流程（服务商代填 &rarr; 系统冻结自申诉并生成确认链接 &rarr; 服务商复制发给商家 &rarr; 商家打开 H5）；绿色为商家确认提交；橙色为商家拒绝；红色为 24h 超时未处理。次数判定见下方规则，全程双向同步。</blockquote>
 
     <p><strong>核心规则要点：</strong></p>
     <div class="table-wrap">
@@ -1227,7 +1227,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
         <tr><td>提交对象提示</td><td>文案</td><td><code>提交对象：{小程序名称}</code></td></tr>
         <tr><td>取消</td><td>按钮</td><td>按钮文案 <code>取消</code>；关闭确认弹窗，保留处理弹窗表单内容</td></tr>
         <tr><td>确认提交</td><td>按钮</td><td>按钮文案 <code>确认提交</code>；发起商家 H5 确认，不直接提交审核（次数消耗规则见 4.2）</td></tr>
-        <tr><td>发起成功</td><td>状态</td><td>Toast：<code>已发起商家确认，等待商家确认后正式提交</code>；关闭提交确认弹窗和处理弹窗；记录进入 <code>待商家确认</code> 子状态，状态展示 <code>待商家确认</code>；刷新列表、数量角标和行状态</td></tr>
+        <tr class="focus"><td>发起成功</td><td>状态</td><td>Toast：<code>已发起商家确认，等待商家确认后正式提交</code>；记录进入 <code>待商家确认</code>；刷新列表。一期不关窗：弹窗内一键复制「话术 + 链接」，明示「已发起、待商家确认、请尽快发送」；服务商复制后自行发给商家（话术见第 6 节）</td></tr>
         <tr><td>提交失败</td><td>提示 / 状态</td><td>Toast：<code>发起失败：{失败原因}，请稍后重试</code>；关闭确认弹窗，停留原业务状态，保留处理弹窗表单内容，可重新提交</td></tr>
       </tbody>
     </table>
@@ -1254,7 +1254,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
     </div>
 
     <h2 id="sec-6"><span class="num">6</span> 通知流程</h2>
-    <p>商家侧在原有微信通知链路基础上，<span class="mark">仅代申诉确认环节新增 H5</span>；服务商侧通过<span class="hl-blue">微信 API 回调、模板消息和监管专区控制台</span>三轨触达。不自建通知推送系统。</p>
+    <p>商家侧在原有微信通知链路基础上，<span class="mark">仅代申诉确认环节新增 H5</span>；服务商侧通过<span class="hl-blue">微信 API 回调、模板消息和监管专区控制台</span>三轨触达。不自建通知推送系统。<span class="hl">商家确认触达按三期落地</span>：一期复制链接；二期站内信；三期视情况再评估模板消息与 MP「待确认」Tab。</p>
     <div class="table-wrap">
     <table>
       <thead><tr><th>侧</th><th>通知对象</th></tr></thead>
@@ -1272,9 +1272,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
       <thead><tr><th>阶段</th><th>商家</th><th>服务商</th></tr></thead>
       <tbody>
         <tr><td>产生违规</td><td>安全助手推送 + MP 后台通知（原有，不变）</td><td>原有微信 API 回调 <code>wxa_punish_event</code> + 模板消息 + 控制台列表更新</td></tr>
-        <tr><td>发起代申诉</td><td>安全助手强提醒 → H5 确认链接；<span class="hl-blue u">OAuth 校验身份</span></td><td>无需通知（操作人自行发起）；列表进入「待商家确认」</td></tr>
+        <tr class="focus"><td>发起代申诉</td><td>一期：服务商复制话术 + 链接发给商家；商家打开 H5；<span class="hl-blue u">OAuth 校验身份</span></td><td>无需通知（操作人自行发起）；列表进入「待商家确认」</td></tr>
         <tr><td>商家拒绝</td><td>不额外推送（刚在 H5 完成操作）</td><td><span class="tag tag-info">新增</span> 微信 API 回调 + 模板消息 + 控制台更新</td></tr>
-        <tr><td>商家超时</td><td>MP 站内信留痕（<em>弱触达</em>，不另发强提醒）</td><td><span class="tag tag-info">新增</span> 微信 API 回调 + 模板消息 + 控制台更新</td></tr>
+        <tr><td>商家超时</td><td>一期不另推；二期起可 MP 站内信留痕</td><td><span class="tag tag-info">新增</span> 微信 API 回调 + 模板消息 + 控制台更新</td></tr>
         <tr><td>审核终局（通过 / 驳回）</td><td>官方标准结果推送（原有，不变）</td><td>原有微信 API 回调 <code>wxa_appeal_record</code> + 模板消息 + 控制台更新</td></tr>
         <tr><td>旁路：商家自行申诉</td><td>MP 原有申诉提交流程</td><td>原有微信 API 回调 <code>wxa_appeal_record</code> + 模板消息 + 控制台更新；列表标「小程序侧提交」</td></tr>
       </tbody>
@@ -1282,13 +1282,42 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
     </div>
 
     <h3 id="sec-6-2">6.2 商家侧</h3>
-    <p>代申诉确认是商家侧唯一新增体验；其余阶段沿用微信原有通知，仅微调文案以区分「待确认」与「已提交」。</p>
+    <p>代申诉确认是商家侧唯一新增体验；其余阶段沿用微信原有通知。</p>
     <p><strong>H5 身份校验</strong>：打开链接后走微信 OAuth，身份范围与上表商家通知对象一致；非授权身份拦截。</p>
+    <p><strong>代申诉确认触达（分期）</strong>：</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>期次</th><th>触达</th><th>口径</th></tr></thead>
+      <tbody>
+        <tr class="focus"><td>一期</td><td>服务商一键复制</td><td>发起确认后，处理弹窗一键复制「话术 + 链接」；服务商用微信等渠道发给商家；弹窗明示「已发起、待商家确认、请尽快发送」</td></tr>
+        <tr><td>二期</td><td>MP 站内信</td><td>同动作下发站内信，后台留痕；链接指向同一 H5</td></tr>
+        <tr><td>三期</td><td>（视情况）模板消息；MP「待确认」Tab</td><td>视情况与跨团队排期再定；模板消息经安全助手下发；MP Tab 仅作补入口</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><strong>一期复制话术</strong>（链接单独成行）：</p>
+    <pre style="white-space:pre-wrap;background:#f7f7f7;padding:12px 14px;border-radius:6px;font-size:13px;line-height:1.6;max-width:72ch;">您好，我是服务商「{服务商名}」。
+
+您的小程序「{小程序名}」于{处罚下发时间}受到「{限制类型}」。
+我们已代为整理申诉说明和材料，请在 24 小时内点开链接，确认是否提交：
+
+{链接}</pre>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>项</th><th>口径</th></tr></thead>
+      <tbody>
+        <tr><td>时间格式</td><td>短日期即可，如 <code>7月8日</code> 或 <code>2026-07-08</code></td></tr>
+        <tr><td>限制类型</td><td>与列表一致（功能限制、账号限制等）</td></tr>
+        <tr><td>申诉次数</td><td>不写进话术；在 H5 页明示</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p><strong>二期及以后文案</strong>（站内信 / 模板消息，按需启用）：</p>
     <div class="table-wrap">
     <table>
       <thead><tr><th>阶段</th><th>触达方式</th><th>文案</th></tr></thead>
       <tbody>
-        <tr><td>发起代申诉确认</td><td>安全助手 + MP 站内信</td><td>服务商「{服务商名称}」<span class="hl">代你准备了</span>小程序「{小程序名称}」的违规申诉，请在 24 小时内<span class="u">查看并确认是否提交</span></td></tr>
+        <tr><td>发起代申诉确认</td><td>站内信 / 模板消息</td><td>服务商「{服务商名称}」<span class="hl">代你准备了</span>小程序「{小程序名称}」的违规申诉，请在 24 小时内<span class="u">查看并确认是否提交</span></td></tr>
         <tr><td>商家确认提交</td><td>MP 站内信留痕</td><td><code>小程序「{小程序名称}」的申诉已按你的确认提交，等待平台审核</code></td></tr>
         <tr><td>商家拒绝</td><td>不推送</td><td>—</td></tr>
         <tr><td>商家超时</td><td>MP 站内信留痕</td><td><code>服务商为小程序「{小程序名称}」提交的申诉确认已超时，本次未提交、未消耗申诉次数</code></td></tr>
@@ -1492,8 +1521,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
         <tr>
           <td>5</td>
           <td>商家 H5 确认触达渠道</td>
-          <td><span class="decided">已决策：通知中心自动触发</span></td>
-          <td>安全助手 + MP 站内信双通道；H5 外链作模板跳转。</td>
+          <td><span class="decided">已决策：分期落地</span></td>
+          <td>一期一键复制话术+链接；二期 MP 站内信；三期视情况再评估模板消息与 MP「待确认」Tab。</td>
         </tr>
         <tr>
           <td>6</td>
