@@ -232,16 +232,21 @@ hr {
 .page-wire-note { font-size: 11px; color: var(--text-faint); }
 
 .mermaid-wrap, .echarts-wrap {
-  margin: var(--space-figure) 0; padding: 16px 12px;
-  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  margin: var(--space-figure) 0; padding: 20px 16px 28px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
   overflow-x: auto; cursor: zoom-in; position: relative;
 }
 .mermaid-wrap::after, .echarts-wrap::after, figure.zoomable::after {
-  content: "点击放大"; position: absolute; right: 8px; bottom: 8px;
-  font-size: 11px; color: var(--text-faint); background: rgba(250, 247, 242, 0.9);
-  padding: 2px 6px; border-radius: 4px; pointer-events: none;
+  content: "点击放大"; position: absolute; right: 10px; bottom: 8px;
+  font-size: 11px; color: var(--text-faint); background: rgba(250, 247, 242, 0.92);
+  padding: 2px 8px; border-radius: 4px; pointer-events: none; z-index: 1;
 }
-.mermaid-wrap .mermaid { display: flex; justify-content: center; }
+.mermaid-wrap .mermaid {
+  display: flex; justify-content: center; align-items: center; min-height: 120px;
+}
+.mermaid-wrap svg {
+  max-width: 100%; height: auto;
+}
 
 figure.zoomable {
   margin: var(--space-figure) 0; text-align: center; position: relative;
@@ -350,107 +355,58 @@ code {
 
 </section>
 <section id="表-a角色与主流程" class="section"><h3>表 A：角色与主流程</h3>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>角色</th>
 <th>入口</th>
 <th>主流程步骤</th>
 <th>异常 / 分支</th>
 </tr></thead><tbody>
-<tr>
-<td>服务商（第三方平台）</td>
-<td>调用代申诉接口</td>
-<td>1. 提交本条违规的申诉说明与证明材料<br>2. 拿到确认链接，自行转发给商家<br>3. 等待商家结果；结果到来后跟进审核</td>
-<td>发起失败：材料或权限不合规，不生成链接<br>商家拒绝 / 超时：可改材料后再次发起<br>待商家确认或已有审核中申诉：不可再发起</td>
-</tr>
-<tr>
-<td>商家（管理员 / 运营者 / 开通了违规处理权限的人）</td>
-<td>打开确认链接</td>
-<td>1. 微信内打开确认页并校验身份<br>2. 只读查看申诉内容<br>3. 点「提交申诉」或「暂不提交」，经二次确认后生效</td>
-<td>非授权身份：不可操作<br>超时未操作：自动失效，不提交、不扣次</td>
-</tr>
-<tr>
-<td>平台</td>
-<td>—</td>
-<td>发起后冻结该违规的商家自申诉入口；商家确认后才正式提交并扣 1 次；拒绝或超时则解冻、不提交</td>
-<td>与微信侧状态冲突时，以微信侧最新结果为准</td>
-</tr>
+<tr><td>服务商（第三方平台）</td><td>调用代申诉接口</td><td>1. 提交本条违规的申诉说明与证明材料<br>2. 拿到确认链接，自行转发给商家<br>3. 等待商家结果；结果到来后跟进审核</td><td>发起失败：材料或权限不合规，不生成链接<br>商家拒绝 / 超时：可改材料后再次发起<br>待商家确认或已有审核中申诉：不可再发起</td></tr>
+<tr><td>商家（管理员 / 运营者 / 开通了违规处理权限的人）</td><td>打开确认链接</td><td>1. 微信内打开确认页并校验身份<br>2. 只读查看申诉内容<br>3. 点「提交申诉」或「暂不提交」，经二次确认后生效</td><td>非授权身份：不可操作<br>超时未操作：自动失效，不提交、不扣次</td></tr>
+<tr><td>平台</td><td>—</td><td>发起后冻结该违规的商家自申诉入口；商家确认后才正式提交并扣 1 次；拒绝或超时则解冻、不提交</td><td>与微信侧状态冲突时，以微信侧最新结果为准</td></tr>
 </tbody></table>
-<div class="mermaid-wrap"><pre class="mermaid">flowchart LR
-  A[服务商调接口代填] --&gt; B[返回确认链接&lt;br&gt;冻结商家自申诉]
-  B --&gt; C[服务商转发链接]
-  C --&gt; D[待商家确认页]
-  D --&gt;|提交申诉| E[二次确认弹层]
-  D --&gt;|暂不提交| F[拒绝二次确认弹层]
-  E --&gt;|确认提交| G[已提交结果页&lt;br&gt;扣 1 次]
-  E --&gt;|再想想| D
-  F --&gt;|确定拒绝| H[商家已拒绝结果页&lt;br&gt;不扣次]
-  F --&gt;|再想想| D
-  D --&gt;|24h 未操作| I[已超时结果页&lt;br&gt;不扣次]
-  G --&gt; J[审核中 / 通过 / 驳回]</pre></div>
+<div class="mermaid-wrap"><pre class="mermaid">flowchart TB
+  A[服务商调接口代填] --> B[返回确认链接 · 冻结自申诉]
+  B --> C[服务商转发链接]
+  C --> D[待商家确认页]
+
+  D -->|提交申诉| E{二次确认}
+  D -->|暂不提交| F{拒绝确认}
+  D -->|超 24h| I[已超时 · 不扣次]
+
+  E -->|确认提交| G[已提交 · 扣 1 次]
+  E -->|取消| D
+  F -->|确认拒绝| H[已拒绝 · 不扣次]
+  F -->|取消| D
+
+  G --> J[审核中 / 通过 / 驳回]
+
+  classDef start fill:#EDE6DC,stroke:#A85A3A,color:#3A342E
+  classDef decision fill:#FAF7F2,stroke:#8B7355,color:#3A342E
+  classDef ok fill:#E8F0E4,stroke:#5A7A4A,color:#3A342E
+  classDef stop fill:#F3E8E4,stroke:#A85A3A,color:#3A342E
+  class A,B,C,D start
+  class E,F decision
+  class G,J ok
+  class H,I stop</pre></div>
 </section>
 <section id="表-b业务规则" class="section"><h3>表 B：业务规则</h3>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>规则</th>
 <th>条件</th>
 <th>系统行为</th>
 </tr></thead><tbody>
-<tr>
-<td>谁能代申诉</td>
-<td>小程序已授权服务商「基础管理 + 违规申诉协助」两类权限</td>
-<td>不满足则不可发起</td>
-</tr>
-<tr>
-<td>哪些违规可代申诉</td>
-<td>处罚类可申诉记录（功能限制、账号限制、页面封禁、下架等）</td>
-<td>警告类不进入本链路</td>
-</tr>
-<tr>
-<td>服务商只能代填</td>
-<td>调用接口成功</td>
-<td>只生成待确认任务与链接，不直接进审</td>
-</tr>
-<tr>
-<td>商家确认后才提交</td>
-<td>商家在二次确认弹层点「确认提交」</td>
-<td>进入平台审核队列，扣减 1 次申诉机会</td>
-</tr>
-<tr>
-<td>确认前不扣次</td>
-<td>已发起但未确认、拒绝、超时</td>
-<td>不消耗申诉次数</td>
-</tr>
-<tr>
-<td>确认有效期</td>
-<td>发起后 24 小时内</td>
-<td>超时自动失效；双方提交入口恢复</td>
-</tr>
-<tr>
-<td>待确认期间</td>
-<td>服务商已发起、商家尚未确认/拒绝/超时</td>
-<td>冻结该违规的商家自申诉；服务商不可改材料、不可再发起；不拦截查看违规或其他违规的处理</td>
-</tr>
-<tr>
-<td>审核中互斥</td>
-<td>已有审核中的申诉</td>
-<td>商家与服务商均不可再提交该违规的申诉</td>
-</tr>
-<tr>
-<td>不可撤回已发起确认</td>
-<td>确认任务已生成</td>
-<td>只能等确认、拒绝或超时；不可改材料、不可撤销任务</td>
-</tr>
-<tr>
-<td>可再次发起</td>
-<td>拒绝或超时之后</td>
-<td>次数不限；须重新提交材料并再走确认</td>
-</tr>
-<tr>
-<td>结果怎么同步给服务商</td>
-<td>商家确认 / 拒绝 / 超时，以及后续审核结果</td>
-<td><strong>主动推送</strong>：推到第三方平台事先配置的消息接收地址；<strong>查询回补</strong>：服务商也可主动查询申诉状态，防止漏收推送</td>
-</tr>
+<tr><td>谁能代申诉</td><td>小程序已授权服务商「基础管理 + 违规申诉协助」两类权限</td><td>不满足则不可发起</td></tr>
+<tr><td>哪些违规可代申诉</td><td>处罚类可申诉记录（功能限制、账号限制、页面封禁、下架等）</td><td>警告类不进入本链路</td></tr>
+<tr><td>服务商只能代填</td><td>调用接口成功</td><td>只生成待确认任务与链接，不直接进审</td></tr>
+<tr><td>商家确认后才提交</td><td>商家在二次确认弹层点「确认提交」</td><td>进入平台审核队列，扣减 1 次申诉机会</td></tr>
+<tr><td>确认前不扣次</td><td>已发起但未确认、拒绝、超时</td><td>不消耗申诉次数</td></tr>
+<tr><td>确认有效期</td><td>发起后 24 小时内</td><td>超时自动失效；双方提交入口恢复</td></tr>
+<tr><td>待确认期间</td><td>服务商已发起、商家尚未确认/拒绝/超时</td><td>冻结该违规的商家自申诉；服务商不可改材料、不可再发起；不拦截查看违规或其他违规的处理</td></tr>
+<tr><td>审核中互斥</td><td>已有审核中的申诉</td><td>商家与服务商均不可再提交该违规的申诉</td></tr>
+<tr><td>不可撤回已发起确认</td><td>确认任务已生成</td><td>只能等确认、拒绝或超时；不可改材料、不可撤销任务</td></tr>
+<tr><td>可再次发起</td><td>拒绝或超时之后</td><td>次数不限；须重新提交材料并再走确认</td></tr>
+<tr><td>结果怎么同步给服务商</td><td>商家确认 / 拒绝 / 超时，以及后续审核结果</td><td><strong>主动推送</strong>：推到第三方平台事先配置的消息接收地址；<strong>查询回补</strong>：服务商也可主动查询申诉状态，防止漏收推送</td></tr>
 </tbody></table>
 <div class="callout"><strong>推送与查询回补（白话）</strong>：第三方平台在开平后台配过一个「收消息的网址」。商家一点确认或拒绝，微信就往这个网址推一条结果，服务商系统自动收到。若推送偶发没收到，服务商再调查询接口把状态补齐——两套一起用，不是二选一。</div>
 <hr>
@@ -463,37 +419,16 @@ code {
 </section>
 <section id="32-字段与小程序管理后台对照" class="section"><h3>3.2 字段与小程序管理后台对照</h3>
 <p>确认页「申诉内容」区字段对齐设计稿；与商家在小程序管理后台（MP）看违规 / 申诉时的信息对应关系如下（名称以本页展示名为准）：</p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>本页字段</th>
 <th>展示规则</th>
 <th>与 MP 的关系</th>
 </tr></thead><tbody>
-<tr>
-<td>违规描述</td>
-<td>一行或短文，说明违规与处理结果</td>
-<td>对应 MP 违规详情中的被处理原因+处理内容</td>
-</tr>
-<tr>
-<td>处罚对象</td>
-<td>小程序头像 + 名称</td>
-<td>对应被处罚的小程序账号</td>
-</tr>
-<tr>
-<td>处罚时间</td>
-<td>日期</td>
-<td>对应该条处罚下发时间</td>
-</tr>
-<tr>
-<td>申诉理由</td>
-<td>多行文本，服务商代填</td>
-<td>对应 MP 申诉表单中的申诉说明 / 申诉原因；本页不可改</td>
-</tr>
-<tr>
-<td>补充证明材料</td>
-<td>缩略图网格，可点预览</td>
-<td>对应 MP 申诉表单中的证明材料；本页不可增删改</td>
-</tr>
+<tr><td>违规描述</td><td>一行或短文，说明违规与处理结果</td><td>对应 MP 违规详情中的被处理原因+处理内容</td></tr>
+<tr><td>处罚对象</td><td>小程序头像 + 名称</td><td>对应被处罚的小程序账号</td></tr>
+<tr><td>处罚时间</td><td>日期</td><td>对应该条处罚下发时间</td></tr>
+<tr><td>申诉理由</td><td>多行文本，服务商代填</td><td>对应 MP 申诉表单中的申诉说明 / 申诉原因；本页不可改</td></tr>
+<tr><td>补充证明材料</td><td>缩略图网格，可点预览</td><td>对应 MP 申诉表单中的证明材料；本页不可增删改</td></tr>
 </tbody></table>
 <p class="ps"><em>ps.</em> MP 后台申诉填写页是可编辑的；本链路是确认页，只读展示服务商已填内容。</p>
 </section>
@@ -502,186 +437,93 @@ code {
 </section>
 <section id="a-待商家确认" class="section"><h4>A. 待商家确认</h4>
 <p>设计稿已有。商家首次打开未处理完的确认链接时展示。</p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>页头标题</td>
-<td><code>服务商申请为你的「{小程序名}」小程序提交违规申诉</code></td>
-</tr>
-<tr>
-<td>时效说明</td>
-<td><code>{截止时间}前未提交自动终止当前申诉</code>（截止时间 = 发起后 24 小时）</td>
-</tr>
-<tr>
-<td>申诉内容</td>
-<td>见 3.2 五个字段，只读</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td><code>暂不提交</code> / <code>提交申诉</code>（均不直接生效，先进入二次确认）</td>
-</tr>
+<tr><td>页头标题</td><td><code>服务商申请为你的「{小程序名}」小程序提交违规申诉</code></td></tr>
+<tr><td>时效说明</td><td><code>{截止时间}前未提交自动终止当前申诉</code>（截止时间 = 发起后 24 小时）</td></tr>
+<tr><td>申诉内容</td><td>见 3.2 五个字段，只读</td></tr>
+<tr><td>底部按钮</td><td><code>暂不提交</code> / <code>提交申诉</code>（均不直接生效，先进入二次确认）</td></tr>
 </tbody></table>
 <p>本态底部<strong>不</strong>单独铺长说明；扣次与剩余次数放进二次确认弹层。</p>
 </section>
 <section id="b-二次确认弹层" class="section"><h4>B. 二次确认（弹层）</h4>
 <p>设计稿商家侧目前从主按钮直达结果页，<strong>设计稿疑似漏做二次确认</strong>；弹层样式可复用设计体系已有确认弹层。</p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>触发</th>
 <th>弹层标题</th>
 <th>说明文案（弹层中部）</th>
 <th>按钮</th>
 </tr></thead><tbody>
-<tr>
-<td>点「提交申诉」</td>
-<td><code>确认提交申诉？</code></td>
-<td><code>确认后将按服务商代填内容正式提交平台审核，并扣减 1 次申诉机会（当前剩余 {n} 次）。</code></td>
-<td><code>取消</code> / <code>确认提交</code></td>
-</tr>
-<tr>
-<td>点「暂不提交」</td>
-<td><code>确定暂不提交？</code></td>
-<td><code>确定后本次代办申诉不会提交，也不扣减申诉机会（当前剩余 {n} 次）。</code></td>
-<td><code>取消</code> / <code>确认拒绝</code></td>
-</tr>
+<tr><td>点「提交申诉」</td><td><code>确认提交申诉？</code></td><td><code>确认后将按服务商代填内容正式提交平台审核，并扣减 1 次申诉机会（当前剩余 {n} 次）。</code></td><td><code>取消</code> / <code>确认提交</code></td></tr>
+<tr><td>点「暂不提交」</td><td><code>确定暂不提交？</code></td><td><code>确定后本次代办申诉不会提交，也不扣减申诉机会（当前剩余 {n} 次）。</code></td><td><code>取消</code> / <code>确认拒绝</code></td></tr>
 </tbody></table>
 <ul><li><code>取消</code>：关闭弹层，回到待商家确认页</li><li><code>确认提交</code>：扣 1 次并正式进审 → 进入「已提交结果」</li><li><code>确定拒绝</code>：不提交、不扣次 → 进入「商家已拒绝」</li></ul>
 </section>
 <section id="c-已提交结果" class="section"><h4>C. 已提交结果</h4>
 <p><strong>1）结果过渡页（提交成功瞬间）</strong></p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>状态图标</td>
-<td>成功勾选</td>
-</tr>
-<tr>
-<td>主文案</td>
-<td><code>已提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td>
-</tr>
-<tr>
-<td>次数说明</td>
-<td><code>剩余{m}次申诉机会</code>（m = 扣次后的剩余次数）</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td><code>我知道了</code>（进入审核中详情页）</td>
-</tr>
+<tr><td>状态图标</td><td>成功勾选</td></tr>
+<tr><td>主文案</td><td><code>已提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td></tr>
+<tr><td>次数说明</td><td><code>剩余{m}次申诉机会</code>（m = 扣次后的剩余次数）</td></tr>
+<tr><td>底部按钮</td><td><code>我知道了</code>（进入审核中详情页）</td></tr>
 </tbody></table>
 <p><strong>2）申诉审核中详情页（同链接再次打开，或点「我知道了」后进入）</strong></p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>状态标题</td>
-<td><code>申诉审核中</code></td>
-</tr>
-<tr>
-<td>次数说明</td>
-<td><code>还剩{m}次申诉机会</code></td>
-</tr>
-<tr>
-<td>申诉内容</td>
-<td>同 3.2 五个字段，只读</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td>无操作按钮</td>
-</tr>
+<tr><td>状态标题</td><td><code>申诉审核中</code></td></tr>
+<tr><td>次数说明</td><td><code>还剩{m}次申诉机会</code></td></tr>
+<tr><td>申诉内容</td><td>同 3.2 五个字段，只读</td></tr>
+<tr><td>底部按钮</td><td>无操作按钮</td></tr>
 </tbody></table>
 </section>
 <section id="d-商家已拒绝" class="section"><h4>D. 商家已拒绝</h4>
 <p><strong>1）结果过渡页</strong></p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>主文案</td>
-<td><code>已拒绝提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td>
-</tr>
-<tr>
-<td>次数说明</td>
-<td><code>可重新发起申诉，剩余{n}次申诉机会</code>（n 未扣次）</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td><code>我知道了</code></td>
-</tr>
+<tr><td>主文案</td><td><code>已拒绝提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td></tr>
+<tr><td>次数说明</td><td><code>可重新发起申诉，剩余{n}次申诉机会</code>（n 未扣次）</td></tr>
+<tr><td>底部按钮</td><td><code>我知道了</code></td></tr>
 </tbody></table>
 <p><strong>2）详情页（同链接再次打开）</strong></p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>状态标题</td>
-<td><code>已拒绝提交申诉</code></td>
-</tr>
-<tr>
-<td>次数说明</td>
-<td><code>还剩{n}次申诉机会</code></td>
-</tr>
-<tr>
-<td>申诉内容</td>
-<td>同 3.2，只读</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td>无；服务商需重新发起后才会再有可操作确认页</td>
-</tr>
+<tr><td>状态标题</td><td><code>已拒绝提交申诉</code></td></tr>
+<tr><td>次数说明</td><td><code>还剩{n}次申诉机会</code></td></tr>
+<tr><td>申诉内容</td><td>同 3.2，只读</td></tr>
+<tr><td>底部按钮</td><td>无；服务商需重新发起后才会再有可操作确认页</td></tr>
 </tbody></table>
 </section>
 <section id="e-已超时" class="section"><h4>E. 已超时</h4>
 <p>设计稿已有。超过截止时间仍未确认时，打开链接进入此态。</p>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>区域</th>
 <th>文案 / 内容</th>
 </tr></thead><tbody>
-<tr>
-<td>状态标题</td>
-<td><code>申诉未提交</code></td>
-</tr>
-<tr>
-<td>说明</td>
-<td><code>超过24小时未提交，可重新发起申诉</code></td>
-</tr>
-<tr>
-<td>申诉内容</td>
-<td>同 3.2，只读</td>
-</tr>
-<tr>
-<td>底部按钮</td>
-<td>无</td>
-</tr>
+<tr><td>状态标题</td><td><code>申诉未提交</code></td></tr>
+<tr><td>说明</td><td><code>超过24小时未提交，可重新发起申诉</code></td></tr>
+<tr><td>申诉内容</td><td>同 3.2，只读</td></tr>
+<tr><td>底部按钮</td><td>无</td></tr>
 </tbody></table>
 <p>不扣次；服务商可重新发起。</p>
 </section>
 <section id="34-异常" class="section"><h3>3.4 异常</h3>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>情况</th>
 <th>表现</th>
 </tr></thead><tbody>
-<tr>
-<td>非授权身份</td>
-<td>拦截，不可查看完整材料与操作</td>
-</tr>
-<tr>
-<td>链接无效 / 任务不存在</td>
-<td>提示确认已失效</td>
-</tr>
+<tr><td>非授权身份</td><td>拦截，不可查看完整材料与操作</td></tr>
+<tr><td>链接无效 / 任务不存在</td><td>提示确认已失效</td></tr>
 </tbody></table>
 <hr>
 </section>
@@ -695,74 +537,29 @@ code {
 <p>服务商平台监管专区（列表、处理弹窗、状态筛选等）整包后置，规则仍以完整方案 <code>01</code> 为准；本文不展开页面规格。</p>
 </section>
 <section id="附录-c待决" class="section"><h3>附录 C：待决</h3>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>项</th>
 <th>现状</th>
 <th>谁拍板</th>
 </tr></thead><tbody>
-<tr>
-<td>代申诉接口入参、出参（含确认链接字段）与错误码</td>
-<td>产品行为已定，字段待接口方案</td>
-<td>后端 + 开平</td>
-</tr>
-<tr>
-<td>确认 / 拒绝 / 超时推送的事件名与字段</td>
-<td>产品要求有推送；具体定义待定</td>
-<td>后端 + 开平</td>
-</tr>
-<tr>
-<td>查询回补用哪条已有或新查询能力</td>
-<td>原则要有；接口选型待定</td>
-<td>后端</td>
-</tr>
-<tr>
-<td>二次确认弹层视觉（设计是否排期补画）</td>
-<td>产品规格已定；设计稿商家侧未画</td>
-<td>设计</td>
-</tr>
-<tr>
-<td>证明材料预览能力边界</td>
-<td>以缩略图 + 可预览为方向；稳定性待实测</td>
-<td>后端</td>
-</tr>
-<tr>
-<td>申诉理由字数、材料数量/大小/格式上限</td>
-<td>部分有现网经验，正式上限待与现网对齐</td>
-<td>产品 + 后端</td>
-</tr>
+<tr><td>代申诉接口入参、出参（含确认链接字段）与错误码</td><td>产品行为已定，字段待接口方案</td><td>后端 + 开平</td></tr>
+<tr><td>确认 / 拒绝 / 超时推送的事件名与字段</td><td>产品要求有推送；具体定义待定</td><td>后端 + 开平</td></tr>
+<tr><td>查询回补用哪条已有或新查询能力</td><td>原则要有；接口选型待定</td><td>后端</td></tr>
+<tr><td>二次确认弹层视觉（设计是否排期补画）</td><td>产品规格已定；设计稿商家侧未画</td><td>设计</td></tr>
+<tr><td>证明材料预览能力边界</td><td>以缩略图 + 可预览为方向；稳定性待实测</td><td>后端</td></tr>
 </tbody></table>
 </section>
 <section id="附录-d术语" class="section"><h3>附录 D：术语</h3>
-<table>
-<thead><tr>
+<table><thead><tr>
 <th>术语</th>
 <th>含义</th>
 </tr></thead><tbody>
-<tr>
-<td>代申诉</td>
-<td>服务商填写申诉说明和材料，商家确认后才正式提交</td>
-</tr>
-<tr>
-<td>第三方平台</td>
-<td>服务商在开放平台侧承接授权与接口调用的账号体系；本期对接主体</td>
-</tr>
-<tr>
-<td>消息接收地址</td>
-<td>第三方平台在开平配置的网址，用于接收微信推送的业务结果</td>
-</tr>
-<tr>
-<td>查询回补</td>
-<td>推送之外，服务商主动查状态，把漏掉或延迟的结果补齐</td>
-</tr>
-<tr>
-<td>待商家确认</td>
-<td>已代填并发起确认，但尚未进审、尚未扣次</td>
-</tr>
-<tr>
-<td>二次确认</td>
-<td>商家点主按钮后弹出的确认层；说明文案在弹层中部，须含是否扣次与剩余次数</td>
-</tr>
+<tr><td>代申诉</td><td>服务商填写申诉说明和材料，商家确认后才正式提交</td></tr>
+<tr><td>第三方平台</td><td>服务商在开放平台侧承接授权与接口调用的账号体系；本期对接主体</td></tr>
+<tr><td>消息接收地址</td><td>第三方平台在开平配置的网址，用于接收微信推送的业务结果</td></tr>
+<tr><td>查询回补</td><td>推送之外，服务商主动查状态，把漏掉或延迟的结果补齐</td></tr>
+<tr><td>待商家确认</td><td>已代填并发起确认，但尚未进审、尚未扣次</td></tr>
+<tr><td>二次确认</td><td>商家点主按钮后弹出的确认层；说明文案在弹层中部，须含是否扣次与剩余次数</td></tr>
 </tbody></table>
 </section>
 </div>
@@ -816,6 +613,7 @@ code {
   const lb = document.getElementById('lightbox');
   const lbInner = lb && lb.querySelector('.lightbox-inner');
   const lbClose = document.getElementById('lightboxClose');
+
   function openLightbox(node) {
     if (!lb || !lbInner) return;
     lbInner.innerHTML = '';
@@ -823,10 +621,21 @@ code {
       const img = node.cloneNode(true);
       img.style.cursor = 'default';
       lbInner.appendChild(img);
-    } else if (node.classList.contains('mermaid-wrap')) {
-      const svg = node.querySelector('svg');
-      if (svg) lbInner.appendChild(svg.cloneNode(true));
-      else lbInner.appendChild(node.cloneNode(true));
+    } else if (node.classList.contains('mermaid-wrap') || node.closest?.('.mermaid-wrap')) {
+      const wrap = node.classList.contains('mermaid-wrap') ? node : node.closest('.mermaid-wrap');
+      const svg = wrap.querySelector('svg');
+      if (svg) {
+        const clone = svg.cloneNode(true);
+        clone.removeAttribute('width');
+        clone.removeAttribute('height');
+        clone.style.width = 'min(92vw, 1100px)';
+        clone.style.height = 'auto';
+        clone.style.maxHeight = '82vh';
+        clone.style.display = 'block';
+        lbInner.appendChild(clone);
+      } else {
+        lbInner.appendChild(wrap.cloneNode(true));
+      }
     } else if (node.classList.contains('echarts-wrap')) {
       const clone = node.cloneNode(true);
       clone.style.cursor = 'default';
@@ -836,26 +645,39 @@ code {
     lb.classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
+
   function closeLightbox() {
     if (!lb) return;
     lb.classList.remove('is-open');
     lbInner.innerHTML = '';
     document.body.style.overflow = '';
   }
-  if (lbClose) lbClose.addEventListener('click', closeLightbox);
+
+  if (lbClose) lbClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeLightbox();
+  });
   if (lb) lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
-  document.querySelectorAll('figure.zoomable img').forEach((img) => {
-    img.closest('figure').addEventListener('click', () => openLightbox(img));
-  });
-  document.querySelectorAll('.mermaid-wrap, .echarts-wrap').forEach((el) => {
-    el.addEventListener('click', () => openLightbox(el));
+  // 事件委托：mermaid 异步渲染后仍可点
+  document.addEventListener('click', (e) => {
+    if (lb && lb.classList.contains('is-open')) return;
+    const imgFig = e.target.closest('figure.zoomable');
+    if (imgFig) {
+      const img = imgFig.querySelector('img');
+      if (img) openLightbox(img);
+      return;
+    }
+    const wrap = e.target.closest('.mermaid-wrap, .echarts-wrap');
+    if (wrap) openLightbox(wrap);
   });
 
-  if (typeof mermaid !== 'undefined') {
+  function initMermaid() {
+    if (typeof mermaid === 'undefined') return;
     mermaid.initialize({
-      startOnLoad: true,
+      startOnLoad: false,
+      securityLevel: 'loose',
       theme: 'base',
       themeVariables: {
         primaryColor: '#EDE6DC',
@@ -864,10 +686,35 @@ code {
         lineColor: '#8B7355',
         secondaryColor: '#F5F0E8',
         tertiaryColor: '#FAF7F2',
-        fontFamily: '-apple-system, PingFang SC, sans-serif'
+        fontFamily: '-apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif',
+        fontSize: '14px',
+        nodeBorder: '#A85A3A',
+        mainBkg: '#EDE6DC',
+        clusterBkg: '#FAF7F2',
+        titleColor: '#3A342E',
+        edgeLabelBackground: '#FAF7F2'
       },
-      flowchart: { curve: 'basis', padding: 12 }
+      flowchart: {
+        curve: 'basis',
+        padding: 16,
+        nodeSpacing: 36,
+        rankSpacing: 48,
+        htmlLabels: true,
+        useMaxWidth: true
+      }
     });
+    const nodes = document.querySelectorAll('.mermaid-wrap .mermaid, pre.mermaid');
+    if (nodes.length && typeof mermaid.run === 'function') {
+      mermaid.run({ nodes });
+    } else if (typeof mermaid.init === 'function') {
+      mermaid.init(undefined, nodes);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMermaid);
+  } else {
+    initMermaid();
   }
 })();
 
