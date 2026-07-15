@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代申诉开放接口与商家确认 — 精简方案</title>
+<style>
+/* B端文档阅读页 — 暖色纸感。改此处后须同步内联到各 HTML。 */
+/* B端文档阅读页 — 暖色纸感设计系统。改此处即可全站生效，禁止单篇 inline 覆盖 token。 */
+:root {
+  --bg: #F5F0E8;
+  --bg-sidebar: #EBE4D9;
+  --surface: #FAF7F2;
+  --accent: #A85A3A;
+  --accent-deep: #8B4A30;
+  --text: #3A342E;
+  --text-muted: #6B635B;
+  --text-faint: #9A9288;
+  --border: #DDD5C8;
+  --callout-bg: #EDE6DC;
+  --sidebar-w: 210px;
+  --content-max: 900px;
+  --prose-max: 72ch;
+  --lh-body: 1.7;
+  --lh-tight: 1.55;
+  --lh-heading: 1.35;
+  --space-para: 0.75em;
+  --space-section: 2.25em;
+  --space-figure: 1.25em;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: var(--lh-body);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+.layout { min-height: 100vh; }
+
+.sidebar-toggle {
+  position: fixed; top: 12px; left: calc(var(--sidebar-w) - 14px); z-index: 200;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 13px; color: var(--text-muted);
+  transition: left 0.25s, background 0.15s;
+}
+.sidebar-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.sidebar-collapsed .sidebar-toggle { left: 12px; }
+body.sidebar-collapsed .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+body.sidebar-collapsed .main { margin-left: 0; }
+
+.sidebar {
+  width: var(--sidebar-w); position: fixed; top: 0; left: 0; bottom: 0;
+  padding: 16px 0; overflow-y: auto; z-index: 100;
+  background: var(--bg-sidebar); border-right: 1px solid var(--border);
+  transition: transform 0.25s ease;
+}
+.sidebar-label { font-size: 13px; font-weight: 600; color: var(--text-faint); padding: 0 16px 10px; }
+.sidebar nav a {
+  display: block; padding: 6px 16px; font-size: 16px;
+  color: var(--text-muted); text-decoration: none;
+  border-left: 3px solid transparent; transition: all 0.15s; line-height: var(--lh-heading);
+}
+.sidebar nav a.sub { padding-left: 28px; font-size: 14px; }
+.sidebar nav a.sub.nav-chosen { color: var(--accent-deep); font-weight: 600; }
+.sidebar nav a:hover { color: var(--accent-deep); background: rgba(168, 90, 58, 0.08); }
+.sidebar nav a.active {
+  color: var(--accent-deep); font-weight: 600;
+  border-left-color: var(--accent); background: rgba(168, 90, 58, 0.12);
+}
+.toc-group { margin-bottom: 2px; }
+.toc-group > .toc-parent {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 16px; font-size: 16px; color: var(--text-muted);
+  cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s;
+}
+.toc-group > .toc-parent:hover { background: rgba(168, 90, 58, 0.08); color: var(--accent-deep); }
+.toc-group > .toc-parent.active {
+  color: var(--accent-deep); font-weight: 600;
+  border-left-color: var(--accent); background: rgba(168, 90, 58, 0.12);
+}
+.toc-group > .toc-parent .arrow { font-size: 10px; transition: transform 0.2s; color: var(--text-faint); margin-left: 8px; }
+.toc-group.collapsed > .toc-parent .arrow { transform: rotate(-90deg); }
+.toc-children { overflow: hidden; transition: max-height 0.25s ease; }
+.toc-group.collapsed .toc-children { max-height: 0 !important; }
+
+.main {
+  margin-left: var(--sidebar-w); min-width: 0; min-height: 100vh;
+  padding: 28px 32px 48px; background: var(--surface);
+  transition: margin-left 0.25s ease;
+}
+.content { width: 100%; max-width: var(--content-max); margin: 0 auto; }
+
+.breadcrumb { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+
+.doc-title {
+  font-size: 2em; font-weight: 700; line-height: var(--lh-heading);
+  color: var(--accent-deep); margin-bottom: 16px; letter-spacing: -0.02em;
+}
+
+.callout {
+  padding: 12px 16px 12px 14px; background: var(--callout-bg);
+  border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+  color: var(--text); font-size: 14px; line-height: var(--lh-tight); max-width: var(--prose-max);
+}
+.callout strong { color: var(--accent-deep); font-weight: 600; }
+.callout.meta { margin-bottom: 8px; max-width: none; }
+.callout.meta p { margin: 0; color: var(--text-muted); font-size: 14px; }
+.callout-key {
+  border-left-width: 4px; background: rgba(168, 90, 58, 0.14);
+  font-size: 15px; max-width: none;
+}
+.status-pill {
+  display: inline-block; padding: 2px 10px;
+  background: var(--accent); color: #fff;
+  border-radius: 4px; font-size: 13px; font-weight: 600;
+}
+.hl {
+  background: linear-gradient(180deg, transparent 58%, rgba(168, 90, 58, 0.28) 58%);
+  font-weight: 600; color: var(--accent-deep);
+}
+.block-chosen {
+  margin: 0.25em 0 1.75em; padding: 4px 16px 14px;
+  border: 1px solid rgba(168, 90, 58, 0.22); border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0; background: rgba(168, 90, 58, 0.07);
+}
+
+.section { margin-top: var(--space-section); }
+.section:first-of-type { margin-top: 1.75em; }
+h2 {
+  font-size: 1.35em; font-weight: 700; color: var(--accent-deep);
+  margin-bottom: 0.75em; line-height: var(--lh-heading);
+}
+h3 { font-size: 1.05em; font-weight: 600; margin: 1.5em 0 0.5em; color: var(--text); max-width: var(--prose-max); }
+h3:first-of-type { margin-top: 0.75em; }
+.section > p { color: var(--text); margin-bottom: var(--space-para); max-width: var(--prose-max); }
+/* 列表：须覆盖所有层级（勿仅用 .section > ul，否则嵌套子列表无缩进） */
+.content ul,
+.content ol {
+  margin: 0 0 var(--space-para);
+  padding-left: 1.5em;
+  max-width: var(--prose-max);
+  list-style-position: outside;
+}
+.content ul li,
+.content ol li { margin-bottom: 0.35em; }
+.content li > ul,
+.content li > ol {
+  margin-top: 0.35em;
+  margin-bottom: 0.1em;
+}
+.content ul { list-style-type: disc; }
+.content ul ul { list-style-type: circle; }
+.content ul ul ul { list-style-type: square; }
+
+.flow-box {
+  font-family: "SF Mono", Menlo, monospace; font-size: 13px; padding: 10px 14px;
+  background: var(--callout-bg); border-left: 3px solid var(--border);
+  border-radius: 0 6px 6px 0; color: var(--text-muted);
+  margin: 0.5em 0 1em; line-height: var(--lh-tight); max-width: var(--prose-max);
+}
+
+hr {
+  border: none; border-top: 1px solid var(--border);
+  margin: 2em 0; max-width: var(--prose-max);
+}
+.section > p,
+.content li,
+.callout:not(.meta) {
+  text-align: justify;
+  text-align-last: left;
+  text-justify: inter-ideograph;
+}
+
+/* MD ASCII 线框 → 结构化页面示意（禁止原样 dump <pre>） */
+.page-wire {
+  margin: 1em 0 1.25em; max-width: min(100%, 720px);
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); overflow: hidden;
+  box-shadow: 0 1px 0 rgba(58, 52, 46, 0.04);
+}
+.page-wire-hd {
+  padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+  background: var(--callout-bg);
+}
+.page-wire-hd .page-wire-title {
+  font-size: 15px; font-weight: 650; color: var(--accent-deep);
+  margin-bottom: 8px; letter-spacing: -0.01em;
+}
+.page-wire-filters {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
+}
+.page-wire-filters span {
+  font-size: 12px; padding: 2px 10px; border-radius: 4px;
+  color: var(--text-muted); border: 1px solid var(--border);
+  background: var(--surface);
+}
+.page-wire-filters span.is-on {
+  color: var(--accent-deep); border-color: rgba(168, 90, 58, 0.35);
+  background: rgba(168, 90, 58, 0.1); font-weight: 600;
+}
+.page-wire-desc {
+  font-size: 12px; line-height: 1.55; color: var(--text-muted);
+  margin: 0; text-align: left;
+}
+.page-wire .table-wrap {
+  margin: 0; border: none; border-radius: 0; background: transparent;
+}
+.page-wire table { font-size: 13px; }
+.page-wire thead th { padding: 8px 12px; }
+.page-wire tbody td { padding: 8px 12px; color: var(--text); }
+.page-wire .muted { color: var(--text-faint); }
+.page-wire .row-disabled td { color: var(--text-faint); }
+.page-wire-ft {
+  padding: 10px 16px 12px; border-top: 1px solid var(--border);
+  background: var(--surface); font-size: 12px; color: var(--text-muted);
+  display: grid; gap: 6px;
+}
+.page-wire-ft .bar {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 8px;
+}
+.page-wire-btn {
+  display: inline-block; padding: 4px 12px; border-radius: 4px;
+  background: var(--accent); color: #fff; font-size: 12px; font-weight: 600;
+}
+.page-wire-note { font-size: 11px; color: var(--text-faint); }
+
+.mermaid-wrap, .echarts-wrap {
+  margin: var(--space-figure) 0; padding: 16px 12px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+  overflow-x: auto; cursor: zoom-in; position: relative;
+}
+.mermaid-wrap::after, .echarts-wrap::after, figure.zoomable::after {
+  content: "点击放大"; position: absolute; right: 8px; bottom: 8px;
+  font-size: 11px; color: var(--text-faint); background: rgba(250, 247, 242, 0.9);
+  padding: 2px 6px; border-radius: 4px; pointer-events: none;
+}
+.mermaid-wrap .mermaid { display: flex; justify-content: center; }
+
+figure.zoomable {
+  margin: var(--space-figure) 0; text-align: center; position: relative;
+  cursor: zoom-in;
+}
+figure.zoomable img {
+  max-width: 100%; height: auto; border: 1px solid var(--border);
+  border-radius: 6px; background: var(--bg);
+}
+figcaption {
+  margin-top: 0.5em; font-size: 13px; color: var(--text-muted);
+  line-height: var(--lh-tight);
+}
+
+.table-wrap {
+  overflow-x: auto; margin: 0.75em 0 1em;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--bg);
+}
+table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: var(--lh-body); }
+thead th {
+  background: var(--callout-bg); color: var(--text); font-weight: 600;
+  text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+.col-focus { background: rgba(168, 90, 58, 0.07); }
+th.col-focus { color: var(--accent-deep); background: rgba(168, 90, 58, 0.16); font-weight: 700; }
+tr.focus td { background: rgba(168, 90, 58, 0.09); }
+tr.focus td:first-child { font-weight: 600; color: var(--accent-deep); }
+td.em { font-weight: 600; color: var(--accent-deep); }
+
+code {
+  font-family: "SF Mono", Menlo, monospace; font-size: 0.88em;
+  background: rgba(168, 90, 58, 0.1); padding: 1px 5px;
+  border-radius: 3px; color: var(--accent-deep);
+}
+
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(58, 52, 46, 0.88); align-items: center; justify-content: center;
+  padding: 24px; cursor: zoom-out;
+}
+.lightbox.is-open { display: flex; }
+.lightbox-inner {
+  max-width: 95vw; max-height: 90vh; overflow: auto;
+  background: var(--surface); border-radius: 8px; padding: 16px;
+  cursor: default; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.lightbox-inner img { max-width: 100%; height: auto; display: block; }
+.lightbox-inner .mermaid, .lightbox-inner svg { max-width: 100%; height: auto; }
+.lightbox-close {
+  position: fixed; top: 16px; right: 20px; z-index: 1001;
+  width: 36px; height: 36px; border: none; border-radius: 50%;
+  background: var(--surface); color: var(--text); font-size: 20px;
+  cursor: pointer; line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .sidebar-toggle { display: none; }
+  .sidebar { position: relative; width: 100%; transform: none !important; height: auto; }
+  .sidebar nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 0 10px; }
+  .sidebar nav a, .toc-group > .toc-parent { border-left: none; border-radius: 6px; }
+  .sidebar-label { display: none; }
+  .main { margin-left: 0; padding: 16px 16px 32px; }
+  .mermaid-wrap::after, .echarts-wrap::after, figure.zoomable::after { display: none; }
+}
+
+</style>
+</head>
+<body>
+<button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收起或展开目录">‹</button>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-label">目录</div>
+  <nav>
+<a href="#1-背景问题与范围">1. 背景、问题与范围</a>
+<div class="toc-group"><div class="toc-parent" data-href="#2-角色流程与规则">2. 角色、流程与规则 <span class="arrow">▼</span></div><div class="toc-children"><a href="#表-a角色与主流程" class="sub">表 A：角色与主流程</a>
+<a href="#表-b业务规则" class="sub">表 B：业务规则</a></div></div>
+<div class="toc-group"><div class="toc-parent" data-href="#3-页面与交互商家确认">3. 页面与交互（商家确认） <span class="arrow">▼</span></div><div class="toc-children"><a href="#31-全页共用" class="sub">3.1 全页共用</a>
+<a href="#32-字段与小程序管理后台对照" class="sub">3.2 字段与小程序管理后台对照</a>
+<a href="#33-状态与页面" class="sub">3.3 状态与页面</a>
+<a href="#a-待商家确认" class="sub">A. 待商家确认</a>
+<a href="#b-二次确认弹层" class="sub">B. 二次确认（弹层）</a>
+<a href="#c-已提交结果" class="sub">C. 已提交结果</a>
+<a href="#d-商家已拒绝" class="sub">D. 商家已拒绝</a>
+<a href="#e-已超时" class="sub">E. 已超时</a>
+<a href="#34-异常" class="sub">3.4 异常</a></div></div>
+<div class="toc-group"><div class="toc-parent" data-href="#附录">附录 <span class="arrow">▼</span></div><div class="toc-children"><a href="#附录-a本期边界" class="sub">附录 A：本期边界</a>
+<a href="#附录-b二期草案不展开" class="sub">附录 B：二期草案（不展开）</a>
+<a href="#附录-c待决" class="sub">附录 C：待决</a>
+<a href="#附录-d术语" class="sub">附录 D：术语</a></div></div>
+  </nav>
+</aside>
+<main class="main">
+<div class="content">
+<nav class="breadcrumb"><a href="./index.html">文档库</a> / 代申诉接口精简方案</nav>
+<h1 class="doc-title">代申诉开放接口与商家确认 — 精简方案</h1>
+<div class="callout meta"><strong>产品方案</strong>　2026-07-15 ｜ 本期只交付开放能力：服务商调接口代填申诉 → 商家微信内确认 → 确认后才正式提交。服务商平台可视化专区不在本期。　<span class="hl">接口先行精简稿</span>　关联：完整方案「服务商违规申诉代办」</div>
+<section id="1-背景问题与范围" class="section"><h2>1. 背景、问题与范围</h2>
+<p>服务商已在帮商家写申诉、凑材料，但提交仍多靠线下催商家自己点。本期开放「代申诉」能力：服务商把说明和材料交给平台，平台生成确认链接；商家在手机微信里看完再决定是否提交。服务商不能替商家直接点提交。</p>
+<p><strong>成功指标</strong>：代申诉链路可被第三方平台接入并跑通「发起 → 商家确认/拒绝/超时 → 正式进审或退回」闭环。</p>
+<p>本期边界见附录 A。</p>
+<hr>
+</section>
+<section id="2-角色流程与规则" class="section"><h2>2. 角色、流程与规则</h2>
+
+</section>
+<section id="表-a角色与主流程" class="section"><h3>表 A：角色与主流程</h3>
+<table>
+<thead><tr>
+<th>角色</th>
+<th>入口</th>
+<th>主流程步骤</th>
+<th>异常 / 分支</th>
+</tr></thead><tbody>
+<tr>
+<td>服务商（第三方平台）</td>
+<td>调用代申诉接口</td>
+<td>1. 提交本条违规的申诉说明与证明材料<br>2. 拿到确认链接，自行转发给商家<br>3. 等待商家结果；结果到来后跟进审核</td>
+<td>发起失败：材料或权限不合规，不生成链接<br>商家拒绝 / 超时：可改材料后再次发起<br>待商家确认或已有审核中申诉：不可再发起</td>
+</tr>
+<tr>
+<td>商家（管理员 / 运营者 / 开通了违规处理权限的人）</td>
+<td>打开确认链接</td>
+<td>1. 微信内打开确认页并校验身份<br>2. 只读查看申诉内容<br>3. 点「提交申诉」或「暂不提交」，经二次确认后生效</td>
+<td>非授权身份：不可操作<br>超时未操作：自动失效，不提交、不扣次</td>
+</tr>
+<tr>
+<td>平台</td>
+<td>—</td>
+<td>发起后冻结该违规的商家自申诉入口；商家确认后才正式提交并扣 1 次；拒绝或超时则解冻、不提交</td>
+<td>与微信侧状态冲突时，以微信侧最新结果为准</td>
+</tr>
+</tbody></table>
+<div class="mermaid-wrap"><pre class="mermaid">flowchart LR
+  A[服务商调接口代填] --&gt; B[返回确认链接&lt;br&gt;冻结商家自申诉]
+  B --&gt; C[服务商转发链接]
+  C --&gt; D[待商家确认页]
+  D --&gt;|提交申诉| E[二次确认弹层]
+  D --&gt;|暂不提交| F[拒绝二次确认弹层]
+  E --&gt;|确认提交| G[已提交结果页&lt;br&gt;扣 1 次]
+  E --&gt;|再想想| D
+  F --&gt;|确定拒绝| H[商家已拒绝结果页&lt;br&gt;不扣次]
+  F --&gt;|再想想| D
+  D --&gt;|24h 未操作| I[已超时结果页&lt;br&gt;不扣次]
+  G --&gt; J[审核中 / 通过 / 驳回]</pre></div>
+</section>
+<section id="表-b业务规则" class="section"><h3>表 B：业务规则</h3>
+<table>
+<thead><tr>
+<th>规则</th>
+<th>条件</th>
+<th>系统行为</th>
+</tr></thead><tbody>
+<tr>
+<td>谁能代申诉</td>
+<td>小程序已授权服务商「基础管理 + 违规申诉协助」两类权限</td>
+<td>不满足则不可发起</td>
+</tr>
+<tr>
+<td>哪些违规可代申诉</td>
+<td>处罚类可申诉记录（功能限制、账号限制、页面封禁、下架等）</td>
+<td>警告类不进入本链路</td>
+</tr>
+<tr>
+<td>服务商只能代填</td>
+<td>调用接口成功</td>
+<td>只生成待确认任务与链接，不直接进审</td>
+</tr>
+<tr>
+<td>商家确认后才提交</td>
+<td>商家在二次确认弹层点「确认提交」</td>
+<td>进入平台审核队列，扣减 1 次申诉机会</td>
+</tr>
+<tr>
+<td>确认前不扣次</td>
+<td>已发起但未确认、拒绝、超时</td>
+<td>不消耗申诉次数</td>
+</tr>
+<tr>
+<td>确认有效期</td>
+<td>发起后 24 小时内</td>
+<td>超时自动失效；双方提交入口恢复</td>
+</tr>
+<tr>
+<td>待确认期间</td>
+<td>服务商已发起、商家尚未确认/拒绝/超时</td>
+<td>冻结该违规的商家自申诉；服务商不可改材料、不可再发起；不拦截查看违规或其他违规的处理</td>
+</tr>
+<tr>
+<td>审核中互斥</td>
+<td>已有审核中的申诉</td>
+<td>商家与服务商均不可再提交该违规的申诉</td>
+</tr>
+<tr>
+<td>不可撤回已发起确认</td>
+<td>确认任务已生成</td>
+<td>只能等确认、拒绝或超时；不可改材料、不可撤销任务</td>
+</tr>
+<tr>
+<td>可再次发起</td>
+<td>拒绝或超时之后</td>
+<td>次数不限；须重新提交材料并再走确认</td>
+</tr>
+<tr>
+<td>结果怎么同步给服务商</td>
+<td>商家确认 / 拒绝 / 超时，以及后续审核结果</td>
+<td><strong>主动推送</strong>：推到第三方平台事先配置的消息接收地址；<strong>查询回补</strong>：服务商也可主动查询申诉状态，防止漏收推送</td>
+</tr>
+</tbody></table>
+<div class="callout"><strong>推送与查询回补（白话）</strong>：第三方平台在开平后台配过一个「收消息的网址」。商家一点确认或拒绝，微信就往这个网址推一条结果，服务商系统自动收到。若推送偶发没收到，服务商再调查询接口把状态补齐——两套一起用，不是二选一。</div>
+<hr>
+</section>
+<section id="3-页面与交互商家确认" class="section"><h2>3. 页面与交互（商家确认）</h2>
+<p>同一确认链接按任务状态打开不同页；下列字段均只读。</p>
+</section>
+<section id="31-全页共用" class="section"><h3>3.1 全页共用</h3>
+<ul><li>路径 / 入口：服务商转发的确认链接；须在手机微信内打开</li><li>权限：仅小程序管理员、运营者、其他单独开通违规处理权限的人员可查看并操作；非授权身份拦截</li></ul>
+</section>
+<section id="32-字段与小程序管理后台对照" class="section"><h3>3.2 字段与小程序管理后台对照</h3>
+<p>确认页「申诉内容」区字段对齐设计稿；与商家在小程序管理后台（MP）看违规 / 申诉时的信息对应关系如下（名称以本页展示名为准）：</p>
+<table>
+<thead><tr>
+<th>本页字段</th>
+<th>展示规则</th>
+<th>与 MP 的关系</th>
+</tr></thead><tbody>
+<tr>
+<td>违规描述</td>
+<td>一行或短文，说明违规与处理结果</td>
+<td>对应 MP 违规详情中的被处理原因+处理内容</td>
+</tr>
+<tr>
+<td>处罚对象</td>
+<td>小程序头像 + 名称</td>
+<td>对应被处罚的小程序账号</td>
+</tr>
+<tr>
+<td>处罚时间</td>
+<td>日期</td>
+<td>对应该条处罚下发时间</td>
+</tr>
+<tr>
+<td>申诉理由</td>
+<td>多行文本，服务商代填</td>
+<td>对应 MP 申诉表单中的申诉说明 / 申诉原因；本页不可改</td>
+</tr>
+<tr>
+<td>补充证明材料</td>
+<td>缩略图网格，可点预览</td>
+<td>对应 MP 申诉表单中的证明材料；本页不可增删改</td>
+</tr>
+</tbody></table>
+<p class="ps"><em>ps.</em> MP 后台申诉填写页是可编辑的；本链路是确认页，只读展示服务商已填内容。</p>
+</section>
+<section id="33-状态与页面" class="section"><h3>3.3 状态与页面</h3>
+
+</section>
+<section id="a-待商家确认" class="section"><h4>A. 待商家确认</h4>
+<p>设计稿已有。商家首次打开未处理完的确认链接时展示。</p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>页头标题</td>
+<td><code>服务商申请为你的「{小程序名}」小程序提交违规申诉</code></td>
+</tr>
+<tr>
+<td>时效说明</td>
+<td><code>{截止时间}前未提交自动终止当前申诉</code>（截止时间 = 发起后 24 小时）</td>
+</tr>
+<tr>
+<td>申诉内容</td>
+<td>见 3.2 五个字段，只读</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td><code>暂不提交</code> / <code>提交申诉</code>（均不直接生效，先进入二次确认）</td>
+</tr>
+</tbody></table>
+<p>本态底部<strong>不</strong>单独铺长说明；扣次与剩余次数放进二次确认弹层。</p>
+</section>
+<section id="b-二次确认弹层" class="section"><h4>B. 二次确认（弹层）</h4>
+<p>设计稿商家侧目前从主按钮直达结果页，<strong>设计稿疑似漏做二次确认</strong>；弹层样式可复用设计体系已有确认弹层。</p>
+<table>
+<thead><tr>
+<th>触发</th>
+<th>弹层标题</th>
+<th>说明文案（弹层中部）</th>
+<th>按钮</th>
+</tr></thead><tbody>
+<tr>
+<td>点「提交申诉」</td>
+<td><code>确认提交申诉？</code></td>
+<td><code>确认后将按服务商代填内容正式提交平台审核，并扣减 1 次申诉机会（当前剩余 {n} 次）。</code></td>
+<td><code>取消</code> / <code>确认提交</code></td>
+</tr>
+<tr>
+<td>点「暂不提交」</td>
+<td><code>确定暂不提交？</code></td>
+<td><code>确定后本次代办申诉不会提交，也不扣减申诉机会（当前剩余 {n} 次）。</code></td>
+<td><code>取消</code> / <code>确认拒绝</code></td>
+</tr>
+</tbody></table>
+<ul><li><code>取消</code>：关闭弹层，回到待商家确认页</li><li><code>确认提交</code>：扣 1 次并正式进审 → 进入「已提交结果」</li><li><code>确定拒绝</code>：不提交、不扣次 → 进入「商家已拒绝」</li></ul>
+</section>
+<section id="c-已提交结果" class="section"><h4>C. 已提交结果</h4>
+<p><strong>1）结果过渡页（提交成功瞬间）</strong></p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>状态图标</td>
+<td>成功勾选</td>
+</tr>
+<tr>
+<td>主文案</td>
+<td><code>已提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td>
+</tr>
+<tr>
+<td>次数说明</td>
+<td><code>剩余{m}次申诉机会</code>（m = 扣次后的剩余次数）</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td><code>我知道了</code>（进入审核中详情页）</td>
+</tr>
+</tbody></table>
+<p><strong>2）申诉审核中详情页（同链接再次打开，或点「我知道了」后进入）</strong></p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>状态标题</td>
+<td><code>申诉审核中</code></td>
+</tr>
+<tr>
+<td>次数说明</td>
+<td><code>还剩{m}次申诉机会</code></td>
+</tr>
+<tr>
+<td>申诉内容</td>
+<td>同 3.2 五个字段，只读</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td>无操作按钮</td>
+</tr>
+</tbody></table>
+</section>
+<section id="d-商家已拒绝" class="section"><h4>D. 商家已拒绝</h4>
+<p><strong>1）结果过渡页</strong></p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>主文案</td>
+<td><code>已拒绝提交「{小程序名}」小程序的{违规摘要}违规申诉</code></td>
+</tr>
+<tr>
+<td>次数说明</td>
+<td><code>可重新发起申诉，剩余{n}次申诉机会</code>（n 未扣次）</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td><code>我知道了</code></td>
+</tr>
+</tbody></table>
+<p><strong>2）详情页（同链接再次打开）</strong></p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>状态标题</td>
+<td><code>已拒绝提交申诉</code></td>
+</tr>
+<tr>
+<td>次数说明</td>
+<td><code>还剩{n}次申诉机会</code></td>
+</tr>
+<tr>
+<td>申诉内容</td>
+<td>同 3.2，只读</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td>无；服务商需重新发起后才会再有可操作确认页</td>
+</tr>
+</tbody></table>
+</section>
+<section id="e-已超时" class="section"><h4>E. 已超时</h4>
+<p>设计稿已有。超过截止时间仍未确认时，打开链接进入此态。</p>
+<table>
+<thead><tr>
+<th>区域</th>
+<th>文案 / 内容</th>
+</tr></thead><tbody>
+<tr>
+<td>状态标题</td>
+<td><code>申诉未提交</code></td>
+</tr>
+<tr>
+<td>说明</td>
+<td><code>超过24小时未提交，可重新发起申诉</code></td>
+</tr>
+<tr>
+<td>申诉内容</td>
+<td>同 3.2，只读</td>
+</tr>
+<tr>
+<td>底部按钮</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<p>不扣次；服务商可重新发起。</p>
+</section>
+<section id="34-异常" class="section"><h3>3.4 异常</h3>
+<table>
+<thead><tr>
+<th>情况</th>
+<th>表现</th>
+</tr></thead><tbody>
+<tr>
+<td>非授权身份</td>
+<td>拦截，不可查看完整材料与操作</td>
+</tr>
+<tr>
+<td>链接无效 / 任务不存在</td>
+<td>提示确认已失效</td>
+</tr>
+</tbody></table>
+<hr>
+</section>
+<section id="附录" class="section"><h2>附录</h2>
+
+</section>
+<section id="附录-a本期边界" class="section"><h3>附录 A：本期边界</h3>
+<ul><li><strong>本期上线</strong><ul><li>代申诉开放接口：提交申诉说明与证明材料，返回商家确认链接</li><li>商家确认页（待确认 / 二次确认 / 已提交 / 已拒绝 / 已超时）</li><li>确认/拒绝/超时与审核结果：推送到第三方平台；也支持主动查询补齐</li><li>确认链接由服务商用自有渠道转发（群消息、客服、自有站内信等）；平台不负责送到商家手机</li></ul></li><li><strong>二期及以后</strong><ul><li>服务商平台监管专区 UI</li><li>MP 站内信触达；视情况评估模板消息与管理后台「待确认」入口（见 <code>决策记录/商家确认入口·H5与MP方案对比.md</code>）</li></ul></li><li><strong>不在本期</strong><ul><li>服务商平台「监管专区」列表、弹窗、控制台</li><li>平台代商家直接提交（跳过确认）</li><li>模板消息作为商家确认主触达；小程序管理后台「待确认」页签</li><li>确认发起后的撤回、修改；确认后的撤销</li></ul></li></ul>
+</section>
+<section id="附录-b二期草案不展开" class="section"><h3>附录 B：二期草案（不展开）</h3>
+<p>服务商平台监管专区（列表、处理弹窗、状态筛选等）整包后置，规则仍以完整方案 <code>01</code> 为准；本文不展开页面规格。</p>
+</section>
+<section id="附录-c待决" class="section"><h3>附录 C：待决</h3>
+<table>
+<thead><tr>
+<th>项</th>
+<th>现状</th>
+<th>谁拍板</th>
+</tr></thead><tbody>
+<tr>
+<td>代申诉接口入参、出参（含确认链接字段）与错误码</td>
+<td>产品行为已定，字段待接口方案</td>
+<td>后端 + 开平</td>
+</tr>
+<tr>
+<td>确认 / 拒绝 / 超时推送的事件名与字段</td>
+<td>产品要求有推送；具体定义待定</td>
+<td>后端 + 开平</td>
+</tr>
+<tr>
+<td>查询回补用哪条已有或新查询能力</td>
+<td>原则要有；接口选型待定</td>
+<td>后端</td>
+</tr>
+<tr>
+<td>二次确认弹层视觉（设计是否排期补画）</td>
+<td>产品规格已定；设计稿商家侧未画</td>
+<td>设计</td>
+</tr>
+<tr>
+<td>证明材料预览能力边界</td>
+<td>以缩略图 + 可预览为方向；稳定性待实测</td>
+<td>后端</td>
+</tr>
+<tr>
+<td>申诉理由字数、材料数量/大小/格式上限</td>
+<td>部分有现网经验，正式上限待与现网对齐</td>
+<td>产品 + 后端</td>
+</tr>
+</tbody></table>
+</section>
+<section id="附录-d术语" class="section"><h3>附录 D：术语</h3>
+<table>
+<thead><tr>
+<th>术语</th>
+<th>含义</th>
+</tr></thead><tbody>
+<tr>
+<td>代申诉</td>
+<td>服务商填写申诉说明和材料，商家确认后才正式提交</td>
+</tr>
+<tr>
+<td>第三方平台</td>
+<td>服务商在开放平台侧承接授权与接口调用的账号体系；本期对接主体</td>
+</tr>
+<tr>
+<td>消息接收地址</td>
+<td>第三方平台在开平配置的网址，用于接收微信推送的业务结果</td>
+</tr>
+<tr>
+<td>查询回补</td>
+<td>推送之外，服务商主动查状态，把漏掉或延迟的结果补齐</td>
+</tr>
+<tr>
+<td>待商家确认</td>
+<td>已代填并发起确认，但尚未进审、尚未扣次</td>
+</tr>
+<tr>
+<td>二次确认</td>
+<td>商家点主按钮后弹出的确认层；说明文案在弹层中部，须含是否扣次与剩余次数</td>
+</tr>
+</tbody></table>
+</section>
+</div>
+</main>
+</div>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="放大查看">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭">×</button>
+  <div class="lightbox-inner"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+/* B端文档阅读页交互：目录、折叠、滚动定位、lightbox、mermaid。发布时内联进 HTML。 */
+(function () {
+  const toggle = document.getElementById('sidebarToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const collapsed = document.body.classList.toggle('sidebar-collapsed');
+      toggle.textContent = collapsed ? '›' : '‹';
+    });
+  }
+
+  document.querySelectorAll('.toc-group').forEach((group) => {
+    const children = group.querySelector('.toc-children');
+    const parent = group.querySelector('.toc-parent');
+    if (!children || !parent) return;
+    children.style.maxHeight = children.scrollHeight + 'px';
+    parent.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      group.classList.toggle('collapsed');
+    });
+  });
+
+  const navLinks = [...document.querySelectorAll('.sidebar nav a[href^="#"]')];
+  const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll() {
+    let current = sections[0];
+    sections.forEach((sec) => {
+      if (sec.getBoundingClientRect().top <= 120) current = sec;
+    });
+    if (!current) return;
+    const id = '#' + current.id;
+    navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === id));
+    document.querySelectorAll('.toc-parent').forEach((p) => {
+      const href = p.dataset.href;
+      p.classList.toggle('active', href === id);
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const lb = document.getElementById('lightbox');
+  const lbInner = lb && lb.querySelector('.lightbox-inner');
+  const lbClose = document.getElementById('lightboxClose');
+  function openLightbox(node) {
+    if (!lb || !lbInner) return;
+    lbInner.innerHTML = '';
+    if (node.tagName === 'IMG') {
+      const img = node.cloneNode(true);
+      img.style.cursor = 'default';
+      lbInner.appendChild(img);
+    } else if (node.classList.contains('mermaid-wrap')) {
+      const svg = node.querySelector('svg');
+      if (svg) lbInner.appendChild(svg.cloneNode(true));
+      else lbInner.appendChild(node.cloneNode(true));
+    } else if (node.classList.contains('echarts-wrap')) {
+      const clone = node.cloneNode(true);
+      clone.style.cursor = 'default';
+      clone.style.minHeight = '60vh';
+      lbInner.appendChild(clone);
+    }
+    lb.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    if (!lb) return;
+    lb.classList.remove('is-open');
+    lbInner.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+  if (lbClose) lbClose.addEventListener('click', closeLightbox);
+  if (lb) lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+  document.querySelectorAll('figure.zoomable img').forEach((img) => {
+    img.closest('figure').addEventListener('click', () => openLightbox(img));
+  });
+  document.querySelectorAll('.mermaid-wrap, .echarts-wrap').forEach((el) => {
+    el.addEventListener('click', () => openLightbox(el));
+  });
+
+  if (typeof mermaid !== 'undefined') {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#EDE6DC',
+        primaryTextColor: '#3A342E',
+        primaryBorderColor: '#A85A3A',
+        lineColor: '#8B7355',
+        secondaryColor: '#F5F0E8',
+        tertiaryColor: '#FAF7F2',
+        fontFamily: '-apple-system, PingFang SC, sans-serif'
+      },
+      flowchart: { curve: 'basis', padding: 12 }
+    });
+  }
+})();
+
+</script>
+</body>
+</html>
